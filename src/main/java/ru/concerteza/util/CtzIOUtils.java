@@ -1,9 +1,12 @@
 package ru.concerteza.util;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.UnhandledException;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,6 +32,15 @@ public class CtzIOUtils {
             }
         } catch (SQLException e) {
             // ignore
+        }
+    }
+
+    public static File getJarParentDir(Class<?> clazz) {
+        try {
+            URI uri = clazz.getProtectionDomain().getCodeSource().getLocation().toURI();
+            return new File(uri).getParentFile();
+        } catch (Exception e) {
+            throw new UnhandledException(e);
         }
     }
 }
