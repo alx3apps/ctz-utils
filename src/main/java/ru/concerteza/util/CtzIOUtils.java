@@ -5,7 +5,7 @@ import org.apache.commons.lang.UnhandledException;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,5 +42,29 @@ public class CtzIOUtils {
         } catch (Exception e) {
             throw new UnhandledException(e);
         }
+    }
+
+    public static void appendToFile(final InputStream in, final File f) throws IOException {
+        OutputStream stream = null;
+        try {
+            stream = outStream(f);
+            IOUtils.copy(in, stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+    }
+
+    public static void appendToFile(final String in, final File f) throws IOException {
+        InputStream stream = null;
+        try {
+            stream = IOUtils.toInputStream(in);
+            appendToFile(stream, f);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
+    }
+
+    private static OutputStream outStream(final File f) throws IOException {
+        return new BufferedOutputStream(new FileOutputStream(f, true));
     }
 }
