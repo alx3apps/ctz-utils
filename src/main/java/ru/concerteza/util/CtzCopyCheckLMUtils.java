@@ -15,7 +15,7 @@ import static org.apache.commons.io.FileUtils.ONE_MB;
  */
 
 // specialized methods here, for simple methods use FileUtils
-public class CopyCheckLMUtils {
+public class CtzCopyCheckLMUtils {
 
     private static final long FIFTY_MB = ONE_MB * 50;
 

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static ru.concerteza.util.GuavaUtils.*;
+import static ru.concerteza.util.CtzPreconditionUtils.checkArg;
 
 /**
  * User: alexey

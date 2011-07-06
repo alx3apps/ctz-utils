@@ -2,23 +2,19 @@ package ru.concerteza.util;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
  * User: alexey
- * Date: 4/27/11
+ * Date: 6/9/11
  */
-public class GuavaUtils {
-    // collections
+public class CtzCollectionUtils {
     public static <F, T> List<T> transformListCopy(List<F> fromList, Function<? super F, ? extends T> function) {
         return ImmutableList.copyOf(Lists.transform(fromList, function));
     }
@@ -35,21 +31,24 @@ public class GuavaUtils {
         return ImmutableList.copyOf(Iterables.filter(unfiltered, type));
     }
 
-    // preconditions
-    public static void checkArg(boolean expression, String errorMessageTemplate, Object... errorMessageArgs) {
-        if (!expression) {
-            throw new IllegalArgumentException(format(errorMessageTemplate, errorMessageArgs));
-        }
+    public static <K, V> Map<K, V> createMap(Object... pairs) {
+        return createMapVararg(pairs);
     }
 
-    public static void checkState(boolean expression, String errorMessageTemplate, Object... errorMessageArgs) {
-        if (!expression) {
-            throw new IllegalStateException(format(errorMessageTemplate, errorMessageArgs));
-        }
+    private static <K, V> Map<K, V> createMapVararg(Object... paires) {
+        return (Map<K, V>) createMapArray(paires);
     }
 
-    // splitter
-    public static List<String> split(Splitter splitter, String str) {
-        return ImmutableList.copyOf(splitter.split(str));
+    private static Map<Object, Object> createMapArray(Object... paires) {
+        if(0 != paires.length % 2) throw new IllegalArgumentException(format("Varargs must have even lenth, but was: {}", paires.length));
+        ImmutableMap.Builder<Object, Object> builder = new ImmutableMap.Builder<Object, Object>();
+        int even = 0;
+        int odd = 1;
+        while(odd < paires.length) {
+            builder.put(paires[even], paires[odd]);
+            even += 2;
+            odd +=2;
+        }
+        return builder.build();
     }
 }

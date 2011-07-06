@@ -6,12 +6,13 @@ import ru.concerteza.util.namedregex.NamedMatcher;
 import ru.concerteza.util.namedregex.NamedPattern;
 
 import static java.lang.Integer.parseInt;
+import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
  * User: alexey
  * Date: 5/11/11
  */
-public class Version {
+public class CtzVersion {
     private static final NamedPattern STD_VERSION_PATTERN = NamedPattern.compile(
             "^(?<major_version>\\d+)\\.(?<minor_version>\\d+).*$");
 
@@ -24,7 +25,7 @@ public class Version {
     private final int majorVersion;
     private final int minorVersion;
 
-    public Version(String specificationTitle, String specificationVersion, String specificationVendor, String implementationTitle, String implementationVersion, String implementationVendor) {
+    public CtzVersion(String specificationTitle, String specificationVersion, String specificationVendor, String implementationTitle, String implementationVersion, String implementationVendor) {
         this.specificationTitle = specificationTitle;
         this.specificationVersion = specificationVersion;
         this.specificationVendor = specificationVendor;
@@ -77,6 +78,10 @@ public class Version {
 
     public int getMinorVersion() {
         return minorVersion;
+    }
+
+    public String standardFormat() {
+        return format("{}, {} version: {} build: {}", implementationVendor, specificationTitle, specificationVersion, implementationVersion);
     }
 
     @Override

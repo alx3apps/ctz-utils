@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import ru.concerteza.util.CtzPreconditionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.jar.Manifest;
 
 import static ru.concerteza.util.CtzFormatUtils.format;
-import static ru.concerteza.util.GuavaUtils.checkState;
 
 
 /**
@@ -22,7 +22,7 @@ import static ru.concerteza.util.GuavaUtils.checkState;
  * Date: 5/11/11
  */
 // todo check overhead for big projects
-public class VersionUtils {
+public class CtzVersionUtils {
     private static final String MANIFEST_PATH = "classpath*:/META-INF/MANIFEST.MF";
 
     private static final String SPC_TITLE = "Specification-Title";
@@ -33,13 +33,13 @@ public class VersionUtils {
     private static final String IMP_VENDOR = "Implementation-Vendor";
 
 
-    public static Version readVersionFromManifest(String implementationTitle) {
+    public static CtzVersion readVersionFromManifest(String implementationTitle) {
         Map<String, String> mf = loadManifest(implementationTitle);
         List<String> requiredFields = ImmutableList.of(SPC_TITLE, SPC_VERSION, SPC_VENDOR, IMP_TITLE, IMP_VERSION, IMP_VENDOR);
         for (String fi : requiredFields) {
-            checkState(mf.containsKey(fi), "Required field: {} not found in manifest: {}", fi, mf);
+            CtzPreconditionUtils.checkState(mf.containsKey(fi), "Required field: {} not found in manifest: {}", fi, mf);
         }
-        return new Version(mf.get(SPC_TITLE), mf.get(SPC_VERSION), mf.get(SPC_VENDOR),
+        return new CtzVersion(mf.get(SPC_TITLE), mf.get(SPC_VERSION), mf.get(SPC_VENDOR),
                 mf.get(IMP_TITLE), mf.get(IMP_VERSION), mf.get(IMP_VENDOR));
     }
 

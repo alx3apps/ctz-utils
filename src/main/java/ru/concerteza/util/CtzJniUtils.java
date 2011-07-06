@@ -11,7 +11,7 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * User: alexey
  * Date: 5/17/11
  */
-public class JniUtils {
+public class CtzJniUtils {
 
     private static final Platform CURRENT_PLATFORM;
 

@@ -5,14 +5,14 @@ import com.google.common.base.Splitter;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static ru.concerteza.util.GuavaUtils.checkArg;
-import static ru.concerteza.util.GuavaUtils.split;
+import static ru.concerteza.util.CtzPreconditionUtils.checkArg;
+import static ru.concerteza.util.CtzStringUtils.split;
 
 /**
  * User: wmel
  * Date: 29.03.11
  */
-public class IpAddressUtils {
+public class CtzNetUtils {
     private static final Pattern IP_PATTERN = Pattern.compile("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.[\\d]{1,3}$");
     private static final Splitter SPLITTER = Splitter.on('.');
 

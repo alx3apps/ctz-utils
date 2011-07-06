@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
  * User: alexey
  * Date: 4/27/11
  */
-public class CommonConstants {
+public class CtzConstants {
     // common
     public static final String EMPTY_STRING = "";
 

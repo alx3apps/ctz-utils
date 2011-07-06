@@ -3,14 +3,14 @@ package ru.concerteza.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static ru.concerteza.util.IpAddressUtils.convertIpToLong;
-import static ru.concerteza.util.IpAddressUtils.convertIpToString;
+import static ru.concerteza.util.CtzNetUtils.convertIpToLong;
+import static ru.concerteza.util.CtzNetUtils.convertIpToString;
 
 /**
  * User: alexey
  * Date: 4/27/11
  */
-public class IpAddressUtilsTest {
+public class CtzNetUtilsTest {
     @Test
     public void test() {
         Assert.assertEquals("201.88.87.213", convertIpToString(convertIpToLong("201.88.87.213")));

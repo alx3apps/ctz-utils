@@ -7,20 +7,20 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
-import static ru.concerteza.util.CommonConstants.*;
+import static ru.concerteza.util.CtzConstants.*;
 
 /**
  * User: alexey
  * Date: 4/27/11
  */
-public class CopyCheckLMUtilsTest {
+public class CtzCopyCheckLMUtilsTest {
 
     @Test
     public void testNotOverwritten() throws IOException {
         File[] files = prepareFiles();
         File f1 = files[0];
         File f2 = files[1];
-        CopyCheckLMUtils.copyFile(f1, f2);
+        CtzCopyCheckLMUtils.copyFile(f1, f2);
         final String contCheck = FileUtils.readFileToString(f2, UTF8);
         assertEquals("LM fail", "bar", contCheck);
     }
@@ -32,7 +32,7 @@ public class CopyCheckLMUtilsTest {
         File f2 = files[1];
         final boolean res = f2.setLastModified(f2.lastModified() + 1000);
         assertTrue("setLastModified fail", res);
-        CopyCheckLMUtils.copyFile(f1, f2);
+        CtzCopyCheckLMUtils.copyFile(f1, f2);
         final String contCheck = FileUtils.readFileToString(f2, UTF8);
         assertEquals("copy fail", "foo", contCheck);
     }
