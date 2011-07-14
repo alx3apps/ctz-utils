@@ -81,7 +81,7 @@ public class CtzVersion {
     }
 
     public String standardFormat() {
-        return format("{}, {} version: {} build: {}", implementationVendor, specificationTitle, specificationVersion, implementationVersion);
+        return format("{}, {} version: {} build: {}", implementationVendor, specificationTitle, specificationVersion, getShortImplementationVersion());
     }
 
     @Override

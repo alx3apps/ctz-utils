@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import static java.lang.System.getProperty;
 import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.CtzIOUtils.getJarParentDir;
 
 /**
  * User: alexey
@@ -85,5 +86,12 @@ public class CtzJniUtils {
         } catch (Throwable e) {
             throw new IOException(e);
         }
+    }
+
+    public static void loadJniLibsFromStandardPath(Class<?> mainClass, String... names) throws IOException {
+        File jarPath = getJarParentDir(mainClass);
+        String postfix = "lib" + File.separator + "native";
+        File nativeLibsPath = new File(jarPath, postfix).getCanonicalFile();
+        for(String na : names) loadJniLib(na, nativeLibsPath);
     }
 }
