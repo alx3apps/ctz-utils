@@ -6,7 +6,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import ru.concerteza.util.CtzPreconditionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Manifest;
 
+import static com.google.common.base.Preconditions.checkState;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 
@@ -37,7 +37,7 @@ public class CtzVersionUtils {
         Map<String, String> mf = loadManifest(implementationTitle);
         List<String> requiredFields = ImmutableList.of(SPC_TITLE, SPC_VERSION, SPC_VENDOR, IMP_TITLE, IMP_VERSION, IMP_VENDOR);
         for (String fi : requiredFields) {
-            CtzPreconditionUtils.checkState(mf.containsKey(fi), "Required field: {} not found in manifest: {}", fi, mf);
+            checkState(mf.containsKey(fi), "Required field: %s not found in manifest: %s", fi, mf);
         }
         return new CtzVersion(mf.get(SPC_TITLE), mf.get(SPC_VERSION), mf.get(SPC_VENDOR),
                 mf.get(IMP_TITLE), mf.get(IMP_VERSION), mf.get(IMP_VENDOR));

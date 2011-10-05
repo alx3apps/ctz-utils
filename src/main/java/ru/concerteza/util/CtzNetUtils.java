@@ -5,7 +5,7 @@ import com.google.common.base.Splitter;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static ru.concerteza.util.CtzPreconditionUtils.checkArg;
+import static com.google.common.base.Preconditions.checkArgument;
 import static ru.concerteza.util.CtzStringUtils.split;
 
 /**
@@ -17,7 +17,7 @@ public class CtzNetUtils {
     private static final Splitter SPLITTER = Splitter.on('.');
 
     public static Long convertIpToLong(String ipStr) {
-        checkArg(IP_PATTERN.matcher(ipStr).matches(), "Ip address must be in 000.000.000.000 format, but was: {}", ipStr);
+        checkArgument(IP_PATTERN.matcher(ipStr).matches(), "Ip address must be in 000.000.000.000 format, but was: %s", ipStr);
         List<String> arr = split(SPLITTER, ipStr);
         return Long.valueOf(arr.get(0)) * 16777216 + Long.valueOf(arr.get(1)) * 65536 + Long.valueOf(arr.get(2)) * 256 + Long.parseLong(arr.get(3));
     }

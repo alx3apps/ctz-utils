@@ -3,8 +3,8 @@ package ru.concerteza.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static ru.concerteza.util.CtzPreconditionUtils.checkArg;
 
 /**
  * User: alexey
@@ -19,7 +19,7 @@ public class CtzFormatUtils {
 
     // stripped from org.slf4j.helpers.MessageFormatter
     private static String formatArray(final String messagePattern, final Object[] argArray) {
-        checkArg(isNotEmpty(messagePattern), "messagePattern must be not empty, but was: '{}'", messagePattern);
+        checkArgument(isNotEmpty(messagePattern), "messagePattern must be not empty, but was: '%s'", messagePattern);
 
         if (null == argArray) return messagePattern;
 

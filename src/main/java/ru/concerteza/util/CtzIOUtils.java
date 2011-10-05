@@ -57,7 +57,7 @@ public class CtzIOUtils {
     public static void appendToFile(final String in, final File f) throws IOException {
         InputStream stream = null;
         try {
-            stream = IOUtils.toInputStream(in);
+            stream = IOUtils.toInputStream(in, CtzConstants.UTF8);
             appendToFile(stream, f);
         } finally {
             IOUtils.closeQuietly(stream);
