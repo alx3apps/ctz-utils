@@ -44,27 +44,23 @@ public class CtzIOUtils {
         }
     }
 
-    public static void appendToFile(final InputStream in, final File f) throws IOException {
-        OutputStream stream = null;
-        try {
-            stream = outStream(f);
-            IOUtils.copy(in, stream);
-        } finally {
-            IOUtils.closeQuietly(stream);
-        }
-    }
-
-    public static void appendToFile(final String in, final File f) throws IOException {
+    public static void appendToFile(final String in, final File f, String encoding) throws IOException {
         InputStream stream = null;
         try {
-            stream = IOUtils.toInputStream(in, CtzConstants.UTF8);
+            stream = IOUtils.toInputStream(in, encoding);
             appendToFile(stream, f);
         } finally {
             IOUtils.closeQuietly(stream);
         }
     }
 
-    private static OutputStream outStream(final File f) throws IOException {
-        return new BufferedOutputStream(new FileOutputStream(f, true));
+    public static void appendToFile(final InputStream in, final File f) throws IOException {
+        OutputStream stream = null;
+        try {
+            stream = new BufferedOutputStream(new FileOutputStream(f, true));
+            IOUtils.copy(in, stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 }
