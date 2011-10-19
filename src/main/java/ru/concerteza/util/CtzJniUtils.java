@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import static java.lang.System.getProperty;
 import static ru.concerteza.util.CtzFormatUtils.format;
-import static ru.concerteza.util.CtzIOUtils.getJarParentDir;
+import static ru.concerteza.util.CtzIOUtils.getCodeSourceDir;
 
 /**
  * User: alexey
@@ -89,7 +89,7 @@ public class CtzJniUtils {
     }
 
     public static void loadJniLibsFromStandardPath(Class<?> mainClass, String... names) throws IOException {
-        File jarPath = getJarParentDir(mainClass);
+        File jarPath = getCodeSourceDir(mainClass);
         String postfix = "lib" + File.separator + "native";
         File nativeLibsPath = new File(jarPath, postfix).getCanonicalFile();
         for(String na : names) loadJniLib(na, nativeLibsPath);

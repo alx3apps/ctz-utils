@@ -35,10 +35,11 @@ public class CtzIOUtils {
         }
     }
 
-    public static File getJarParentDir(Class<?> clazz) {
+    public static File getCodeSourceDir(Class<?> clazz) {
         try {
             URI uri = clazz.getProtectionDomain().getCodeSource().getLocation().toURI();
-            return new File(uri).getParentFile();
+            File jarOrDir = new File(uri);
+            return jarOrDir.isDirectory() ? jarOrDir : jarOrDir.getParentFile();
         } catch (Exception e) {
             throw new UnhandledException(e);
         }
