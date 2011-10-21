@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * User: alexey
@@ -29,6 +30,16 @@ public class CtzIOUtils {
         try {
             if (conn != null) {
                 conn.close();
+            }
+        } catch (SQLException e) {
+            // ignore
+        }
+    }
+
+    public static void closeQuietly(Statement stmt) {
+        try {
+            if (stmt != null) {
+                stmt.close();
             }
         } catch (SQLException e) {
             // ignore
