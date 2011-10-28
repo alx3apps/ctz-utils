@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,11 +21,11 @@ public class CtzCollectionUtils {
         return ImmutableList.copyOf(Lists.transform(fromList, function));
     }
 
-    public static <T> List<T> filterCopy(final List<T> unfiltered, final Predicate<? super T> predicate) {
+    public static <T> List<T> filterCopy(List<T> unfiltered, Predicate<? super T> predicate) {
         return ImmutableList.copyOf(Iterables.filter(unfiltered, predicate));
     }
 
-    public static <T> List<T> filterCopy(final List<?> unfiltered, final Class<T> type) {
+    public static <T> List<T> filterCopy(List<?> unfiltered, Class<T> type) {
         return ImmutableList.copyOf(Iterables.filter(unfiltered, type));
     }
 
@@ -33,11 +34,11 @@ public class CtzCollectionUtils {
         return ImmutableSet.copyOf(Collections2.transform(fromSet, function));
     }
 
-    public static <T> Set<T> filterCopy(final Set<T> unfiltered, final Predicate<? super T> predicate) {
+    public static <T> Set<T> filterCopy(Set<T> unfiltered, Predicate<? super T> predicate) {
         return ImmutableSet.copyOf(Iterables.filter(unfiltered, predicate));
     }
 
-    public static <T> Set<T> filterCopy(final Set<?> unfiltered, final Class<T> type) {
+    public static <T> Set<T> filterCopy(Set<?> unfiltered, Class<T> type) {
         return ImmutableSet.copyOf(Iterables.filter(unfiltered, type));
     }
 }

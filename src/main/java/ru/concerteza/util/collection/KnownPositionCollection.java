@@ -4,6 +4,8 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * User: alexey
  * Date: 8/11/11
@@ -14,6 +16,7 @@ public class KnownPositionCollection<T> extends AbstractCollection<T> {
     private KnownPositionIterator<T> kpIterator;
 
     private KnownPositionCollection(Collection<T> target) {
+        checkNotNull(target);
         this.target = target;
         this.size = target.size();
     }
