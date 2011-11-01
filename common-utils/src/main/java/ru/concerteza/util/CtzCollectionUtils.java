@@ -16,6 +16,8 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * Date: 6/9/11
  */
 public class CtzCollectionUtils {
+    public static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
+
     // Lists
     public static <F, T> List<T> transformCopy(List<F> fromList, Function<? super F, ? extends T> function) {
         return ImmutableList.copyOf(Lists.transform(fromList, function));
