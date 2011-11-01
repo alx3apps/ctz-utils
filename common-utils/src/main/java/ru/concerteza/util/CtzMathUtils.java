@@ -1,6 +1,7 @@
 package ru.concerteza.util;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
 
 /**
  * User: alexey
@@ -9,11 +10,11 @@ import javax.annotation.Nullable;
 public class CtzMathUtils {
     public static final int DEFAULT_INT = -1;
 
-    public static int defaultInt(@Nullable Object input) {
+    public static int defaultInt(@Nullable BigDecimal input) {
         return defaultInt(input, DEFAULT_INT);
     }
 
-    public static int defaultInt(@Nullable Object input, int defaultValue) {
-        return null == input ? defaultValue : (Integer) input;
+    public static int defaultInt(@Nullable BigDecimal input, int defaultValue) {
+        return null == input ? defaultValue : input.intValueExact();
     }
 }
