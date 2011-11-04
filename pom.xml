@@ -6,7 +6,7 @@
 
     <groupId>ru.concerteza.util</groupId>
     <artifactId>ctz-utils</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <modules>
         <module>common-utils</module>
         <module>db-utils</module>
