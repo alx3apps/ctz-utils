@@ -6,6 +6,7 @@ import ru.concerteza.util.namedregex.NamedMatcher;
 import ru.concerteza.util.namedregex.NamedPattern;
 
 import static java.lang.Integer.parseInt;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
@@ -13,8 +14,6 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * Date: 5/11/11
  */
 public class CtzVersion {
-    private static final NamedPattern STD_VERSION_PATTERN = NamedPattern.compile(
-            "^(?<major_version>\\d+)\\.(?<minor_version>\\d+).*$");
 
     private final String specificationTitle;
     private final String specificationVersion;
@@ -22,24 +21,20 @@ public class CtzVersion {
     private final String implementationTitle;
     private final String implementationVersion;
     private final String implementationVendor;
-    private final int majorVersion;
-    private final int minorVersion;
+    private final String gitBranch;
+    private final String gitTag;
+    private final int gitCommitsCount;
 
-    public CtzVersion(String specificationTitle, String specificationVersion, String specificationVendor, String implementationTitle, String implementationVersion, String implementationVendor) {
+    public CtzVersion(String specificationTitle, String specificationVersion, String specificationVendor, String implementationTitle, String implementationVersion, String implementationVendor, String gitBranch, String gitTag, String gitCommitsCount) {
         this.specificationTitle = specificationTitle;
         this.specificationVersion = specificationVersion;
         this.specificationVendor = specificationVendor;
         this.implementationTitle = implementationTitle;
         this.implementationVersion = implementationVersion;
         this.implementationVendor = implementationVendor;
-        NamedMatcher matcher = STD_VERSION_PATTERN.matcher(specificationVersion);
-        if(matcher.matches()) {
-            majorVersion = parseInt(matcher.group("major_version"));
-            minorVersion = parseInt(matcher.group("minor_version"));
-        } else {
-            majorVersion = -1;
-            minorVersion = -1;
-        }
+        this.gitBranch = gitBranch;
+        this.gitTag = gitTag;
+        this.gitCommitsCount = Integer.parseInt(gitCommitsCount);
     }
 
     public String getSpecificationTitle() {
@@ -66,22 +61,30 @@ public class CtzVersion {
         return implementationVendor;
     }
 
+    public String getGitBranch() {
+        return gitBranch;
+    }
+
+    public String getGitTag() {
+        return gitTag;
+    }
+
+    public int getGitCommitsCount() {
+        return gitCommitsCount;
+    }
+
     // git rev-parse --short HEAD
-    public String getShortImplementationVersion() {
+    private String getRevision() {
         if(implementationVersion.length() > 7) return implementationVersion.substring(0, 7);
         else return implementationVersion;
     }
 
-    public int getMajorVersion() {
-        return majorVersion;
-    }
-
-    public int getMinorVersion() {
-        return minorVersion;
-    }
-
-    public String standardFormat() {
-        return format("{}, {}, version: {}, build: {}", implementationVendor, specificationTitle, specificationVersion, getShortImplementationVersion());
+    public String createBuildnumber() {
+        final String prefix;
+        if(isNotEmpty(gitBranch)) prefix = gitBranch + "-dev";
+        else if(isNotEmpty(gitTag)) prefix = gitTag;
+        else prefix = "UNTAGGED";
+        return format("{}.{}.{}", prefix, gitCommitsCount, getRevision());
     }
 
     @Override
@@ -93,8 +96,9 @@ public class CtzVersion {
                 append("implementationTitle", implementationTitle).
                 append("implementationVersion", implementationVersion).
                 append("implementationVendor", implementationVendor).
-                append("majorVersion", majorVersion).
-                append("minorVersion", minorVersion).
+                append("gitBranch", gitBranch).
+                append("gitTag", gitTag).
+                append("gitCommitsCount", gitCommitsCount).
                 toString();
     }
 }

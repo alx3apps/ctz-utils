@@ -31,16 +31,20 @@ public class CtzVersionUtils {
     private static final String IMP_TITLE = "Implementation-Title";
     private static final String IMP_VERSION = "Implementation-Version";
     private static final String IMP_VENDOR = "Implementation-Vendor";
+    private static final String GIT_BRANCH = "X-Git-Branch";
+    private static final String GIT_TAG = "X-Git-Tag";
+    private static final String GIT_COMMITS_COUNT = "X-Git-Commits-Count";
 
 
     public static CtzVersion readVersionFromManifest(String implementationTitle) {
         Map<String, String> mf = loadManifest(implementationTitle);
-        List<String> requiredFields = ImmutableList.of(SPC_TITLE, SPC_VERSION, SPC_VENDOR, IMP_TITLE, IMP_VERSION, IMP_VENDOR);
+        List<String> requiredFields = ImmutableList.of(
+                SPC_TITLE, SPC_VERSION, SPC_VENDOR, IMP_TITLE, IMP_VERSION, IMP_VENDOR, GIT_BRANCH, GIT_TAG, GIT_COMMITS_COUNT);
         for (String fi : requiredFields) {
             checkState(mf.containsKey(fi), "Required field: %s not found in manifest: %s", fi, mf);
         }
         return new CtzVersion(mf.get(SPC_TITLE), mf.get(SPC_VERSION), mf.get(SPC_VENDOR),
-                mf.get(IMP_TITLE), mf.get(IMP_VERSION), mf.get(IMP_VENDOR));
+                mf.get(IMP_TITLE), mf.get(IMP_VERSION), mf.get(IMP_VENDOR), mf.get(GIT_BRANCH), mf.get(GIT_TAG), mf.get(GIT_COMMITS_COUNT));
     }
 
     private static Map<String, String> loadManifest(String impTitle) {

@@ -5,10 +5,10 @@
     <parent>
         <artifactId>ctz-utils</artifactId>
         <groupId>ru.concerteza.util</groupId>
-        <version>1.2.2</version>
+        <version>1.2.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <!-- todo -->
     <artifactId>db-utils</artifactId>
 
 
