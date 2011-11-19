@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import static java.lang.System.getProperty;
 import static ru.concerteza.util.CtzFormatUtils.format;
-import static ru.concerteza.util.CtzIOUtils.getCodeSourceDir;
+import static ru.concerteza.util.io.CtzIOUtils.getCodeSourceDir;
 
 /**
  * User: alexey

@@ -1,4 +1,4 @@
-package ru.concerteza.util;
+package ru.concerteza.util.collection;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
