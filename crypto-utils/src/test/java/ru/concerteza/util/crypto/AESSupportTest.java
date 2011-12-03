@@ -33,6 +33,15 @@ public class AESSupportTest {
         assertEquals(secret, res);
     }
 
+    @Test
+    public void testEncryptDecryptEmpty() {
+        String secret = "";
+        byte[] payload = secret.getBytes(UTF8_CHARSET);
+        byte[] encrypted = AESSupport.encryptArray(payload, KEY, IV);
+        byte[] decrypted = AESSupport.decryptArray(encrypted, KEY, IV);
+        String res = new String(decrypted, UTF8_CHARSET);
+        assertEquals(secret, res);
+    }
 
     @Test
     public void testEncryptDecryptLong() {
