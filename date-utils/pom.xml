@@ -6,7 +6,7 @@
     <parent>
         <groupId>ru.concerteza.util</groupId>
         <artifactId>ctz-utils-parent</artifactId>
-        <version>1.3.1</version>
+        <version>1.3.2</version>
     </parent>
     <artifactId>ctz-date-utils</artifactId>
     <packaging>jar</packaging>
