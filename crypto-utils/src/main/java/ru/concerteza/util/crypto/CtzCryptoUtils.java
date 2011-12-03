@@ -21,7 +21,7 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * User: mitrofan
  * Date: 25.08.2009
  */
-public class SecurityUtils {
+public class CtzCryptoUtils {
     // enables AES-256
     private static final int AES_KEY_SIZE = 32;
     private static final int AES_IV_SIZE = 16;
