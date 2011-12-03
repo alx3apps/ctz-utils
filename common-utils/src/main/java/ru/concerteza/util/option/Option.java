@@ -1,6 +1,7 @@
 package ru.concerteza.util.option;
 
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
@@ -12,11 +13,14 @@ public abstract class Option<T> {
 
     public abstract T get();
 
+    public abstract T getIfAny(T defaultValue);
+
     public abstract boolean isNone();
 
     public abstract boolean isSome();
 
     public static <T> Some<T> some(T t) {
+        checkNotNull(t, "Some value cannot be null");
         return new Some<T>(t);
     }
 

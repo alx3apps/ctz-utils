@@ -17,4 +17,6 @@ public class CtzConstants {
     public static final Charset WINDOWS1251_CHARSET = Charset.forName(WINDOWS1251);
     public static final String ASCII = "ASCII";
     public static final Charset ASCII_CHARSET = Charset.forName(ASCII);
+    public static final String UTF16 = "UTF-16";
+    public static final Charset UTF16_CHARSET = Charset.forName(UTF16);
 }

@@ -24,6 +24,11 @@ public final class None<T> extends Option<T> {
     }
 
     @Override
+    public T getIfAny(T defaultValue) {
+        return defaultValue;
+    }
+
+    @Override
     public String toString() {
         return "NONE";
     }

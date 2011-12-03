@@ -1,5 +1,6 @@
 package ru.concerteza.util.option;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -27,6 +28,11 @@ public final class Some<T> extends Option<T> {
     @Override
     public boolean isSome() {
         return true;
+    }
+
+    @Override
+    public T getIfAny(T defaultValue) {
+        return value;
     }
 
     @Override
