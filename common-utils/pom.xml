@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.concerteza.util</groupId>
-        <artifactId>ctz-utils</artifactId>
-        <version>1.3.0</version>
+        <artifactId>ctz-utils-parent</artifactId>
+        <version>1.3.1</version>
     </parent>
-    <artifactId>common-utils</artifactId>
+    <artifactId>ctz-common-utils</artifactId>
     <packaging>jar</packaging>
     <name>Con Certeza Common Utilities Library</name>
 

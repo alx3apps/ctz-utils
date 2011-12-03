@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.concerteza.util</groupId>
-    <artifactId>ctz-utils</artifactId>
-    <version>1.3.0</version>
+    <artifactId>ctz-utils-parent</artifactId>
+    <version>1.3.1</version>
     <packaging>pom</packaging>
     <name>Con Certeza Utilities Project</name>
 
@@ -25,6 +25,7 @@
         <module>db-utils</module>
         <module>date-utils</module>
         <module>freemarker-utils</module>
+        <module>crypto-utils</module>
     </modules>
 
     <repositories>
