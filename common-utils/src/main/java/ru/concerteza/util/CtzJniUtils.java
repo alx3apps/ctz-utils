@@ -55,7 +55,7 @@ public class CtzJniUtils {
             CURRENT_PLATFORM = Platform.LINUX_X86_64;
         } else if ("sunos".equals(name) && "x86".equals(arch)) {
             CURRENT_PLATFORM = Platform.SOLARIS_X86_32;
-        } else if ("sunos".equals(name) && "amd".equals(arch)) {
+        } else if ("sunos".equals(name) && "amd64".equals(arch)) {
             CURRENT_PLATFORM = Platform.SOLARIS_X86_64;
         } else if ("sunos".equals(name) && "sparc".equals(arch)) {
             CURRENT_PLATFORM = Platform.SOLARIS_SPARC_32;
