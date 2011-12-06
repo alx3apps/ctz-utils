@@ -8,7 +8,7 @@ import java.io.OutputStream;
  * Date: 11/19/11
  */
 
-// make rough libs not to close or flush my streams
+// prevent rough libs from closing or flushing my streams
 public class WriteOnlyOutputStream extends OutputStream {
     private final OutputStream target;
 
