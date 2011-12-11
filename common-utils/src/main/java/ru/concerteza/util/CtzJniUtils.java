@@ -22,7 +22,7 @@ public class CtzJniUtils {
         LINUX_X86_32("linux-x32", "so"), LINUX_X86_64("linux-x64", "so"),
         SOLARIS_X86_32("sol-x86_32", "so"), SOLARIS_X86_64("sol-x86_64", "so"),
         SOLARIS_SPARC_32("sol-sparc_32", "so"), SOLARIS_SPARC_64("sol-sparc_64", "so"),
-        MACOSX_X86_32("mac-x86_32", "dylib"), MACOSX_X86_64("mac-x86_64", "dylib");
+        MACOSX_X86_32("mac-x86_32", "jnilib"), MACOSX_X86_64("mac-x86_64", "jnilib");
 
         // maven features
         private final String classifier;
