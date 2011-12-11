@@ -18,8 +18,8 @@ public class CtzJniUtils {
 
     private enum Platform {
         UNKNOWN("unknown", "unknown"),
-        WINDOWS_X86_32("windows-x32", "dll"), WINDOWS_X86_64("windows-x64", "dll"),
-        LINUX_X86_32("linux-x32", "so"), LINUX_X86_64("linux-x64", "so"),
+        WINDOWS_X86_32("windows-x86_32", "dll"), WINDOWS_X86_64("windows-x86_64", "dll"),
+        LINUX_X86_32("linux-x86_32", "so"), LINUX_X86_64("linux-x86_64", "so"),
         SOLARIS_X86_32("sol-x86_32", "so"), SOLARIS_X86_64("sol-x86_64", "so"),
         SOLARIS_SPARC_32("sol-sparc_32", "so"), SOLARIS_SPARC_64("sol-sparc_64", "so"),
         MACOSX_X86_32("mac-x86_32", "jnilib"), MACOSX_X86_64("mac-x86_64", "jnilib");
