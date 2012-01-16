@@ -87,6 +87,10 @@ public class CtzVersion {
         return format("{}.{}.{}", prefix, gitCommitsCount, getRevision());
     }
 
+    public String standardFormat() {
+        return format("{}, {}, {}", implementationVendor, specificationTitle, createBuildnumber());
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
