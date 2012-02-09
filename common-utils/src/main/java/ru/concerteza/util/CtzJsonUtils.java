@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,14 +23,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 10/17/11
  */
 public class CtzJsonUtils {
+    public static final Type STRING_MAP_TYPE = new TypeToken<HashMap<String, String>>() {}.getType();
+    public static final Type STRING_LIST_TYPE = new TypeToken<List<String>>() {}.getType();
 
     public static Map<String, String> parseStringMap(Resource resource) {
         return parseMap(resource, CtzConstants.UTF8);
     }
 
     public static Map<String, String> parseMap(Resource resource, String encoding) {
-        Type mapType = new TypeToken<HashMap<String, String>>() {}.getType();
-        Map<String, String> map = parseResource(resource, mapType, encoding);
+        Map<String, String> map = parseResource(resource, STRING_MAP_TYPE, encoding);
         return ImmutableMap.copyOf(map);
     }
 
