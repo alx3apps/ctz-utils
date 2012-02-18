@@ -3,9 +3,12 @@ package ru.concerteza.util.except;
 /**
  * User: alexey
  * Date: 10/18/11
+ *
+ * Runtime exception, that carries important business-logic error message,
+ * that should be finally returned to app client
+ *
  */
 
-// parent for business-logic exceptions
 public abstract class MessageException extends RuntimeException {
     private static final long serialVersionUID = 4668320002581645785L;
 

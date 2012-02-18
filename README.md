@@ -19,3 +19,16 @@ After that standard maven build should work:
 
     mvn clean install
 
+Common utils
+------------
+
+### Exception utils
+package: ru.concerteza.util.except
+__MessageException__: runtime exception, that carries important business-logic error message, that should be finally returned to app client.
+__CtzExceptionUtils__: wrapper over apache exception utils. Looks for MessageException in nested exceptions stack and returns business error message, id any. Usage example is in CtzExceptionUtilsTest.
+
+License information
+-------------------
+You can use any code from this project under terms of Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+
+

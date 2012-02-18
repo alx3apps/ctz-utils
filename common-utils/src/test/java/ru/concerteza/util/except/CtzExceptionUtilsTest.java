@@ -12,6 +12,10 @@ import static org.junit.Assert.assertTrue;
 /**
  * User: alexey
  * Date: 11/19/11
+ *
+ * Wrapper over apache exception utils. Looks for MessageException in nested exceptions stack
+ * and returns business error message, id any. Usage example is in CtzExceptionUtilsTest
+ *
  */
 public class CtzExceptionUtilsTest {
     @Test
