@@ -1,6 +1,7 @@
 package ru.concerteza.util;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,15 +15,17 @@ public class CtzReflectionUtils {
     public static List<Field> allFields(Class<?> type) {
         List<Field> res = new ArrayList<Field>();
         // own fields
-        for(Field fi : type.getDeclaredFields()) {
-            // skip inner class' parent reference
-            if(!"this$0".equals(fi.getName())) res.add(fi);
-        }
+        Collections.addAll(res, type.getDeclaredFields());
         // parent fields
         if (null != type.getSuperclass()) {
             List<Field> parents = allFields(type.getSuperclass());
             res.addAll(parents);
         }
         return res;
+    }
+
+    public static boolean isInner(Class<?> clazz) {
+        if(null == clazz.getEnclosingClass()) return false;
+        return (clazz.getModifiers() & Modifier.STATIC) == 0;
     }
 }
