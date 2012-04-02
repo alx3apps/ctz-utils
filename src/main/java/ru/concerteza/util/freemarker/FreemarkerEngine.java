@@ -1,9 +1,11 @@
 package ru.concerteza.util.freemarker;
 
+import freemarker.cache.TemplateCache;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.lang.UnhandledException;
+import ru.concerteza.util.CtzConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,16 +19,28 @@ import java.util.Map;
  * Date: 10/21/11
  */
 
+// preconfigured for Spring by default
 public class FreemarkerEngine {
     private Configuration configuration;
     private TemplateProvider templateProvider;
-    private String templateEncoding;
+    // default values for spring
+    private String templateEncoding = CtzConstants.UTF8;
+    private boolean useTemplatesCache = false;
 
-    // use this for no DI setup
-    public FreemarkerEngine(Configuration configuration, TemplateProvider templateProvider, String templateEncoding) {
+    // spring friendly, dont use directly
+    public FreemarkerEngine() {
+    }
+
+    // use this or next for no DI setup
+    public FreemarkerEngine(Configuration configuration, TemplateProvider templateProvider) {
+        this(configuration, templateProvider, CtzConstants.UTF8, false);
+    }
+
+    public FreemarkerEngine(Configuration configuration, TemplateProvider templateProvider, String templateEncoding, boolean useTemplatesCache) {
         this.configuration = configuration;
         this.templateEncoding = templateEncoding;
         this.templateProvider = templateProvider;
+        this.useTemplatesCache = useTemplatesCache;
         try {
             postConstruct();
         } catch (NoSuchFieldException e) {
@@ -34,10 +48,6 @@ public class FreemarkerEngine {
         } catch (IllegalAccessException e) {
             throw new UnhandledException(e);
         }
-    }
-
-    // spring friendly, dont use directly
-    public FreemarkerEngine() {
     }
 
     public void setConfiguration(Configuration configuration) {
@@ -54,7 +64,12 @@ public class FreemarkerEngine {
 
     // spring init
     private void postConstruct() throws NoSuchFieldException, IllegalAccessException {
-        ProxyTemplateCache cache = new ProxyTemplateCache(configuration, templateEncoding, templateProvider);
+        final TemplateCache cache;
+        if(useTemplatesCache) {
+            cache = new MemoryTemplateCache(configuration, templateEncoding, templateProvider);
+        } else {
+            cache = new ProxyTemplateCache(configuration, templateEncoding, templateProvider);
+        }
         // hack here to workaround FM name normalizing (it breaks abs. path keys)
         Field cacheField = Configuration.class.getDeclaredField("cache");
         cacheField.setAccessible(true);

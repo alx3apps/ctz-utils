@@ -34,6 +34,6 @@ public class FreemarkerEngineTest {
         objectWrapper.setExposeFields(true);
         conf.setObjectWrapper(objectWrapper);
         TemplateProvider provider = new ClassPathTemplateProvider();
-        return new FreemarkerEngine(conf, provider, CtzConstants.UTF8);
+        return new FreemarkerEngine(conf, provider);
     }
 }
