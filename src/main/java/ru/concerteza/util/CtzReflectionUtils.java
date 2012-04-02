@@ -11,10 +11,13 @@ import java.util.List;
 */
 public class CtzReflectionUtils {
      // http://stackoverflow.com/questions/1042798/retrieving-the-inherited-attribute-names-values-using-java-reflection/1042827#1042827
-    public List<Field> allFields(Class<?> type) {
+    public static List<Field> allFields(Class<?> type) {
         List<Field> res = new ArrayList<Field>();
         // own fields
-        Collections.addAll(res, type.getDeclaredFields());
+        for(Field fi : type.getDeclaredFields()) {
+            // skip inner class' parent reference
+            if(!"this$0".equals(fi.getName())) res.add(fi);
+        }
         // parent fields
         if (null != type.getSuperclass()) {
             List<Field> parents = allFields(type.getSuperclass());

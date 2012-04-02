@@ -73,7 +73,7 @@ public class CtzAESUtils {
 
     public static byte[] createKey(String keyString) {
         byte[] key = keyString.getBytes(UTF8_CHARSET);
-        if (AES_KEY_SIZE < key.length) {
+        if (AES_KEY_SIZE > key.length) {
             throw new IllegalArgumentException(format(
                     "AES key must be UTF-8 string with length >= {}, but was: {}. " +
                             "Length measured in bytes, not chars", AES_KEY_SIZE, key.length));

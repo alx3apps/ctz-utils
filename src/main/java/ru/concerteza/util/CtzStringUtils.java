@@ -27,7 +27,7 @@ public class CtzStringUtils {
         return ImmutableList.copyOf(splitter.split(str));
     }
 
-    public String prettifyXml(String xml) {
+    public static String prettifyXml(String xml) {
         Preconditions.checkNotNull(xml);
         byte[] inBytes = xml.getBytes(UTF8_CHARSET);
         InputStream in = new ByteArrayInputStream(inBytes);
@@ -37,12 +37,12 @@ public class CtzStringUtils {
         return new String(outBytes, UTF8_CHARSET);
     }
 
-    public void prettifyXml(InputStream xml, OutputStream out) {
+    public static void prettifyXml(InputStream xml, OutputStream out) {
         prettifyXml(xml, out, CtzConstants.UTF8);
     }
 
     // http://stackoverflow.com/questions/139076/how-to-pretty-print-xml-from-java/4472580#4472580
-    public void prettifyXml(InputStream xml, OutputStream out, String encoding) {
+    public static void prettifyXml(InputStream xml, OutputStream out, String encoding) {
         try {
             Transformer serializer = SAXTransformerFactory.newInstance().newTransformer();
             serializer.setOutputProperty(OutputKeys.INDENT, "yes");

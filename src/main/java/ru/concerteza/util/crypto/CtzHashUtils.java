@@ -31,11 +31,4 @@ public class CtzHashUtils {
         digest.doFinal(dig, 0);
         return dig;
     }
-
-    public static String sha1JDKDigest(String str) throws NoSuchProviderException, NoSuchAlgorithmException {
-        byte[] data = str.getBytes(UTF8_CHARSET);
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1", "SUN");
-        byte[] hash = sha1.digest(data);
-        return Hex.encodeHexString(hash);
-    }
 }
