@@ -1,18 +1,22 @@
 package ru.concerteza.util.freemarker;
 
-import freemarker.cache.TemplateCache;
+import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.ResourceLoader;
 import ru.concerteza.util.CtzConstants;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.Field;
+import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
+
+import static freemarker.ext.beans.BeansWrapper.EXPOSE_PROPERTIES_ONLY;
 
 /**
  * User: alexey
@@ -20,76 +24,97 @@ import java.util.Map;
  */
 
 // preconfigured for Spring by default
-public class FreemarkerEngine {
-    private Configuration configuration;
-    private TemplateProvider templateProvider;
-    // default values for spring
+public class FreemarkerEngine extends Configuration implements ApplicationContextAware {
+    private ResourceLoader loader;
+    private TemplateProvider templateProvider = new ResourceTemplateProvider();
     private String templateEncoding = CtzConstants.UTF8;
-    private boolean useTemplatesCache = false;
+//    private ObjectWrapper objectWrapper = ObjectWrapper.DEFAULT_WRAPPER;
 
-    // spring friendly, dont use directly
+    private Map<String, Template> templateCache;
+    private final Object templateCacheLock = new Object();
+
     public FreemarkerEngine() {
+        // change defaults
+        this.setLocalizedLookup(false);
+        this.setTagSyntax(SQUARE_BRACKET_TAG_SYNTAX);
+        this.setTemplateUpdateDelay(Integer.MAX_VALUE);
+        this.setNumberFormat("computer");
+        BeansWrapper bw = (BeansWrapper) this.getObjectWrapper();
+        bw.setExposureLevel(EXPOSE_PROPERTIES_ONLY);
     }
 
-    // use this or next for no DI setup
-    public FreemarkerEngine(Configuration configuration, TemplateProvider templateProvider) {
-        this(configuration, templateProvider, CtzConstants.UTF8, false);
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.loader = applicationContext;
     }
 
-    public FreemarkerEngine(Configuration configuration, TemplateProvider templateProvider, String templateEncoding, boolean useTemplatesCache) {
-        this.configuration = configuration;
-        this.templateEncoding = templateEncoding;
-        this.templateProvider = templateProvider;
-        this.useTemplatesCache = useTemplatesCache;
-        try {
-            postConstruct();
-        } catch (NoSuchFieldException e) {
-            throw new UnhandledException(e);
-        } catch (IllegalAccessException e) {
-            throw new UnhandledException(e);
-        }
-    }
-
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
-    }
-
+    // use for non UTF-8 templates
     public void setTemplateEncoding(String templateEncoding) {
         this.templateEncoding = templateEncoding;
     }
 
+    // use for custom provider, spring resources URL's used by default
     public void setTemplateProvider(TemplateProvider templateProvider) {
         this.templateProvider = templateProvider;
     }
 
-    // spring init
-    private void postConstruct() throws NoSuchFieldException, IllegalAccessException {
-        final TemplateCache cache;
-        if(useTemplatesCache) {
-            cache = new MemoryTemplateCache(configuration, templateEncoding, templateProvider);
-        } else {
-            cache = new ProxyTemplateCache(configuration, templateEncoding, templateProvider);
-        }
-        // hack here to workaround FM name normalizing (it breaks abs. path keys)
-        Field cacheField = Configuration.class.getDeclaredField("cache");
-        cacheField.setAccessible(true);
-        cacheField.set(configuration, cache);
+    // all templates will be cached im-memory, false by default
+    public void setUseTemplatesCache(boolean useTemplatesCache) {
+        templateCache = useTemplatesCache ? new HashMap<String, Template>() : null;
     }
 
-    public String process(String path, Map<String, ?> params) {
+    public void setExposureLevel(int level) {
+        BeansWrapper bw = (BeansWrapper) this.getObjectWrapper();
+        bw.setExposureLevel(level);
+    }
+
+    public String process(String path, Object params) {
         StringWriter writer = new StringWriter();
         process(path, params, writer);
         return writer.toString();
     }
 
-    public void process(String path, Map<String, ?> params, Writer writer) {
+    public void process(String path, Object params, Writer writer) {
         try {
-            Template ftl = configuration.getTemplate(path);
+            Template ftl = findTemplate(path);
             ftl.process(params, writer);
         } catch (TemplateException e) {
             throw new UnhandledException(e);
         } catch (IOException e) {
             throw new UnhandledException(e);
+        }
+    }
+
+    private Template findTemplate(String path) throws IOException {
+        if (null == templateCache) return loadTemplate(path);
+        synchronized (templateCacheLock) {
+            Template cached = templateCache.get(path);
+            final Template res;
+            if (null == cached) {
+                res = loadTemplate(path);
+                templateCache.put(path, res);
+            } else {
+                res = cached;
+            }
+            return res;
+        }
+    }
+
+    private Template loadTemplate(String path) throws IOException {
+        Reader reader = null;
+        try {
+            InputStream is = templateProvider.loadTemplate(path);
+            reader = new InputStreamReader(is, templateEncoding);
+            return new Template(path, reader, this, templateEncoding);
+        } finally {
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    private class ResourceTemplateProvider implements TemplateProvider {
+        @Override
+        public InputStream loadTemplate(String path) throws IOException {
+            return loader.getResource(path).getInputStream();
         }
     }
 }

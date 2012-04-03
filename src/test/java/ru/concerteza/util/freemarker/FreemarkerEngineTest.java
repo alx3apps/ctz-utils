@@ -1,12 +1,9 @@
 package ru.concerteza.util.freemarker;
 
-import com.google.common.collect.ImmutableMap;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
 import org.junit.Test;
-import ru.concerteza.util.CtzConstants;
 
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,22 +15,35 @@ public class FreemarkerEngineTest {
 
     @Test
     public void testClasspath() {
-        Map<String, String> params = ImmutableMap.of("foo", "bar");
-        String res = createEngine().process("/FreemarkerEngineTest.ftl", params);
+//        Map<String, String> params = ImmutableMap.of("foo", "bar");
+        String res = createEngine().process("/FreemarkerEngineTest.ftl", new Params("bar"));
         assertEquals("Hello bar", res);
     }
 
     private FreemarkerEngine createEngine() {
-        Configuration conf = new Configuration();
-        conf.setLocalizedLookup(false);
-        conf.setDefaultEncoding(CtzConstants.UTF8);
-        conf.setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
-        conf.setTemplateUpdateDelay(Integer.MAX_VALUE);
-        conf.setNumberFormat("computer");
-        DefaultObjectWrapper objectWrapper = new DefaultObjectWrapper();
-        objectWrapper.setExposeFields(true);
-        conf.setObjectWrapper(objectWrapper);
         TemplateProvider provider = new ClassPathTemplateProvider();
-        return new FreemarkerEngine(conf, provider);
+        FreemarkerEngine res = new FreemarkerEngine();
+        res.setTemplateProvider(provider);
+        return res;
     }
+
+    private class ClassPathTemplateProvider implements TemplateProvider {
+        @Override
+        public InputStream loadTemplate(String path) throws IOException {
+            return ClassPathTemplateProvider.class.getResourceAsStream(path);
+        }
+    }
+
+    public class Params {
+        private final String foo;
+
+        private Params(String foo) {
+            this.foo = foo;
+        }
+
+        public String getFoo() {
+            return foo;
+        }
+    }
+
 }
