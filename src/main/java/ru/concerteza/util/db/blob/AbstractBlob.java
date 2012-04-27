@@ -7,19 +7,13 @@ import java.io.Closeable;
  * Date: 8/11/11
  */
 public abstract class AbstractBlob implements Closeable {
-    protected final long oid;
-    protected final boolean compressed;
+    protected final long id;
 
-    protected AbstractBlob(long oid, boolean compressed) {
-        this.oid = oid;
-        this.compressed = compressed;
+    protected AbstractBlob(long id) {
+        this.id = id;
     }
 
-    public long getOid() {
-        return oid;
-    }
-
-    public boolean isCompressed() {
-        return compressed;
+    public long getId() {
+        return id;
     }
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:/oracle-blob-tool-test.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--context annotations -->
+    <context:component-scan base-package="ru.concerteza.util.db.blob" use-default-filters="false">
+     	<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:${ctzutils.blob.db.user}@//${ctzutils.blob.db.host}:${ctzutils.blob.db.port}/${ctzutils.blob.db.database}"/>
+        <property name="username" value="${ctzutils.blob.db.user}"/>
+        <property name="password" value="${ctzutils.blob.db.password}"/>
+        <property name="defaultAutoCommit" value="false"/>
+        <!-- java.sql.Connection.TRANSACTION_READ_COMMITTED -->
+        <property name="defaultTransactionIsolation" value="2"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="compressor" class="ru.concerteza.util.db.blob.compress.NoCompressor"/>
+
+    <bean id="blobTool" class="ru.concerteza.util.db.blob.tool.ServerSideJdbcBlobTool">
+        <constructor-arg index="0" ref="dataSource"/>
+        <constructor-arg index="1" ref="compressor"/>
+        <constructor-arg index="2" value="select blob_storage_id_seq.nextval from dual"/>
+        <constructor-arg index="3" value="insert into blob_storage(id, data) values(:id, :data)"/>
+        <constructor-arg index="4" value="select data from blob_storage where id = :id"/>
+        <constructor-arg index="5" value="delete from blob_storage where id = :id"/>
+    </bean>
+
+</beans>

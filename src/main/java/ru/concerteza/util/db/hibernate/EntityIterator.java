@@ -18,7 +18,7 @@ public class EntityIterator<T> extends AbstractIterator<T> {
     private final int threshold;
     private int readCount = 0;
 
-    EntityIterator(SessionFactory sf, ScrollableResults target, int threshold) {
+    public EntityIterator(SessionFactory sf, ScrollableResults target, int threshold) {
         this.target = target;
         this.sf = sf;
         this.threshold = threshold;

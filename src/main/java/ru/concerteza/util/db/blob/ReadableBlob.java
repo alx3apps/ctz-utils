@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.blob;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -13,8 +14,8 @@ import java.io.InputStream;
 public class ReadableBlob extends AbstractBlob {
     private final InputStream inputStream;
 
-    ReadableBlob(long oid, boolean compressed, InputStream inputStream) {
-        super(oid, compressed);
+    public ReadableBlob(long oid, InputStream inputStream) {
+        super(oid);
         this.inputStream = inputStream;
     }
 
@@ -30,7 +31,7 @@ public class ReadableBlob extends AbstractBlob {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                append("oid", oid).
+                append("id", id).
                 append("inputStream", inputStream).
                 toString();
     }

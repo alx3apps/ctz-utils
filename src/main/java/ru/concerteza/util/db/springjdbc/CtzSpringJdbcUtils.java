@@ -1,13 +1,22 @@
 package ru.concerteza.util.db.springjdbc;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import ru.concerteza.util.CtzReflectionUtils;
 
+import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Transient;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkState;
+import static ru.concerteza.util.CtzReflectionUtils.collectFields;
 
 /**
  * User: alexey
@@ -66,5 +75,22 @@ public class CtzSpringJdbcUtils {
             res += updated;
         }
         return res;
+    }
+
+    public Map<String, Field> createColumnMap(Class<?> clazz) {
+        ImmutableMap.Builder<String, Field> builder = ImmutableMap.builder();
+        for(Field fi : collectFields(clazz, new ColumnMapPredicate())){
+            String key = fi.getAnnotation(Column.class).name();
+            if(null == key) key = fi.getName();
+            builder.put(key, fi);
+        }
+        return builder.build();
+    }
+
+    private class ColumnMapPredicate implements Predicate<Field> {
+        @Override
+        public boolean apply(Field fi) {
+            return fi.isAnnotationPresent(Column.class);
+        }
     }
 }

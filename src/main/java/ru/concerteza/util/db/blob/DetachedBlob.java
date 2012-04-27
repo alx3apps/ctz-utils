@@ -1,38 +1,29 @@
 package ru.concerteza.util.db.blob;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
+import ru.concerteza.util.db.blob.compress.Compressor;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.zip.GZIPInputStream;
+import java.io.*;
 
 /**
- * User: alexey
- * Date: 8/19/11
- */
+* User: alexey
+* Date: 8/19/11
+*/
 public class DetachedBlob extends AbstractBlob implements Serializable {
     private static final long serialVersionUID = 5752953727569147166L;
+    private final byte[] compressedData;
+    private final Compressor compressor;
 
-    private final byte[] data;
-
-    public DetachedBlob(long oid, boolean compressed, byte[] data) {
-        super(oid, compressed);
-        this.data = data;
+    public DetachedBlob(long id, byte[] compressedData, Compressor compressor) {
+        super(id);
+        this.compressedData = compressedData;
+        this.compressor = compressor;
     }
 
-    public byte[] getData() {
+    public InputStream getInputStream() {
         try {
-            final byte[] res;
-            if (compressed) {
-                ByteArrayInputStream baos = new ByteArrayInputStream(data);
-                GZIPInputStream gzipStream = new GZIPInputStream(baos);
-                res = IOUtils.toByteArray(gzipStream);
-            } else {
-                res = data;
-            }
-            return res;
+            InputStream bais = new ByteArrayInputStream(compressedData);
+            return compressor.wrapDecompress(bais);
         } catch (IOException e) {
             throw new UnhandledException(e);
         }

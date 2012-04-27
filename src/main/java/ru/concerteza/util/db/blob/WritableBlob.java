@@ -10,11 +10,11 @@ import java.io.OutputStream;
  * User: alexey
  * Date: 8/11/11
  */
-public class WriteableBlob extends AbstractBlob {
+public class WritableBlob extends AbstractBlob {
     private final OutputStream outputStream;
 
-    WriteableBlob(long oid, boolean compressed, OutputStream outputStream) {
-        super(oid, compressed);
+    public WritableBlob(long oid, OutputStream outputStream) {
+        super(oid);
         this.outputStream = outputStream;
     }
 
@@ -30,7 +30,7 @@ public class WriteableBlob extends AbstractBlob {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                append("oid", oid).
+                append("id", id).
                 append("outputStream", outputStream).
                 toString();
     }

@@ -1,15 +1,19 @@
 package ru.concerteza.util;
 
+import com.google.common.base.Predicate;
 import org.apache.commons.lang.UnhandledException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static ru.concerteza.util.CtzReflectionUtils.assignPrimitiveOrString;
 import static ru.concerteza.util.CtzReflectionUtils.callDefaultConstructor;
+import static ru.concerteza.util.CtzReflectionUtils.collectFields;
 
 /**
  * User: alexey
@@ -19,10 +23,17 @@ public class CtzReflectionUtilsTest {
 
     @Test
     public void testFields() {
-        List<Field> fields = CtzReflectionUtils.allFields(TestParams.class);
-        Assert.assertEquals("size fail", 2, fields.size());
-        Assert.assertEquals("child fail", "bar", fields.get(0).getName());
-        Assert.assertEquals("parent fail", "foo", fields.get(1).getName());
+        List<Field> fields = collectFields(TestParams.class);
+        assertEquals("size fail", 2, fields.size());
+        assertEquals("child fail", "bar", fields.get(0).getName());
+        assertEquals("parent fail", "foo", fields.get(1).getName());
+    }
+
+    @Test
+    public void testFieldsPredicate() {
+        List<Field> fields = collectFields(TestParams.class, new NotFooPredicate());
+        assertEquals("size fail", 1, fields.size());
+        assertEquals("child fail", "bar", fields.get(0).getName());
     }
 
     @Test
@@ -95,6 +106,13 @@ public class CtzReflectionUtilsTest {
     private static class NonEnclosed {}
     private static class NoDefaultConstructor {
         private NoDefaultConstructor(String dummy) {}
+    }
+
+    private class NotFooPredicate implements Predicate<Field> {
+        @Override
+        public boolean apply(Field input) {
+            return !"foo".equals(input.getName());
+        }
     }
 }
 

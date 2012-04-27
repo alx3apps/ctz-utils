@@ -1,13 +1,14 @@
 package ru.concerteza.util;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.UnhandledException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static ru.concerteza.util.CtzFormatUtils.format;
@@ -17,17 +18,28 @@ import static ru.concerteza.util.CtzFormatUtils.format;
 * Date: 3/18/12
 */
 public class CtzReflectionUtils {
-     // http://stackoverflow.com/questions/1042798/retrieving-the-inherited-attribute-names-values-using-java-reflection/1042827#1042827
-    public static List<Field> allFields(Class<?> type) {
-        List<Field> res = new ArrayList<Field>();
-        // own fields
-        Collections.addAll(res, type.getDeclaredFields());
-        // parent fields
-        if (null != type.getSuperclass()) {
-            List<Field> parents = allFields(type.getSuperclass());
-            res.addAll(parents);
+
+    public static List<Field> collectFields(Class<?> clazz) {
+        return collectFields(clazz, Predicates.<Field>alwaysTrue());
+    }
+
+    public static List<Field> collectFields(Class<?> clazz, Predicate<Field> predicate) {
+        ImmutableList.Builder<Field> builder = new ImmutableList.Builder<Field>();
+        collectFieldsRecursive(builder, clazz, predicate);
+        return builder.build();
+    }
+
+    // http://stackoverflow.com/questions/1042798/retrieving-the-inherited-attribute-names-values-using-java-reflection/1042827#1042827
+    private static void collectFieldsRecursive(ImmutableList.Builder<Field> results, Class<?> clazz, Predicate<Field> predicate) {
+        Field[] fields = clazz.getDeclaredFields();
+        // own fields, fields is not iterable so prevent intermediate list
+        for(Field fi : fields) {
+            if(predicate.apply(fi)) results.add(fi);
         }
-        return res;
+        // parent fields
+        if (null != clazz.getSuperclass()) {
+            collectFieldsRecursive(results, clazz.getSuperclass(), predicate);
+        }
     }
 
     public static boolean isInner(Class<?> clazz) {
@@ -62,6 +74,10 @@ public class CtzReflectionUtils {
         } catch (IllegalAccessException e) {
             throw new UnhandledException(e);
         }
+    }
+
+    public static <T> T callDefaultConstructor(Class<T> clazz) {
+        return callDefaultConstructor(clazz, null);
     }
 
     @SuppressWarnings("unchecked")
