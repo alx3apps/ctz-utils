@@ -25,14 +25,16 @@ import static ru.concerteza.util.CtzConstants.UTF8;
 public class TempFileOutputInputStreamTest {
     @Test
     public void test() throws IOException {
-        final Holder<String> holder = new Holder<String>();
+        final Holder<String> dataHolder = new Holder<String>();
+        final Holder<Long> lengthHolder = new Holder<Long>();
 
-        class Fun implements Function<InputStream, Void> {
+        class Fun implements Function<TempFileOutputInputStream.TempFile, Void> {
             @Override
-            public Void apply(InputStream input) {
+            public Void apply(TempFileOutputInputStream.TempFile input) {
                 try {
-                    String str = IOUtils.toString(input, UTF8);
-                    holder.set(str);
+                    String str = IOUtils.toString(input.getDecompressed(), UTF8);
+                    dataHolder.set(str);
+                    lengthHolder.set(input.getDecompressedLength());
                     return null;
                 } catch (IOException e) {
                     throw new UnhandledException(e);
@@ -41,10 +43,12 @@ public class TempFileOutputInputStreamTest {
         }
 
         OutputStream os = new TempFileOutputInputStream(new Fun());
-        IOUtils.write("foobar", os, UTF8);
-        assertNull(holder.get());
+        byte[] data = "foobar".getBytes(UTF8);
+        IOUtils.write(data, os);
+        assertNull(dataHolder.get());
         os.close();
-        assertNotNull(holder.get());
-        assertEquals("foobar", holder.get());
+        assertNotNull(dataHolder.get());
+        assertEquals("foobar", dataHolder.get());
+        assertEquals(data.length, (long) lengthHolder.get());
     }
 }

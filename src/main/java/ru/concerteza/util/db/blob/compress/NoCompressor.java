@@ -10,12 +10,12 @@ import java.io.OutputStream;
  */
 public class NoCompressor implements Compressor {
     @Override
-    public OutputStream wrapCompress(OutputStream out) throws IOException {
+    public OutputStream wrapCompress(OutputStream out) {
         return out;
     }
 
     @Override
-    public InputStream wrapDecompress(InputStream in) throws IOException {
+    public InputStream wrapDecompress(InputStream in) {
         return in;
     }
 }

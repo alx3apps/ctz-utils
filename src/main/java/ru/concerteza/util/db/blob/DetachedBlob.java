@@ -21,12 +21,8 @@ public class DetachedBlob extends AbstractBlob implements Serializable {
     }
 
     public InputStream getInputStream() {
-        try {
-            InputStream bais = new ByteArrayInputStream(compressedData);
-            return compressor.wrapDecompress(bais);
-        } catch (IOException e) {
-            throw new UnhandledException(e);
-        }
+        InputStream bais = new ByteArrayInputStream(compressedData);
+        return compressor.wrapDecompress(bais);
     }
 
     @Override

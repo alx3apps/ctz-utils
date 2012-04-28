@@ -1,16 +1,17 @@
 package ru.concerteza.util.db.blob;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
+import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * User: alexey
@@ -28,6 +29,12 @@ public class OracleBlobToolTest {
     private BlobTestService service;
     @Inject
     private DataSource dataSource;
+//    @Inject
+//    private BlobTestLargeService largeService;
+//    @Value("${ctzutils.blob.large_file.path}")
+//    private File largeFile;
+//    @Value("${ctzutils.blob.large_file.sha1}")
+//    private String largeFileSha1;
 
     @Test
     public void dummy() {
@@ -48,6 +55,17 @@ public class OracleBlobToolTest {
         service.delete(id);
         service.read(id);
     }
+
+//    with 1GB file
+//    Total time: 9:30.842s
+//    @Test
+//    public void testLarge() throws IOException {
+//        long id = largeService.create(largeFile);
+//        String sha1 = largeService.readSha1(id);
+//        largeService.delete(id);
+//        assertEquals(largeFileSha1, sha1);
+//    }
+
 }
 
 

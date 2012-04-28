@@ -11,14 +11,14 @@ import java.io.OutputStream;
  * User: alexey
  * Date: 4/14/12
  */
-public class SnappyCompressor implements Compressor {
+public class SnappyCompressor extends AbstractCompressor {
     @Override
-    public OutputStream wrapCompress(OutputStream out) throws IOException {
+    protected OutputStream wrapCompressInternal(OutputStream out) throws IOException {
         return new SnappyOutputStream(out);
     }
 
     @Override
-    public InputStream wrapDecompress(InputStream in) throws IOException {
+    protected InputStream wrapDecompressInternal(InputStream in) throws IOException {
         return new SnappyInputStream(in);
     }
 }

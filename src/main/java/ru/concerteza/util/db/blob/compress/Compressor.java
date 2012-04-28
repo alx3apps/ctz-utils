@@ -10,7 +10,7 @@ import java.io.OutputStream;
  */
 public interface Compressor {
 
-    OutputStream wrapCompress(OutputStream out) throws IOException;
+    OutputStream wrapCompress(OutputStream out);
 
-    InputStream wrapDecompress(InputStream in) throws IOException;
+    InputStream wrapDecompress(InputStream in);
 }

@@ -12,7 +12,7 @@ import java.io.OutputStream;
  * User: alexey
  * Date: 4/14/12
  */
-public class XzCompressor implements Compressor {
+public class XzCompressor extends AbstractCompressor {
     private final int level;
 
     public XzCompressor() {
@@ -24,12 +24,12 @@ public class XzCompressor implements Compressor {
     }
 
     @Override
-    public OutputStream wrapCompress(OutputStream out) throws IOException {
+    protected OutputStream wrapCompressInternal(OutputStream out) throws IOException {
         return new XZOutputStream(out, new LZMA2Options(level));
     }
 
     @Override
-    public InputStream wrapDecompress(InputStream in) throws IOException {
+    protected InputStream wrapDecompressInternal(InputStream in) throws IOException {
         return new XZInputStream(in);
     }
 }

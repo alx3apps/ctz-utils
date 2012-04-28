@@ -4,5 +4,5 @@
 /target
 /.idea
 /src/test/resources/postgre-blob-tool-test.properties
-/src/test/resources/mysql-blob-tool-test.properties
 /src/test/resources/oracle-blob-tool-test.properties
+/src/test/resources/sqlserver-blob-tool-test.properties

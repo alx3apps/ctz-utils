@@ -1,6 +1,7 @@
 package ru.concerteza.util.db.blob.tool;
 
 import com.google.common.collect.ImmutableMap;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import ru.concerteza.util.db.blob.compress.Compressor;
 import ru.concerteza.util.value.Pair;
@@ -10,6 +11,7 @@ import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * User: alexey
@@ -29,7 +31,10 @@ public class ServerSideJdbcBlobTool extends AbstractJdbcBlobTool {
         long id = jt.getJdbcOperations().queryForLong(generateIdSQL);
         Connection conn = DataSourceUtils.doGetConnection(dataSource);
         Blob blob = conn.createBlob();
-        jt.update(insertSQL, ImmutableMap.of("id", id, "data", blob));
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("id", id, Types.BIGINT);
+        params.addValue("data", blob, Types.BLOB);
+        jt.update(insertSQL, params);
         Blob created = jt.queryForObject(loadSQL, ImmutableMap.of("id", id), Blob.class);
         OutputStream blobStream = created.setBinaryStream(1);
         return new Pair<Long, OutputStream>(id, blobStream);

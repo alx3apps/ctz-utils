@@ -14,7 +14,7 @@
     <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:/mysql-blob-tool-test.properties</value>
+                <value>classpath:/sqlserver-blob-tool-test.properties</value>
             </list>
         </property>
     </bean>
@@ -27,8 +27,8 @@
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://${ctzutils.blob.db.host}:${ctzutils.blob.db.port}/${ctzutils.blob.db.database}"/>
+        <property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver"/>
+        <property name="url" value="jdbc:jtds:sqlserver://${ctzutils.blob.db.host}:${ctzutils.blob.db.port}/${ctzutils.blob.db.database}"/>
         <property name="username" value="${ctzutils.blob.db.user}"/>
         <property name="password" value="${ctzutils.blob.db.password}"/>
         <property name="defaultAutoCommit" value="false"/>
@@ -45,10 +45,11 @@
     <bean id="blobTool" class="ru.concerteza.util.db.blob.tool.TmpFileJdbcBlobTool">
         <constructor-arg index="0" ref="dataSource"/>
         <constructor-arg index="1" ref="compressor"/>
-        <constructor-arg index="2" value="select blob_storage_id_seq_function();"/>
-        <constructor-arg index="3" value="insert into blob_storage(id, data) values(:id, :data)"/>
-        <constructor-arg index="4" value="select data from blob_storage where id = :id"/>
-        <constructor-arg index="5" value="delete from blob_storage where id = :id"/>
+        <constructor-arg index="2" value="false"/>
+        <constructor-arg index="3" value="exec blob_storage_id_seq_fun"/>
+        <constructor-arg index="4" value="insert into blob_storage(id, data) values(:id, :data)"/>
+        <constructor-arg index="5" value="select data from blob_storage where id = :id"/>
+        <constructor-arg index="6" value="delete from blob_storage where id = :id"/>
     </bean>
 
 </beans>

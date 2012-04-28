@@ -31,7 +31,7 @@ public class H2BlobToolTest {
         jt.update("drop sequence if exists blob_storage_id_seq");
         jt.update("drop table if exists blob_storage");
         jt.update("create sequence blob_storage_id_seq");
-        jt.update("create table blob_storage (id bigint primary key, data blob);");
+        jt.update("create table blob_storage (id bigint primary key, data blob)");
     }
 
     @Test

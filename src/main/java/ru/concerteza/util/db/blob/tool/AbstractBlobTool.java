@@ -20,7 +20,7 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
  */
 public abstract class AbstractBlobTool implements BlobTool {
     protected final DataSource dataSource;
-    private final Compressor compressor;
+    protected final Compressor compressor;
 
     protected AbstractBlobTool(DataSource dataSource, Compressor compressor) {
         this.dataSource = dataSource;
@@ -37,15 +37,6 @@ public abstract class AbstractBlobTool implements BlobTool {
             throw new BlobException(e, "Cannot create blob");
         }
     }
-
-//    @Override
-//    public long create(InputStream inputStream) throws SQLException {
-//        try {
-//            return createInternal(inputStream);
-//        } catch (Exception e) {
-//            throw new BlobException("Cannot create blob", e);
-//        }
-//    }
 
     @Override
     public ReadableBlob load(long id) {
@@ -82,19 +73,6 @@ public abstract class AbstractBlobTool implements BlobTool {
     }
 
     protected abstract Pair<Long, OutputStream> createInternal() throws Exception;
-
-    // override for RDBMS that doesn't not support OutputStream blobs
-//    protected long createInternal(InputStream inputStream) throws Exception {
-//        OutputStream blobStream = null;
-//        try {
-//            Pair<Long, OutputStream> pair = createInternal();
-//            blobStream = pair.getSecond();
-//            IOUtils.copyLarge(inputStream, blobStream);
-//            return pair.getFirst();
-//        } finally {
-//            IOUtils.closeQuietly(blobStream);
-//        }
-//    }
 
     protected abstract InputStream loadInternal(long id) throws Exception;
 
