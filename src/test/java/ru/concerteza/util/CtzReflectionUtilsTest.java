@@ -6,14 +6,15 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-import static ru.concerteza.util.CtzReflectionUtils.assignPrimitiveOrString;
-import static ru.concerteza.util.CtzReflectionUtils.callDefaultConstructor;
-import static ru.concerteza.util.CtzReflectionUtils.collectFields;
+import static ru.concerteza.util.CtzReflectionUtils.*;
 
 /**
  * User: alexey
@@ -85,6 +86,25 @@ public class CtzReflectionUtilsTest {
         assertNotNull(notEnc1);
     }
 
+    @Test
+    public void testColumnsFieldsMap() {
+        Map<String, Field> map = columnsFieldMap(Entity.class);
+        assertEquals("Size fail", 2, map.size());
+        assertTrue("Unnamed fail", map.containsKey("foo"));
+        assertEquals("Unnamed wrong field fail", "foo", map.get("foo").getName());
+        assertTrue("Named fail", map.containsKey("dummy"));
+        assertEquals("Named wrong field fail", "bar", map.get("dummy").getName());
+    }
+
+    @Test
+    public void testIsAssignableBoxed() {
+        assertTrue(isAssignableBoxed(boolean.class, Boolean.class));
+        assertTrue(isAssignableBoxed(Long.class, long.class));
+        assertTrue(isAssignableBoxed(Integer.class, Integer.class));
+        assertTrue(isAssignableBoxed(Byte.class, byte.class));
+        assertFalse(isAssignableBoxed(String.class, Map.class));
+    }
+
     class InnerOne{}
     private class PrivateInnerOne{}
     static class NotInnerOne{}
@@ -113,6 +133,15 @@ public class CtzReflectionUtilsTest {
         public boolean apply(Field input) {
             return !"foo".equals(input.getName());
         }
+    }
+
+    private class Entity {
+        @Id
+        @Column
+        private long foo;
+        @Column(name = "dummy")
+        private String bar;
+        private String throwaway;
     }
 }
 

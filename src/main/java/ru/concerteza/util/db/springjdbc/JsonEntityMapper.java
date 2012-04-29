@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
 import static ru.concerteza.util.CtzFormatUtils.format;
 import static ru.concerteza.util.CtzReflectionUtils.callDefaultConstructor;
+import static ru.concerteza.util.CtzReflectionUtils.isAssignableBoxed;
 
 /**
  * User: alexey
@@ -31,7 +32,7 @@ public class JsonEntityMapper<T> implements RowMapper<T> {
     private final List<Filter> filters = new ArrayList<Filter>();
 
     public JsonEntityMapper(Class<T> clazz, Map<String, Field> fieldMap, Filter... filters) {
-        this(clazz, fieldMap, null, filters);
+        this(clazz, fieldMap, new Gson(), filters);
     }
 
     public JsonEntityMapper(Class<T> clazz, Map<String, Field> fieldMap, Gson gson, Filter... filters) {
@@ -51,9 +52,9 @@ public class JsonEntityMapper<T> implements RowMapper<T> {
         checkArgument(dataMap.size() == columnMap.size(), "Data map size: '%s' doesn't match field's size: '%s'", dataMap.size(), columnMap.size());
         for(Map.Entry<String, Object> en : dataMap.entrySet()) {
             if(null == en.getValue()) continue;
-            Field fi = columnMap.get(en.getKey());
-            checkArgument(null != fi, "Canot map field: '%s', class: '%s', columnMap kesy: '%s'", en.getKey(), clazz.getName(), columnMap.keySet());
-            if(fi.getType().isAssignableFrom(en.getValue().getClass())) {
+            Field fi = columnMap.get(en.getKey().toLowerCase());
+            checkArgument(null != fi, "Cannot map field: '%s', class: '%s', columnMap keys: '%s'", en.getKey(), clazz.getName(), columnMap.keySet());
+            if(isAssignableBoxed(fi.getType(), en.getValue().getClass())) {
                 assign(res, fi, en.getValue());
             } else if(null != gson && String.class.isAssignableFrom(en.getValue().getClass())) {
                 Object parsed = gson.fromJson((String) en.getValue(), fi.getType());
