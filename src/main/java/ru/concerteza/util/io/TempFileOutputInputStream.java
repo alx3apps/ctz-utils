@@ -1,7 +1,6 @@
 package ru.concerteza.util.io;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.db.blob.compress.Compressor;
@@ -11,6 +10,7 @@ import java.io.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 
 /**
  * User: alexey
@@ -39,8 +39,7 @@ public class TempFileOutputInputStream extends OutputStream {
             checkNotNull(compressor);
             this.fun = fun;
             this.compressor = compressor;
-            this.file = File.createTempFile(getClass().getName(), ".tmp");
-            this.file.deleteOnExit(); // just in case
+            this.file = createTmpFile(getClass());
             FileOutputStream fileOut = new FileOutputStream(this.file);
             BufferedOutputStream bufferedOut = new BufferedOutputStream(fileOut);
             this.compressedOut = new CountingOutputStream(bufferedOut);

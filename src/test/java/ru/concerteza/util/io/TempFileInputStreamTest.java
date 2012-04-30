@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static ru.concerteza.util.CtzConstants.UTF8;
+import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 
 /**
  * User: alexey
@@ -23,8 +24,7 @@ import static ru.concerteza.util.CtzConstants.UTF8;
 public class TempFileInputStreamTest {
     @Test
     public void test() throws IOException {
-        File file = File.createTempFile("foo", "bar");
-        file.deleteOnExit();
+        File file = createTmpFile(getClass());
         FileUtils.writeStringToFile(file, "foobar", UTF8);
         String str = FileUtils.readFileToString(file, UTF8);
         assertEquals("foobar", str);

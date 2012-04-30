@@ -2,12 +2,14 @@ package ru.concerteza.util;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import ru.concerteza.util.io.CtzIOUtils;
 
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
 import static ru.concerteza.util.CtzConstants.*;
+import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 
 /**
  * User: alexey
@@ -38,10 +40,8 @@ public class CtzCopyCheckLMUtilsTest {
     }
 
     private File[] prepareFiles() throws IOException {
-        File f1 = File.createTempFile("foo", "bar");
-        f1.deleteOnExit();
-        File f2 = File.createTempFile("foo", "baz");
-        f2.deleteOnExit();
+        File f1 = createTmpFile(getClass());
+        File f2 = createTmpFile(getClass());
         FileUtils.write(f1, "foo", UTF8);
         FileUtils.write(f2, "bar", UTF8);
         long now = System.currentTimeMillis();

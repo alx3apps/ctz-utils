@@ -1,12 +1,20 @@
 package ru.concerteza.util.crypto;
 
-import java.security.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.springframework.core.io.Resource;
+import ru.concerteza.util.io.CtzIOUtils;
 
+import static org.apache.commons.io.IOUtils.closeQuietly;
+import static org.apache.commons.io.IOUtils.copyLarge;
 import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
+import static ru.concerteza.util.CtzFormatUtils.format;
 
 
 /**
@@ -30,5 +38,24 @@ public class CtzHashUtils {
         byte[] dig = new byte[digest.getDigestSize()];
         digest.doFinal(dig, 0);
         return dig;
+    }
+
+    public static String sha1Digest(File file) throws IOException {
+        String url = format("file:{}", file.getPath());
+        return sha1ResourceDigest(url);
+    }
+
+    public static String sha1ResourceDigest(String url) throws IOException {
+        InputStream is = null;
+        try {
+            Resource resource = CtzIOUtils.RESOURCE_LOADER.getResource(url);
+            if(!resource.exists()) throw new IOException(format("Resource: '{}' doesn't exist", url));
+            is = resource.getInputStream();
+            SHA1InputStream sha1 = new SHA1InputStream(is);
+            copyLarge(sha1, new NullOutputStream());
+            return sha1.digest();
+        } finally {
+            closeQuietly(is);
+        }
     }
 }
