@@ -1,5 +1,6 @@
 package ru.concerteza.util.io;
 
+import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
@@ -16,6 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static java.lang.System.currentTimeMillis;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
@@ -132,11 +134,11 @@ public class CtzIOUtils {
     }
 
     public static File createTmpDir(Class<?> clazz) throws IOException {
-        File tmp = File.createTempFile(clazz.getName(), ".tmp");
-        boolean deleted = tmp.delete();
-        if(!deleted) throw new IOException(format("Cannot delete temp file: '{}' while creating temp dir", tmp.getAbsolutePath()));
-        boolean maked = tmp.mkdir();
-        if(!maked) throw new IOException(format("Cannot create temp dir: '{}' while creating temp dir", tmp.getAbsolutePath()));
+        File baseDir = new File(System.getProperty("java.io.tmpdir"));
+        String baseName = format("{}_{}.tmp", clazz.getName(), currentTimeMillis());
+        File tmp = new File(baseDir, baseName);
+        boolean res = tmp.mkdirs();
+        if(!res) throw new IOException(format("Cannot create directory: '{}'", tmp.getAbsolutePath()));
         tmp.deleteOnExit();
         return tmp;
     }

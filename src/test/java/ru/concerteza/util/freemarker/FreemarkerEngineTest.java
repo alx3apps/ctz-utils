@@ -16,22 +16,15 @@ public class FreemarkerEngineTest {
     @Test
     public void testClasspath() {
 //        Map<String, String> params = ImmutableMap.of("foo", "bar");
-        String res = createEngine().process("/FreemarkerEngineTest.ftl", new Params("bar"));
+        String res = createEngine().process("classpath:/FreemarkerEngineTest.ftl", new Params("bar"));
         assertEquals("Hello bar", res);
     }
 
     private FreemarkerEngine createEngine() {
-        TemplateProvider provider = new ClassPathTemplateProvider();
+        TemplateProvider provider = new ResourceTemplateProvider();
         FreemarkerEngine res = new FreemarkerEngine();
         res.setTemplateProvider(provider);
         return res;
-    }
-
-    private class ClassPathTemplateProvider implements TemplateProvider {
-        @Override
-        public InputStream loadTemplate(String path) throws IOException {
-            return ClassPathTemplateProvider.class.getResourceAsStream(path);
-        }
     }
 
     public class Params {
