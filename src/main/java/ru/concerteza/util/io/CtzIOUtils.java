@@ -1,10 +1,8 @@
 package ru.concerteza.util.io;
 
-import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -25,6 +23,7 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * Date: Oct 30, 2010
  */
 public class CtzIOUtils {
+    // use only if you sure about classloaders
     public static final PathMatchingResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
     public static final ResourceLoader RESOURCE_LOADER = RESOURCE_RESOLVER.getResourceLoader();
 
@@ -90,26 +89,38 @@ public class CtzIOUtils {
 
     public static int copyResourceListToDir(String pattern, File dir) throws IOException {
         mkdirs(dir);
-        Resource[] resources = RESOURCE_RESOLVER.getResources(pattern);
-        for(Resource re : resources) {
-            doCopyResourcesToDir(re, dir);
+        int count = 0;
+        for(Resource re : RESOURCE_RESOLVER.getResources(pattern)) {
+            if(re.getFilename().length() > 0) { // filter directories
+                doCopyResourceToDir(re, dir);
+                count += 1;
+            }
         }
-        return resources.length;
+        return count;
     }
 
     public static void copyResourceToDir(String url, File dir) throws IOException {
         mkdirs(dir);
         Resource re = RESOURCE_LOADER.getResource(url);
-        doCopyResourcesToDir(re, dir);
+        doCopyResourceToDir(re, dir);
     }
 
-    private static void doCopyResourcesToDir(Resource re, File dir) throws IOException {
+    public static void copyResource(String url, File target) throws IOException {
+        Resource re = RESOURCE_LOADER.getResource(url);
+        doCopyResource(re, target);
+    }
+
+    private static void doCopyResourceToDir(Resource re, File dir) throws IOException {
+        File target = new File(dir, re.getFilename());
+        doCopyResource(re, target);
+    }
+
+    private static void doCopyResource(Resource re, File target) throws IOException {
         InputStream is = null;
         OutputStream os = null;
         try {
             if(!re.exists()) throw new IOException(format("Cannot load resource: '{}'", re));
             is = re.getInputStream();
-            File target = new File(dir, re.getFilename());
             os = FileUtils.openOutputStream(target);
             IOUtils.copyLarge(is, os);
         } finally {
