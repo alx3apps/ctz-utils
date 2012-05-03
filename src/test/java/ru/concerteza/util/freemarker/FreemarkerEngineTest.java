@@ -1,9 +1,12 @@
 package ru.concerteza.util.freemarker;
 
 import org.junit.Test;
+import org.springframework.core.io.Resource;
+import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.io.CtzResourceUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,9 +17,17 @@ import static org.junit.Assert.assertEquals;
 public class FreemarkerEngineTest {
 
     @Test
-    public void testClasspath() {
-        String res = new FreemarkerEngine().process("classpath:/FreemarkerEngineTest.ftl", new Params("bar"));
-        assertEquals("Hello bar", res);
+    public void test() throws IOException {
+        FreemarkerEngine engine = new FreemarkerEngine();
+        Params params = new Params("bar");
+        String path = engine.process("classpath:/FreemarkerEngineTest.ftl", params);
+        assertEquals("Hello bar", path);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Resource res = CtzResourceUtils.RESOURCE_LOADER.getResource("classpath:/FreemarkerEngineTest.ftl");
+        engine.process(res.getInputStream(), params, baos);
+        String streams = new String(baos.toByteArray(), CtzConstants.UTF8);
+        assertEquals("Hello bar", streams);
     }
 
     public class Params {

@@ -9,12 +9,12 @@ import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.springframework.core.io.Resource;
-import ru.concerteza.util.io.CtzIOUtils;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.io.IOUtils.copyLarge;
 import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
 import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 
 /**
@@ -48,7 +48,7 @@ public class CtzHashUtils {
     public static String sha1ResourceDigest(String url) throws IOException {
         InputStream is = null;
         try {
-            Resource resource = CtzIOUtils.RESOURCE_LOADER.getResource(url);
+            Resource resource = RESOURCE_LOADER.getResource(url);
             if(!resource.exists()) throw new IOException(format("Resource: '{}' doesn't exist", url));
             is = resource.getInputStream();
             SHA1InputStream sha1 = new SHA1InputStream(is);
