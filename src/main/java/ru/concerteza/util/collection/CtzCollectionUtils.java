@@ -17,11 +17,16 @@ public class CtzCollectionUtils {
     public static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     // fire transform chain for iters with nullable elements
-    public static <T> void fireTransform(Iterator<T> iter) {
-        while (iter.hasNext()) iter.next();
+    public static <T> int fireTransform(Iterator<T> iter) {
+        int counter = 0;
+        while (iter.hasNext()) {
+            iter.next();
+            counter +=1;
+        }
+        return counter;
     }
 
-    public static <T> void fireTransform(Iterable<T> iter) {
-        fireTransform(iter.iterator());
+    public static <T> int fireTransform(Iterable<T> iter) {
+        return fireTransform(iter.iterator());
     }
 }

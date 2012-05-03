@@ -1,5 +1,9 @@
 package ru.concerteza.util.io;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
@@ -14,8 +18,10 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.Arrays.asList;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
@@ -26,6 +32,8 @@ public class CtzIOUtils {
     // use only if you sure about classloaders
     public static final PathMatchingResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
     public static final ResourceLoader RESOURCE_LOADER = RESOURCE_RESOLVER.getResourceLoader();
+
+    private static final ResourceDirectoryPredicate RESOURCE_DIRECTORY_PREDICATE = new ResourceDirectoryPredicate();
 
     public static void closeQuietly(XMLEventReader reader) {
         try {
@@ -67,55 +75,64 @@ public class CtzIOUtils {
         }
     }
 
-    public static void appendToFile(final File file, final String in, String encoding) throws IOException {
+    public static void appendToFile(File file, String in, String encoding) throws RuntimeIOException {
         InputStream stream = null;
         try {
             stream = IOUtils.toInputStream(in, encoding);
             appendToFile(file, stream);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
     }
 
-    public static void appendToFile(final File f, final InputStream in) throws IOException {
+    public static void appendToFile(final File f, final InputStream in) throws RuntimeIOException {
         OutputStream stream = null;
         try {
             stream = new FileOutputStream(f, true);
             IOUtils.copy(in, stream);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
     }
 
-    public static int copyResourceListToDir(String pattern, File dir) throws IOException {
+    public static int copyResourceListToDir(String pattern, File dir) throws RuntimeIOException {
         mkdirs(dir);
-        int count = 0;
-        for(Resource re : RESOURCE_RESOLVER.getResources(pattern)) {
-            if(re.getFilename().length() > 0) { // filter directories
-                doCopyResourceToDir(re, dir);
-                count += 1;
-            }
-        }
-        return count;
+        CopyResourceToDirFunction fun = new CopyResourceToDirFunction(dir);
+        return processResourceList(pattern, RESOURCE_DIRECTORY_PREDICATE, fun).size();
     }
 
-    public static void copyResourceToDir(String url, File dir) throws IOException {
+    public static void copyResourceToDir(String url, File dir) throws RuntimeIOException {
         mkdirs(dir);
         Resource re = RESOURCE_LOADER.getResource(url);
         doCopyResourceToDir(re, dir);
     }
 
-    public static void copyResource(String url, File target) throws IOException {
+    public static void copyResource(String url, File target) throws RuntimeIOException {
         Resource re = RESOURCE_LOADER.getResource(url);
         doCopyResource(re, target);
     }
 
-    private static void doCopyResourceToDir(Resource re, File dir) throws IOException {
+    public static <T> List<T> processResourceList(String pattern, Predicate<Resource> filter, Function<Resource, T> fun) throws RuntimeIOException {
+        try {
+            List<Resource> resources = asList(RESOURCE_RESOLVER.getResources(pattern));
+            Iterable<Resource> filtered = Iterables.filter(resources, filter);
+            Iterable<T> applied = Iterables.transform(filtered, fun);
+            return ImmutableList.copyOf(applied);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
+        }
+    }
+
+    private static void doCopyResourceToDir(Resource re, File dir) throws RuntimeIOException {
         File target = new File(dir, re.getFilename());
         doCopyResource(re, target);
     }
 
-    private static void doCopyResource(Resource re, File target) throws IOException {
+    private static void doCopyResource(Resource re, File target) throws RuntimeIOException {
         InputStream is = null;
         OutputStream os = null;
         try {
@@ -123,34 +140,67 @@ public class CtzIOUtils {
             is = re.getInputStream();
             os = FileUtils.openOutputStream(target);
             IOUtils.copyLarge(is, os);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(os);
         }
     }
 
-    private static void mkdirs(File dir) throws IOException {
+    public static void mkdirs(File dir) throws RuntimeIOException {
         if(dir.exists()) {
-            if(dir.isFile()) throw new IOException(format("Cannot write to directory: '{}'", dir.getAbsolutePath()));
+            if(dir.isFile()) throw new RuntimeIOException(format("Cannot write to directory: '{}'", dir.getAbsolutePath()));
         } else {
             boolean res = dir.mkdirs();
-            if(!res) throw new IOException(format("Cannot create directory: '{}'", dir.getAbsolutePath()));
+            if(!res) throw new RuntimeIOException(format("Cannot create directory: '{}'", dir.getAbsolutePath()));
         }
     }
 
-    public static File createTmpFile(Class<?> clazz) throws IOException {
-        File tmp = File.createTempFile(clazz.getName(), ".tmp");
-        tmp.deleteOnExit();
-        return tmp;
+    public static File createTmpFile(Class<?> clazz) throws RuntimeIOException {
+        try {
+            File tmp = File.createTempFile(clazz.getName(), ".tmp");
+            tmp.deleteOnExit();
+            return tmp;
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
+        }
     }
 
-    public static File createTmpDir(Class<?> clazz) throws IOException {
-        File baseDir = new File(System.getProperty("java.io.tmpdir"));
-        String baseName = format("{}_{}.tmp", clazz.getName(), currentTimeMillis());
-        File tmp = new File(baseDir, baseName);
-        boolean res = tmp.mkdirs();
-        if(!res) throw new IOException(format("Cannot create directory: '{}'", tmp.getAbsolutePath()));
-        tmp.deleteOnExit();
-        return tmp;
+    public static File createTmpDir(Class<?> clazz) throws RuntimeIOException {
+        try {
+            File baseDir = new File(System.getProperty("java.io.tmpdir"));
+            String baseName = format("{}_{}.tmp", clazz.getName(), currentTimeMillis());
+            File tmp = new File(baseDir, baseName);
+            boolean res = tmp.mkdirs();
+            if (!res) throw new IOException(format("Cannot create directory: '{}'", tmp.getAbsolutePath()));
+            tmp.deleteOnExit();
+            return tmp;
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
+        }
+    }
+
+    private static class ResourceDirectoryPredicate implements Predicate<Resource> {
+        @Override
+        public boolean apply(Resource input) {
+            return input.getFilename().length() > 0;
+        }
+    }
+
+    private static class CopyResourceToDirFunction implements Function<Resource, Boolean> {
+        private final File dir;
+
+        private CopyResourceToDirFunction(File dir) {
+            this.dir = dir;
+        }
+
+        @Override
+        public Boolean apply(Resource input) {
+            doCopyResourceToDir(input, dir);
+            // to count copied files in caller,
+            // cannot return Void null here for further chaining
+            return true;
+        }
     }
 }

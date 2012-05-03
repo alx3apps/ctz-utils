@@ -6,10 +6,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.ResourceLoader;
 import ru.concerteza.util.CtzConstants;
 
 import java.io.*;
@@ -23,12 +19,9 @@ import static freemarker.ext.beans.BeansWrapper.EXPOSE_PROPERTIES_ONLY;
  * Date: 10/21/11
  */
 
-// preconfigured for Spring by default
-public class FreemarkerEngine extends Configuration implements ApplicationContextAware {
-    private ResourceLoader loader;
+public class FreemarkerEngine extends Configuration {
     private TemplateProvider templateProvider = new ResourceTemplateProvider();
     private String templateEncoding = CtzConstants.UTF8;
-//    private ObjectWrapper objectWrapper = ObjectWrapper.DEFAULT_WRAPPER;
 
     private Map<String, Template> templateCache;
     private final Object templateCacheLock = new Object();
@@ -41,11 +34,6 @@ public class FreemarkerEngine extends Configuration implements ApplicationContex
         this.setNumberFormat("computer");
         BeansWrapper bw = (BeansWrapper) this.getObjectWrapper();
         bw.setExposureLevel(EXPOSE_PROPERTIES_ONLY);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.loader = applicationContext;
     }
 
     // use for non UTF-8 templates
@@ -108,13 +96,6 @@ public class FreemarkerEngine extends Configuration implements ApplicationContex
             return new Template(path, reader, this, templateEncoding);
         } finally {
             IOUtils.closeQuietly(reader);
-        }
-    }
-
-    private class ResourceTemplateProvider implements TemplateProvider {
-        @Override
-        public InputStream loadTemplate(String path) throws IOException {
-            return loader.getResource(path).getInputStream();
         }
     }
 }

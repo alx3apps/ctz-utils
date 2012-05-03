@@ -15,16 +15,8 @@ public class FreemarkerEngineTest {
 
     @Test
     public void testClasspath() {
-//        Map<String, String> params = ImmutableMap.of("foo", "bar");
-        String res = createEngine().process("classpath:/FreemarkerEngineTest.ftl", new Params("bar"));
+        String res = new FreemarkerEngine().process("classpath:/FreemarkerEngineTest.ftl", new Params("bar"));
         assertEquals("Hello bar", res);
-    }
-
-    private FreemarkerEngine createEngine() {
-        TemplateProvider provider = new ResourceTemplateProvider();
-        FreemarkerEngine res = new FreemarkerEngine();
-        res.setTemplateProvider(provider);
-        return res;
     }
 
     public class Params {
