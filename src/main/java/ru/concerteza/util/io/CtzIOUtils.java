@@ -19,7 +19,7 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * Date: Oct 30, 2010
  */
 public class CtzIOUtils {
-    public static void closeQuietly(XMLEventReader reader) {
+    public static XMLEventReader closeQuietly(XMLEventReader reader) {
         try {
             if (reader != null) {
                 reader.close();
@@ -27,9 +27,10 @@ public class CtzIOUtils {
         } catch (XMLStreamException ioe) {
             // ignore
         }
+        return reader;
     }
 
-    public static void closeQuietly(Connection conn) {
+    public static Connection closeQuietly(Connection conn) {
         try {
             if (conn != null) {
                 conn.close();
@@ -37,9 +38,10 @@ public class CtzIOUtils {
         } catch (SQLException e) {
             // ignore
         }
+        return conn;
     }
 
-    public static void closeQuietly(Statement stmt) {
+    public static Statement closeQuietly(Statement stmt) {
         try {
             if (stmt != null) {
                 stmt.close();
@@ -47,6 +49,7 @@ public class CtzIOUtils {
         } catch (SQLException e) {
             // ignore
         }
+        return stmt;
     }
 
     public static File codeSourceDir(Class<?> clazz) {
@@ -59,7 +62,7 @@ public class CtzIOUtils {
         }
     }
 
-    public static void appendToFile(File file, String in, String encoding) throws RuntimeIOException {
+    public static File appendToFile(File file, String in, String encoding) throws RuntimeIOException {
         InputStream stream = null;
         try {
             stream = IOUtils.toInputStream(in, encoding);
@@ -69,27 +72,30 @@ public class CtzIOUtils {
         } finally {
             IOUtils.closeQuietly(stream);
         }
+        return file;
     }
 
-    public static void appendToFile(final File f, final InputStream in) throws RuntimeIOException {
+    public static File appendToFile(File file, InputStream in) throws RuntimeIOException {
         OutputStream stream = null;
         try {
-            stream = new FileOutputStream(f, true);
+            stream = new FileOutputStream(file, true);
             IOUtils.copy(in, stream);
         } catch (IOException e) {
             throw new RuntimeIOException(e);
         } finally {
             IOUtils.closeQuietly(stream);
         }
+        return file;
     }
 
-    public static void mkdirs(File dir) throws RuntimeIOException {
+    public static File mkdirs(File dir) throws RuntimeIOException {
         if(dir.exists()) {
             if(dir.isFile()) throw new RuntimeIOException(format("Cannot write to directory: '{}'", dir.getAbsolutePath()));
         } else {
             boolean res = dir.mkdirs();
             if(!res) throw new RuntimeIOException(format("Cannot create directory: '{}'", dir.getAbsolutePath()));
         }
+        return dir;
     }
 
     public static File createTmpFile(Class<?> clazz) throws RuntimeIOException {
