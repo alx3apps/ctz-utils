@@ -25,19 +25,19 @@ public class CtzResourceUtils {
     public static final PathMatchingResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
     public static final ResourceLoader RESOURCE_LOADER = RESOURCE_RESOLVER.getResourceLoader();
 
-    public static void copyResourceToDir(String url, File dir) throws RuntimeIOException {
+    public static File copyResourceToDir(String url, File dir) throws RuntimeIOException {
         mkdirs(dir);
         Resource re = RESOURCE_LOADER.getResource(url);
         File target = new File(dir, re.getFilename());
-        copyResource(re, target);
+        return copyResource(re, target);
     }
 
-    public static void copyResource(String url, File target) throws RuntimeIOException {
+    public static File copyResource(String url, File target) throws RuntimeIOException {
         Resource re = RESOURCE_LOADER.getResource(url);
-        copyResource(re, target);
+        return copyResource(re, target);
     }
 
-    public static void copyResource(Resource re, File target) throws RuntimeIOException {
+    public static File copyResource(Resource re, File target) throws RuntimeIOException {
         InputStream is = null;
         OutputStream os = null;
         try {
@@ -51,6 +51,7 @@ public class CtzResourceUtils {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(os);
         }
+        return target;
     }
 
     // will work only with 'classpath:' and 'file:' resources
