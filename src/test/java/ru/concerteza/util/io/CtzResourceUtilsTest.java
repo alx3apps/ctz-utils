@@ -1,5 +1,6 @@
 package ru.concerteza.util.io;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.core.io.Resource;
 import ru.concerteza.util.crypto.CtzHashUtils;
@@ -8,6 +9,7 @@ import ru.concerteza.util.io.CtzResourceUtils;
 import java.io.File;
 import java.io.IOException;
 
+import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -31,7 +33,7 @@ public class CtzResourceUtilsTest {
         CtzResourceUtils.copyResourceToDir(url, dir);
         File file = new File(dir, "log4j.properties");
         String fileSha1 = CtzHashUtils.sha1Digest(file);
-        dir.delete();
+        deleteDirectory(dir);
         assertEquals(resSha1, fileSha1);
     }
 

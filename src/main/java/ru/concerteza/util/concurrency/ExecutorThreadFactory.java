@@ -1,4 +1,4 @@
-package ru.concerteza.util.executor;
+package ru.concerteza.util.concurrency;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

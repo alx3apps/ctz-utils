@@ -1,7 +1,10 @@
 package ru.concerteza.util.io;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
+import ru.concerteza.util.concurrency.CallableList;
+import ru.concerteza.util.concurrency.CtzConcurrencyUtils;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -10,15 +13,25 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.Callable;
 
 import static java.lang.System.currentTimeMillis;
 import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.concurrency.CtzConcurrencyUtils.runnable;
 
 /**
  * User: alexey
  * Date: Oct 30, 2010
  */
 public class CtzIOUtils {
+    private static final DeleteDirsOnExitList DELETE_DIRS_ON_EXIT_LIST = new DeleteDirsOnExitList();
+
+    static {
+        Runnable runnable = runnable(DELETE_DIRS_ON_EXIT_LIST);
+        Thread thread = new Thread(runnable);
+        Runtime.getRuntime().addShutdownHook(thread);
+    }
+
     public static XMLEventReader closeQuietly(XMLEventReader reader) {
         try {
             if (reader != null) {
@@ -115,10 +128,35 @@ public class CtzIOUtils {
             File tmp = new File(baseDir, baseName);
             boolean res = tmp.mkdirs();
             if (!res) throw new IOException(format("Cannot create directory: '{}'", tmp.getAbsolutePath()));
-            tmp.deleteOnExit();
+            DELETE_DIRS_ON_EXIT_LIST.add(tmp);
             return tmp;
         } catch (IOException e) {
             throw new RuntimeIOException(e);
+        }
+    }
+
+    private static class DeleteDirsOnExitList extends CallableList<File> {
+        private final Object lock = new Object();
+
+        public DeleteDirsOnExitList add(File file) {
+            synchronized(lock) {
+                super.add(new DeleteDirCallable(file));
+                return this;
+            }
+        }
+
+        private class DeleteDirCallable implements Callable<File> {
+            private final File dir;
+
+            private DeleteDirCallable(File dir) {
+                this.dir = dir;
+            }
+
+            @Override
+            public File call() throws Exception {
+                FileUtils.deleteDirectory(dir);
+                return dir;
+            }
         }
     }
 }
