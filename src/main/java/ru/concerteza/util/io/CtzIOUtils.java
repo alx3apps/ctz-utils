@@ -1,7 +1,10 @@
 package ru.concerteza.util.io;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.concurrency.CallableList;
 import ru.concerteza.util.concurrency.CtzConcurrencyUtils;
@@ -13,9 +16,13 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.concurrent.Callable;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.lang.System.currentTimeMillis;
+import static org.apache.commons.io.FileUtils.openOutputStream;
+import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
 import static ru.concerteza.util.CtzFormatUtils.format;
 import static ru.concerteza.util.concurrency.CtzConcurrencyUtils.runnable;
 
@@ -91,7 +98,7 @@ public class CtzIOUtils {
     public static File appendToFile(File file, InputStream in) throws RuntimeIOException {
         OutputStream stream = null;
         try {
-            stream = new FileOutputStream(file, true);
+            stream = openOutputStream(file, true);
             IOUtils.copy(in, stream);
         } catch (IOException e) {
             throw new RuntimeIOException(e);
@@ -134,6 +141,29 @@ public class CtzIOUtils {
             throw new RuntimeIOException(e);
         }
     }
+
+    public static List<File> listFiles(File dir) throws RuntimeIOException {
+        return listFiles(dir, TrueFileFilter.TRUE);
+    }
+
+    // idea from here http://techblog.sharpmind.de/?p=228
+    public static List<File> listFiles(File dir, IOFileFilter filter) throws RuntimeIOException {
+        File[] files = dir.listFiles();
+        if(null == files) throw new RuntimeIOException("Cannot list directory: " + dir.getAbsolutePath());
+        // return itself for empty directory
+        if(0 == files.length) return ImmutableList.of(dir);
+
+        // process non empty dir
+        ImmutableList.Builder<File> builder = new ImmutableList.Builder<File>();
+        for (File fi : files) {
+            if (filter.accept(fi)) {
+                if(fi.isFile()) builder.add(fi);
+                else if(fi.isDirectory())  builder.addAll(listFiles(fi, filter));
+            }
+        }
+        return builder.build();
+    }
+
 
     private static class DeleteDirsOnExitList extends CallableList<File> {
         private final Object lock = new Object();

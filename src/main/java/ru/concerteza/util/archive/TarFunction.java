@@ -1,36 +1,38 @@
 package ru.concerteza.util.archive;
 
-import com.google.common.base.Function;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.io.FileUtils;
 import ru.concerteza.util.io.RuntimeIOException;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.apache.commons.io.FilenameUtils.separatorsToUnix;
-import static ru.concerteza.util.archive.CtzArchiveUtils.relative;
+import static org.apache.commons.io.FileUtils.copyFile;
 
 /**
  * User: alexey
  * Date: 5/4/12
  */
-public class TarFunction implements Function<File, String> {
-    private String parent;
+public class TarFunction extends ArchiveFunction {
     private final TarArchiveOutputStream tarStream;
 
     public TarFunction(File dir, TarArchiveOutputStream tarStream) {
-        this.parent = separatorsToUnix(dir.getParent());
+        super(dir);
+        this.tarStream = tarStream;
+    }
+
+    public TarFunction(File dir, String tarRootDirName, TarArchiveOutputStream tarStream) {
+        super(dir, tarRootDirName);
         this.tarStream = tarStream;
     }
 
     @Override
     public String apply(File input) {
         try {
-            String path = relative(parent, input);
+            String relative = relative(dir, input);
+            String path = rootDirName + "/" + relative;
             tarStream.putArchiveEntry(new TarArchiveEntry(input, path));
-            FileUtils.copyFile(input, tarStream);
+            if(input.isFile()) copyFile(input, tarStream);
             tarStream.closeArchiveEntry();
             return path;
         } catch (IOException e) {
