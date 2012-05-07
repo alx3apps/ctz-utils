@@ -3,7 +3,6 @@ package ru.concerteza.util.archive;
 import com.google.common.collect.Collections2;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
-import ru.concerteza.util.io.CtzIOUtils;
 import ru.concerteza.util.io.RuntimeIOException;
 
 import java.io.File;
@@ -15,6 +14,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.compress.archivers.tar.TarArchiveOutputStream.LONGFILE_GNU;
 import static org.apache.commons.io.FileUtils.openOutputStream;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
+import static ru.concerteza.util.io.CtzIOUtils.listFiles;
 
 /**
  * User: alexey
@@ -31,7 +31,7 @@ public class CtzTarUtils {
             tarStream = new TarArchiveOutputStream(out);
             tarStream.setLongFileMode(LONGFILE_GNU);
             TarFunction fun = new TarFunction(dir, tarStream);
-            Collection<File> children = CtzIOUtils.listFiles(dir);
+            Collection<File> children = listFiles(dir, true);
             Collection<String> zipped = Collections2.transform(children, fun);
             return fireTransform(zipped);
         } catch (IOException e) {
