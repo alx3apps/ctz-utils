@@ -16,14 +16,26 @@ import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
 import static ru.concerteza.util.io.CtzIOUtils.listFiles;
 
 /**
- * User: alexey
+ * Utility to create <a href="http://en.wikipedia.org/wiki/Zip_%28file_format%29">ZIP</a> archives from directories,
+ * for fine tuning use {@link ZipFunction} directly. Separated from {@link CtzTarUtils} to be available for client code
+ * without <a href="http://commons.apache.org/compress/">Apache Commons Compress library</> dependency
+ *
+ * @author alexey,
  * Date: 5/4/12
+ * @see ZipFunction
  */
-
-// tar utils separated for using ZipUtils without commons-compress lib
 public class CtzZipUtils {
+    /**
+     * Convenient method to create <a href="http://en.wikipedia.org/wiki/Zip_%28file_format%29">ZIP</a> archives from directories,
+     * directory name will be preserved in archive.
+     * @param dir root directory to make archive of
+     * @param target <a href="http://docs.oracle.com/javase/6/docs/api/java/util/zip/ZipOutputStream.html">ZipOutputStream</a>
+     * to write files to
+     * @return number of entries written to archive
+     * @throws RuntimeIOException IO error happened
+     */
     public static int zipDirectory(File dir, File target) throws RuntimeIOException {
-        checkArgument(dir.exists() && dir.isDirectory(), "Directory doesn't exist: '%s'", dir);
+        if(!(dir.exists() && dir.isDirectory())) throw new RuntimeIOException("Directory doesn't exist: " + dir);
         ZipOutputStream zipStream = null;
         try {
             OutputStream out = openOutputStream(target);

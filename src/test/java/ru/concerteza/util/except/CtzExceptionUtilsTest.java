@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static ru.concerteza.util.except.CtzExceptionUtils.extractMessage;
 
 /**
  * User: alexey
@@ -21,9 +22,10 @@ public class CtzExceptionUtilsTest {
     @Test
     public void testMessage() {
         try {
-            throw new UnhandledException(new RuntimeException(new BusinessLogicException(new IOException("fail"))));
+            BusinessLogicException ex = new BusinessLogicException(new IOException("fail"), "IO error on files: '{}' and '{}'", "foo", "bar");
+            throw new UnhandledException(new RuntimeException(ex));
         } catch (Exception e) {
-            Option<MessageException> op = CtzExceptionUtils.extractMessage(e);
+            Option<MessageException> op = extractMessage(e);
             assertTrue(op.isSome());
             assertNotNull(op.get());
             assertTrue(BusinessLogicException.class.isInstance(op.get()));
@@ -35,14 +37,14 @@ public class CtzExceptionUtilsTest {
         try {
             throw new UnhandledException(new RuntimeException(new IOException("fail")));
         } catch (Exception e) {
-            Option<MessageException> op = CtzExceptionUtils.extractMessage(e);
+            Option<MessageException> op = extractMessage(e);
             assertTrue(op.isNone());
         }
     }
 
     private class BusinessLogicException extends MessageException {
-        private BusinessLogicException(Throwable cause) {
-            super(cause);
+        private BusinessLogicException(Exception cause, String formatString, Object... args) {
+            super(cause, formatString, args);
         }
     }
 }

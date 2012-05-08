@@ -8,7 +8,13 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// http://code.google.com/p/named-regexp/
+/**
+ * Named regex groups implementation from <a href="http://code.google.com/p/named-regexp/">named-regexp project</a>,
+ * no changes except package naming. Extended syntax is {@code "^foo(?&lt;bar_group>bar)$"}
+ * @see NamedMatchResult
+ * @see NamedPattern
+ * @see Matcher
+ */
 public class NamedMatcher implements NamedMatchResult {
 
     private Matcher matcher;

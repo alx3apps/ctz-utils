@@ -14,8 +14,7 @@ public class RuntimeIOException extends MessageException {
     public RuntimeIOException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public RuntimeIOException(Throwable cause) {
-        super(cause);
+    public RuntimeIOException(Exception cause) {
+        super(cause, cause.getMessage());
     }
 }

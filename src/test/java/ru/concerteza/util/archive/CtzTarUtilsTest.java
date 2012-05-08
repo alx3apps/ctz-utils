@@ -2,6 +2,7 @@ package ru.concerteza.util.archive;
 
 import org.junit.Test;
 import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.io.RuntimeIOException;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,13 @@ public class CtzTarUtilsTest {
         file.delete();
         deleteDirectory(dir);
         assertEquals(3, filesCount);
+    }
+
+    @Test(expected = RuntimeIOException.class)
+    public void testTarRIOE() throws IOException {
+        File dir = createTmpDir(getClass());
+        deleteDirectory(dir);
+        tarDirectory(dir, new File(""));
     }
 
     private File create3FilesDir() throws IOException {

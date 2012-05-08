@@ -152,6 +152,10 @@ public class CtzIOUtils {
         return ImmutableList.copyOf(iterateFiles(dir, fileFilter, TrueFileFilter.TRUE, includeEmptyDirLeafs));
     }
 
+    public static List<File> listFiles(File dir, IOFileFilter fileFilter, IOFileFilter dirFilter, boolean includeEmptyDirLeafs) throws RuntimeIOException {
+        return ImmutableList.copyOf(iterateFiles(dir, fileFilter, dirFilter, includeEmptyDirLeafs));
+    }
+
     public static Iterable<File> iterateFiles(File dir, IOFileFilter fileFilter, IOFileFilter dirFilter, boolean includeEmptyDirLeafs) throws RuntimeIOException {
         Iterable<File> files = new FilesIterable(dir, dirFilter, includeEmptyDirLeafs);
         // dir filter is already applied to empty dir leafs

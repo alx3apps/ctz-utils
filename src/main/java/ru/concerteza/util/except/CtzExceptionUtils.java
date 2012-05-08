@@ -1,28 +1,31 @@
 package ru.concerteza.util.except;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import ru.concerteza.util.option.Option;
 
 import static org.apache.commons.lang.exception.ExceptionUtils.getThrowableList;
+import static org.apache.commons.lang.exception.ExceptionUtils.indexOfType;
 
 /**
- * User: alexey
+
+ *
+ * Wrapper over Apache's <a href="http://commons.apache.org/lang/api-2.4/org/apache/commons/lang/exception/ExceptionUtils.html">ExceptionUtils</a>
+ * See usage example in {@link CtzExceptionUtilsTest}
+ *
+ * @author alexey,
  * Date: 11/19/11
- *
- * Wrapper over Apache's {@link <a href="http://commons.apache.org/lang/api-2.4/org/apache/commons/lang/exception/ExceptionUtils.html">ExceptionUtils</a>}.
- * Usage example is in CtzExceptionUtilsTest.
- *
+ * @see MessageException
  */
 public class CtzExceptionUtils {
     /**
      * Looks for {@link MessageException} in nested exceptions stack
-     * and returns business error message, id any.
-     * @param e some exception thrown by application, may contain
-     * @return {@link MessageException} if found in stack, Option.none() otherwise
+     * and returns business error message, if any
+     * @param e some exception, thrown by application, that may contain {@link MessageException} in cause stack
+     * @return {@link MessageException} found in cause stack wrapped into {@link ru.concerteza.util.option.Some},
+     * {@link ru.concerteza.util.option.None} otherwise
      */
     public static Option<MessageException> extractMessage(Exception e) {
-        if (e instanceof MessageException) return Option.some((MessageException) e);
-        int index = ExceptionUtils.indexOfType(e, MessageException.class);
+        if (MessageException.class.isAssignableFrom(e.getClass())) return Option.some((MessageException) e);
+        int index = indexOfType(e, MessageException.class);
         if (index > 0) {
             MessageException cause = (MessageException) getThrowableList(e).get(index);
             return Option.some(cause);

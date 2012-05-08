@@ -18,8 +18,11 @@ import static ru.concerteza.util.CtzFormatUtils.format;
 
 
 /**
- * User: alexey
+ * Utility class, that parses MANIFEST.MF from classpath to create {@link CtzVersion}
+ *
+ * @author alexey,
  * Date: 5/11/11
+ * @see CtzVersion
  */
 // todo check overhead for big projects
 public class CtzVersionUtils {
@@ -35,7 +38,11 @@ public class CtzVersionUtils {
     private static final String GIT_TAG = "X-Git-Tag";
     private static final String GIT_COMMITS_COUNT = "X-Git-Commits-Count";
 
-
+    /**
+     * Scans classpath searching for JAR with given {@code Implementation-Title} in MANIFEST.MF
+     * @param implementationTitle {@code Implementation-Title} field that target JAR file must have
+     * @return {@link CtzVersion}
+     */
     public static CtzVersion readVersionFromManifest(String implementationTitle) {
         Map<String, String> mf = loadManifest(implementationTitle);
         List<String> requiredFields = ImmutableList.of(
