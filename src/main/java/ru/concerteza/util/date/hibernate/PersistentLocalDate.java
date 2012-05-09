@@ -1,21 +1,5 @@
 package ru.concerteza.util.date.hibernate;
 
-/*
- *  Copyright 2001-2011 Stephen Colebourne
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.EnhancedUserType;
@@ -31,13 +15,19 @@ import java.util.Date;
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
 /**
- * User: alexey
+ * Persist org.joda.time.LocalDate via hibernate,
+ * date -> ld conversion changed
+ *
+ * @author Mario Ivankovits (mario@ops.co.at)
+ * @author Stephen Colebourne
+ * @author alexey,
  * Date: 11/1/11
  */
-// date -> ldt conversion changed
 public class PersistentLocalDate implements EnhancedUserType, Serializable {
 
     public static final PersistentLocalDate INSTANCE = new PersistentLocalDate();
+    // to be inlined
+    public static final String LOCAL_DATE_TYPE = "ru.concerteza.util.date.hibernate.PersistentLocalDate";
 
     private static final int[] SQL_TYPES = new int[] { Types.DATE, };
 
