@@ -12,6 +12,20 @@ public class Holder<T> {
     private T target;
 
     /**
+     * Default constructor
+     */
+    public Holder() {
+    }
+
+    /**
+     * Constructor with default value
+     * @param target default value
+     */
+    public Holder(T target) {
+        this.target = target;
+    }
+
+    /**
      * Value getter
      * @return holding value
      */

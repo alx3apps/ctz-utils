@@ -1,11 +1,10 @@
 package ru.concerteza.util;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.UnhandledException;
-import org.junit.Assert;
 import org.junit.Test;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
@@ -15,6 +14,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static ru.concerteza.util.CtzReflectionUtils.*;
+import static ru.concerteza.util.CtzReflectionUtils.assign;
 
 /**
  * User: alexey
@@ -47,6 +47,14 @@ public class CtzReflectionUtilsTest {
 
     @Test
     public void testAssign() throws NoSuchFieldException {
+        Foo foo = new Foo();
+        Field fi = foo.getClass().getDeclaredField("bar");
+        assign(foo, fi, "baz");
+        assertEquals("baz", foo.bar);
+    }
+
+    @Test
+    public void testAssignPrimitive() throws NoSuchFieldException {
         PrimitiveFields obj = new PrimitiveFields();
         Class<PrimitiveFields> clazz = PrimitiveFields.class;
         assignPrimitiveOrString(obj, clazz.getDeclaredField("stringField"), "foo");
@@ -88,7 +96,7 @@ public class CtzReflectionUtilsTest {
 
     @Test
     public void testColumnsFieldsMap() {
-        Map<String, Field> map = columnsFieldMap(Entity.class);
+        Map<String, Field> map = columnFieldMap(Entity.class);
         assertEquals("Size fail", 2, map.size());
         assertTrue("Unnamed fail", map.containsKey("foo"));
         assertEquals("Unnamed wrong field fail", "foo", map.get("foo").getName());
@@ -103,6 +111,15 @@ public class CtzReflectionUtilsTest {
         assertTrue(isAssignableBoxed(Integer.class, Integer.class));
         assertTrue(isAssignableBoxed(Byte.class, byte.class));
         assertFalse(isAssignableBoxed(String.class, Map.class));
+    }
+
+    @Test
+    public void testMapToObject() throws NoSuchFieldException {
+        Map<String, Field> columnMap = ImmutableMap.of("foo", Bar.class.getDeclaredField("foo"), "bar", Bar.class.getDeclaredField("bar"));
+        Bar bar = mapToObject(ImmutableMap.of("foo", "baz", "bar", 42L), Bar.class, columnMap);
+        assertNotNull("Create fail", bar);
+        assertEquals("Field fail", "baz", bar.foo);
+        assertEquals("Field fail", 42L, bar.bar);
     }
 
     class InnerOne{}
@@ -142,6 +159,15 @@ public class CtzReflectionUtilsTest {
         @Column(name = "dummy")
         private String bar;
         private String throwaway;
+    }
+
+    private class Foo {
+        private String bar;
+    }
+
+    private static class Bar {
+        private String foo;
+        private long bar;
     }
 }
 

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * User: alexey
  * Date: 6/9/11
@@ -28,5 +30,15 @@ public class CtzCollectionUtils {
 
     public static <T> int fireTransform(Iterable<T> iter) {
         return fireTransform(iter.iterator());
+    }
+
+    // set becomes map keys, values are products
+    // see http://docs.guava-libraries.googlecode.com/git-history/v12.0/javadoc/index.html
+    public static <K, V> ImmutableMap<K, V> keySetToMap(Set<K> keySet, Function<? super K, V> valueFunction) {
+        ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
+        for(K key : keySet) {
+            builder.put(key, valueFunction.apply(key));
+        }
+        return builder.build();
     }
 }

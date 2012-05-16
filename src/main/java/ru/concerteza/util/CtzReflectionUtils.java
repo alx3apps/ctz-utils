@@ -15,6 +15,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static ru.concerteza.util.CtzFormatUtils.format;
@@ -62,6 +63,15 @@ public class CtzReflectionUtils {
     public static boolean isInner(Class<?> clazz) {
         if(null == clazz.getEnclosingClass()) return false;
         return (clazz.getModifiers() & Modifier.STATIC) == 0;
+    }
+
+    public static void assign(Object obj, Field fi, Object value) {
+        try {
+            if (!fi.isAccessible()) fi.setAccessible(true);
+            fi.set(obj, value);
+        } catch (IllegalAccessException e) {
+            throw new UnhandledException(e);
+        }
     }
 
     public static void assignPrimitiveOrString(Object obj, Field field, String valueString) {
@@ -125,7 +135,7 @@ public class CtzReflectionUtils {
         }
     }
 
-    public static Map<String, Field> columnsFieldMap(Class<?> clazz) {
+    public static Map<String, Field> columnFieldMap(Class<?> clazz) {
         ImmutableMap.Builder<String, Field> builder = new ImmutableMap.Builder<String, Field>();
         for (Field fi : collectFields(clazz, ANNOTATED_COLUMN_PREDICATE)) {
             Column col = fi.getAnnotation(Column.class);
@@ -133,6 +143,17 @@ public class CtzReflectionUtils {
             builder.put(name.toLowerCase(), fi);
         }
         return builder.build();
+    }
+
+    public static <T> T mapToObject(Map<String, ?> dataMap, Class<T> clazz, Map<String, Field> fieldMap) {
+        T res = callDefaultConstructor(clazz);
+        for (Map.Entry<String, Field> en : fieldMap.entrySet()) {
+            Object val = dataMap.get(en.getKey());
+            checkArgument(null != val, "Cannot find input value for column: '%s', class: '%s', fieldMap keys: '%s', dataMap: '%s'", en.getKey(), clazz.getName(), fieldMap.keySet(), dataMap);
+            checkArgument(isAssignableBoxed(en.getValue().getType(), val.getClass()), "Cannot map column: '%s', source type: '%s', target type: '%s'", en.getKey(), val.getClass(), en.getValue().getType());
+            assign(res, en.getValue(), val);
+        }
+        return res;
     }
 
     private static class AnnotatedColumnPredicate implements Predicate<Field> {
