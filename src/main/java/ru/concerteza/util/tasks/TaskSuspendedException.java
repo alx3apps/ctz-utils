@@ -1,8 +1,12 @@
 package ru.concerteza.util.tasks;
 
 /**
- * User: alexey
+ * This exception
+ *
+ * @author alexey
  * Date: 5/20/12
+ * @see TaskEngine
+ * @see Task
  */
 public class TaskSuspendedException extends RuntimeException {
     private static final long serialVersionUID = 3388511296426912332L;

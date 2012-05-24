@@ -5,8 +5,11 @@ import com.google.common.base.Function;
 import java.util.Map;
 
 /**
- * User: alexey
+ * Interfaces for filters, that will be applied to row data before mapping
+ *
+ * @author alexey
  * Date: 5/16/12
+ * @see EntityMapper
  */
 public interface Filter extends Function<Map<String, Object>, Map<String, Object>> {
 }

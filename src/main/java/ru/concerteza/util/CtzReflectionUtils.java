@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.UnhandledException;
 
 import javax.annotation.Nullable;
@@ -154,6 +155,21 @@ public class CtzReflectionUtils {
             assign(res, en.getValue(), val);
         }
         return res;
+    }
+
+    public static Map<String, Object> objectToMap(Object obj, Map<String, Field> fieldMap) {
+        try {
+            Map<String, Object> map = Maps.newHashMap(); // allow nulls
+            for (Map.Entry<String, Field> en : fieldMap.entrySet()) {
+                Field fi = en.getValue();
+                if (!fi.isAccessible()) fi.setAccessible(true);
+                Object val = fi.get(obj);
+                map.put(en.getKey(), val);
+            }
+            return map;
+        } catch (IllegalAccessException e) {
+            throw new UnhandledException(e);
+        }
     }
 
     private static class AnnotatedColumnPredicate implements Predicate<Field> {

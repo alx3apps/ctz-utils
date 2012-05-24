@@ -134,7 +134,7 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
         }
 
         @Override
-        protected Enum decorate(String colname, Object value) {
+        protected Enum filter(String colname, Object value) {
             if("stage".equals(colname)) return Stage.valueOf((String) value);
             if("status".equals(colname)) return Status.valueOf((String) value);
             throw new IllegalStateException("Unexpected column: " + colname);

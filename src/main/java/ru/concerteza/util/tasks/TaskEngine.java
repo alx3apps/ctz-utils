@@ -13,10 +13,23 @@ import static java.util.Collections.newSetFromMap;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
- * User: alexey
+ * Engine for asynchronous multistage suspendable tasks.
+ * Processes task stages one by one using provided {@link java.util.concurrent.Executor},
+ * tasks stage will be updated between stages processing. Task status will be updated on error,
+ * suspend or after successful processing of last stage.
+ * Processors must use {@link TaskEngine#isSuspended(long)} method periodically
+ * and throw {@link TaskSuspendedException} on successful suspension check.
+ *
+ * @author alexey
  * Date: 5/17/12
+ * @see Task
+ * @see TaskManager
+ * @see TaskProcessorProvider
+ * @see TaskStageChain
+ * @see TaskStageProcessor
+ * @see TaskSuspendedException
  */
-public class TaskEngine {
+public class TaskEngine implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Executor executor;
@@ -27,15 +40,26 @@ public class TaskEngine {
     private final Object fireLock = new Object();
     private final Object suspensionLock = new Object();
 
+    /**
+     * Spring friendly constructor
+     */
     public TaskEngine() {
     }
 
+    /**
+     * @param executor executor will be used to process separate stages
+     * @param manager tasks DAO for all task state operations
+     * @param provider stage processors provider
+     */
     public TaskEngine(Executor executor, TaskManager<? extends Task> manager, TaskProcessorProvider provider) {
         this.executor = executor;
         this.manager = manager;
         this.provider = provider;
     }
 
+    /**
+     * Init method, must be called after task manager init
+     */
     public void postConstruct() {
         checkNotNull(executor, "'executor' must be non-null");
         checkNotNull(executor, "'dao must' be non-null");
@@ -49,6 +73,12 @@ public class TaskEngine {
         }
     }
 
+    /**
+     * Sends tasks provided by {@link ru.concerteza.util.tasks.TaskManager#markProcessingAndLoad()}
+     * to execution
+     *
+     * @return count of tasks sent for processing
+     */
     public int fire() {
         synchronized (fireLock) {
             Collection<? extends Task> tasksToFire = manager.markProcessingAndLoad();
@@ -70,30 +100,67 @@ public class TaskEngine {
         }
     }
 
-    public boolean suspend(long id) {
+    /**
+     * Spring scheduler friendly fire wrapper
+     */
+    @Override
+    public void run() {
+        fire();
+    }
+
+    /**
+     * Mark task as suspended
+     *
+     * @param taskId task id
+     * @return <code>true</code> if task wasn't already suspended
+     */
+    public boolean suspend(long taskId) {
         synchronized (suspensionLock) {
-            boolean res = suspended.add(id);
-            if(res) manager.updateStatusSuspended(id);
+            boolean res = suspended.add(taskId);
+            if(res) manager.updateStatusSuspended(taskId);
             return res;
         }
     }
 
-    public boolean isSuspended(long id) {
-        return suspended.remove(id);
+    /**
+     * Processors must use this method periodically and throw {@link TaskSuspendedException} on successful suspension check.
+     * Will return <code>true</code> only once for given suspended taskId
+     *
+     * @param taskId task id
+     * @return <code>true</code> if task was suspended and not successful check happened since that time
+     */
+    public boolean isSuspended(long taskId) {
+        return suspended.remove(taskId);
     }
 
-    // spring friendly setters
-
+    /**
+     * Spring3.1-friendly fluent setter
+     *
+     * @param executor executor will be used to process separate stages
+     * @return engine itself for chained init
+     */
     public TaskEngine setExecutor(Executor executor) {
         this.executor = executor;
         return this;
     }
 
+    /**
+     * Spring3.1-friendly fluent setter
+     *
+     * @param manager tasks DAO for all task state operations
+     * @return engine itself for chained init
+     */
     public TaskEngine setTaskManager(TaskManager<? extends Task> manager) {
         this.manager = manager;
         return this;
     }
 
+    /**
+     * Spring3.1-friendly fluent setter
+     *
+     * @param provider stage processors provider
+     * @return engine itself for chained init
+     */
     public TaskEngine setTaskProcessorProvider(TaskProcessorProvider provider) {
         this.provider = provider;
         return this;

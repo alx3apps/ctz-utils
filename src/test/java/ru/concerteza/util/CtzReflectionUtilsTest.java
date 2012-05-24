@@ -42,7 +42,7 @@ public class CtzReflectionUtilsTest {
         assertTrue(CtzReflectionUtils.isInner(InnerOne.class));
         assertTrue(CtzReflectionUtils.isInner(PrivateInnerOne.class));
         assertFalse(CtzReflectionUtils.isInner(NotInnerOne.class));
-        assertFalse(CtzReflectionUtils.isInner(ProvateNotInnerOne.class));
+        assertFalse(CtzReflectionUtils.isInner(PrivateNotInnerOne.class));
     }
 
     @Test
@@ -122,10 +122,21 @@ public class CtzReflectionUtilsTest {
         assertEquals("Field fail", 42L, bar.bar);
     }
 
+    @Test
+    public void testObjectToMap() throws NoSuchFieldException {
+        Bar bar = new Bar("baz", 42L);
+        Map<String, Field> columnMap = ImmutableMap.of("foo", Bar.class.getDeclaredField("foo"), "bar", Bar.class.getDeclaredField("bar"));
+        Map<String, Object> map = objectToMap(bar, columnMap);
+        assertNotNull("Create fail", map);
+        assertEquals("Size fail", 2, map.size());
+        assertEquals("Field fail", "baz", map.get("foo"));
+        assertEquals("Field fail", 42L, map.get("bar"));
+    }
+
     class InnerOne{}
     private class PrivateInnerOne{}
     static class NotInnerOne{}
-    private static class ProvateNotInnerOne{}
+    private static class PrivateNotInnerOne {}
 
     private class PrimitiveFields {
         private String stringField;
@@ -168,6 +179,14 @@ public class CtzReflectionUtilsTest {
     private static class Bar {
         private String foo;
         private long bar;
+
+        private Bar() {
+        }
+
+        private Bar(String foo, long bar) {
+            this.foo = foo;
+            this.bar = bar;
+        }
     }
 }
 

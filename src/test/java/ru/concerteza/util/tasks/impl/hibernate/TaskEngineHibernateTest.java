@@ -39,7 +39,8 @@ import static org.junit.Assert.assertTrue;
  * Date: 5/23/12
  */
 
-// long multithreaded test
+// long multithreaded test, may fail like 'Finish all fail expected:<45> but was:<42>'
+// because of race conditions in test checks
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TaskEngineHibernateTest.Config.class)
 public class TaskEngineHibernateTest {
@@ -62,7 +63,7 @@ public class TaskEngineHibernateTest {
         // suspend
         List<Long> forSuspend = Lists.newArrayList();
         for (int i = 0; i < 3; i++) {
-            long id = taskManager.add(new TaskImpl(200));
+            long id = taskManager.add(new TaskImpl(500));
             forSuspend.add(id);
         }
         taskEngine.fire();
@@ -71,12 +72,13 @@ public class TaskEngineHibernateTest {
             boolean res = taskEngine.suspend(id);
             assertTrue("Suspend fail", res);
         }
+        Thread.sleep(100); // wait for tasks to marked suspended
         int suspended = jt.queryForInt("select count(id) from tasks where status='SUSPENDED'");
         assertEquals("Suspend fail", 3, suspended);
         // resume
         for (long id : forSuspend) taskManager.resume(id);
         taskEngine.fire();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         int finishedAll = jt.queryForInt("select count(id) from tasks where stage='FINISHED'");
         assertEquals("Finish all fail", 45, finishedAll);
     }
@@ -98,7 +100,7 @@ public class TaskEngineHibernateTest {
         public DataSource dataSource() {
             BasicDataSource ds = new BasicDataSource();
             ds.setDriverClassName("org.h2.Driver");
-            ds.setUrl("jdbc:h2:mem:bar;MVCC=TRUE");
+            ds.setUrl("jdbc:h2:mem:bar");
             return ds;
         }
 
