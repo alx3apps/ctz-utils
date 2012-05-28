@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.UnhandledException;
+import ru.concerteza.util.option.Option;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -149,9 +150,14 @@ public class CtzReflectionUtils {
     public static <T> T mapToObject(Map<String, ?> dataMap, Class<T> clazz, Map<String, Field> fieldMap) {
         T res = callDefaultConstructor(clazz);
         for (Map.Entry<String, Field> en : fieldMap.entrySet()) {
-            Object val = dataMap.get(en.getKey());
-            checkArgument(null != val, "Cannot find input value for column: '%s', class: '%s', fieldMap keys: '%s', dataMap: '%s'", en.getKey(), clazz.getName(), fieldMap.keySet(), dataMap);
-            checkArgument(isAssignableBoxed(en.getValue().getType(), val.getClass()), "Cannot map column: '%s', source type: '%s', target type: '%s'", en.getKey(), val.getClass(), en.getValue().getType());
+            final Object colVal = dataMap.get(en.getKey());
+            checkArgument(null != colVal, "Cannot find input value for column: '%s', class: '%s', fieldMap keys: '%s', dataMap: '%s'", en.getKey(), clazz.getName(), fieldMap.keySet(), dataMap);
+            final Object val;
+            if(Option.class.isAssignableFrom(colVal.getClass())) {
+                Option<?> opt = (Option<?>) colVal;
+                val = opt.getIfAny(null);
+            } else val = colVal;
+            if(null != val) checkArgument(isAssignableBoxed(en.getValue().getType(), val.getClass()), "Cannot map column: '%s', source type: '%s', target type: '%s'", en.getKey(), val.getClass(), en.getValue().getType());
             assign(res, en.getValue(), val);
         }
         return res;

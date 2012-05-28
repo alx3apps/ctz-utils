@@ -57,7 +57,7 @@ public class TaskEngineHibernateTest {
         // finish
         for (int i = 0; i < 42; i++) taskManager.add(new TaskImpl(0));
         taskEngine.fire();
-        Thread.sleep(500);
+        Thread.sleep(600);
         int finished = jt.queryForInt("select count(id) from tasks where stage='FINISHED'");
         assertEquals("Finish fail", 42, finished);
         // suspend

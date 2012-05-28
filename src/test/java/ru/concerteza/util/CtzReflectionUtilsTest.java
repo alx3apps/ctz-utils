@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.UnhandledException;
 import org.junit.Test;
+import ru.concerteza.util.option.Option;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -116,10 +117,18 @@ public class CtzReflectionUtilsTest {
     @Test
     public void testMapToObject() throws NoSuchFieldException {
         Map<String, Field> columnMap = ImmutableMap.of("foo", Bar.class.getDeclaredField("foo"), "bar", Bar.class.getDeclaredField("bar"));
-        Bar bar = mapToObject(ImmutableMap.of("foo", "baz", "bar", 42L), Bar.class, columnMap);
-        assertNotNull("Create fail", bar);
-        assertEquals("Field fail", "baz", bar.foo);
-        assertEquals("Field fail", 42L, bar.bar);
+        {
+            Bar bar = mapToObject(ImmutableMap.of("foo", "baz", "bar", 42L), Bar.class, columnMap);
+            assertNotNull("Create fail", bar);
+            assertEquals("Field fail", "baz", bar.foo);
+            assertEquals("Field fail", 42L, bar.bar);
+        }
+        { // option case
+            Bar barWithNull = mapToObject(ImmutableMap.of("foo", Option.none(), "bar", 42L), Bar.class, columnMap);
+            assertNotNull("Create fail", barWithNull);
+            assertEquals("Field fail", null, barWithNull.foo);
+            assertEquals("Field fail", 42L, barWithNull.bar);
+        }
     }
 
     @Test
