@@ -30,7 +30,7 @@ public interface TaskManager<T extends Task> {
     Collection<Long> loadSuspendedIds();
 
     /**
-     * Changes task stage
+     * Changes task stage, will be called between stages processing
      *
      * @param taskId task id
      * @param stage new stage
@@ -38,13 +38,25 @@ public interface TaskManager<T extends Task> {
     void updateStage(long taskId, String stage);
 
     /**
+     * Changes task status to default, will be called after successful processing of last stage
      *
-     *
-     * @param taskId
+     * @param taskId task id
      */
     void updateStatusDefault(long taskId);
 
+    /**
+     * Changes task status to default, will be called after on task suspend
+     *
+     * @param taskId task id
+     */
     void updateStatusSuspended(long taskId);
 
+    /**
+     * Changes task status into "error" and task stage into last completed stage
+     *
+     * @param taskId task id
+     * @param e exception
+     * @param lastCompletedStage name of last completed stage
+     */
     void updateStatusError(long taskId, Exception e, String lastCompletedStage);
 }

@@ -1,7 +1,7 @@
 package ru.concerteza.util.tasks;
 
 /**
- * This exception
+ * This exception should be thrown by client's processor code on successful suspension check
  *
  * @author alexey
  * Date: 5/20/12
