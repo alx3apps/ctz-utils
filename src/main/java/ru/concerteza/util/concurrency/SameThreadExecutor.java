@@ -106,6 +106,7 @@ public class SameThreadExecutor implements ExecutorService {
     private class SameThreadFuture<T> implements Future<T> {
         private final T value;
         private final Exception exception;
+        private boolean cancelled;
 
         private SameThreadFuture(Exception exception) {
             this.value = null;
@@ -119,12 +120,13 @@ public class SameThreadExecutor implements ExecutorService {
 
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
-            throw new UnsupportedOperationException();
+            cancelled = true;
+            return false;
         }
 
         @Override
         public boolean isCancelled() {
-            return false;
+            return cancelled;
         }
 
         @Override

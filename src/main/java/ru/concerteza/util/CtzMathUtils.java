@@ -20,6 +20,14 @@ public class CtzMathUtils {
         return null == input ? defaultValue : input.intValueExact();
     }
 
+    public static int defaultInt(long input) {
+        return defaultInt(input, DEFAULT_INT);
+    }
+
+    public static int defaultInt(long input, int defaultValue) {
+        return input >= Integer.MIN_VALUE && input <= Integer.MAX_VALUE ? (int) input : defaultValue;
+    }
+
     public static BigDecimal defaultBigDecimal(@Nullable BigDecimal input) {
         return defaultBigDecimal(input, DEFAULT_BIG_DECIMAL);
     }

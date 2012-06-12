@@ -12,6 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.io.FileUtils.openOutputStream;
+import static ru.concerteza.util.CtzMathUtils.defaultInt;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
 import static ru.concerteza.util.io.CtzIOUtils.listFiles;
 
@@ -43,7 +44,7 @@ public class CtzZipUtils {
             ZipFunction fun = new ZipFunction(dir, zipStream);
             Collection<File> children = listFiles(dir, true);
             Collection<String> zipped = Collections2.transform(children, fun);
-            return fireTransform(zipped);
+            return defaultInt(fireTransform(zipped));
         } catch (IOException e) {
             throw new RuntimeIOException(e);
         } finally {

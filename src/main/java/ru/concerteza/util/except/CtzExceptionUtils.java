@@ -1,5 +1,6 @@
 package ru.concerteza.util.except;
 
+import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.option.Option;
 
 import static org.apache.commons.lang.exception.ExceptionUtils.getThrowableList;
@@ -19,6 +20,7 @@ public class CtzExceptionUtils {
     /**
      * Looks for {@link MessageException} in nested exceptions stack
      * and returns business error message, if any
+     *
      * @param e some exception, thrown by application, that may contain {@link MessageException} in cause stack
      * @return {@link MessageException} found in cause stack wrapped into {@link ru.concerteza.util.option.Some},
      * {@link ru.concerteza.util.option.None} otherwise
@@ -31,5 +33,13 @@ public class CtzExceptionUtils {
             return Option.some(cause);
         }
         return Option.none();
+    }
+
+    /**
+     * @param e throwable to wrap
+     * @return input throwable, wrapped into runtime exception if necessary
+     */
+    public static RuntimeException runtimeException(Throwable e) {
+        return e instanceof RuntimeException ? (RuntimeException) e : new UnhandledException(e);
     }
 }

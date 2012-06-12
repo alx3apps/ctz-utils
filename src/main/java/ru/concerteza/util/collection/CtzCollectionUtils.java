@@ -19,7 +19,7 @@ public class CtzCollectionUtils {
     public static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     // fire transform chain for iters with nullable elements
-    public static <T> int fireTransform(Iterator<T> iter) {
+    public static <T> long fireTransform(Iterator<T> iter) {
         int counter = 0;
         while (iter.hasNext()) {
             iter.next();
@@ -28,12 +28,12 @@ public class CtzCollectionUtils {
         return counter;
     }
 
-    public static <T> int fireTransform(Iterable<T> iter) {
+    public static <T> long fireTransform(Iterable<T> iter) {
         return fireTransform(iter.iterator());
     }
 
     // set becomes map keys, values are products
-    // see http://docs.guava-libraries.googlecode.com/git-history/v12.0/javadoc/index.html
+    // todo: fixlink: see http://docs.guava-libraries.googlecode.com/git-history/v12.0/javadoc/index.html
     public static <K, V> ImmutableMap<K, V> keySetToMap(Set<K> keySet, Function<? super K, V> valueFunction) {
         ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
         for(K key : keySet) {

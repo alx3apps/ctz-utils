@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import static org.apache.commons.compress.archivers.tar.TarArchiveOutputStream.LONGFILE_GNU;
 import static org.apache.commons.io.FileUtils.openOutputStream;
 import static org.apache.commons.io.filefilter.TrueFileFilter.TRUE;
+import static ru.concerteza.util.CtzMathUtils.defaultInt;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
 import static ru.concerteza.util.io.CtzIOUtils.iterateFiles;
 
@@ -44,7 +45,7 @@ public class CtzTarUtils {
             TarFunction fun = new TarFunction(dir, tarStream);
             Iterable<File> children = iterateFiles(dir, TRUE, TRUE, true);
             Iterable<String> zipped = Iterables.transform(children, fun);
-            return fireTransform(zipped);
+            return defaultInt(fireTransform(zipped));
         } catch (IOException e) {
             throw new RuntimeIOException(e);
         } finally {

@@ -1,13 +1,9 @@
 package ru.concerteza.util.db.springjdbc;
 
-import com.google.common.collect.ImmutableMap;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import ru.concerteza.util.collection.IgnoreNullImmutableMapBuilder;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * User: alexey
@@ -20,7 +16,7 @@ public class RowMapperFunction<T> extends AbstractResultSetMapper<T> {
         this.mapper = mapper;
     }
 
-    public RowMapperFunction<T> wrap(RowMapper<T> mapper) {
+    public static <T> RowMapperFunction<T> of(RowMapper<T> mapper) {
         return new RowMapperFunction<T>(mapper);
     }
 

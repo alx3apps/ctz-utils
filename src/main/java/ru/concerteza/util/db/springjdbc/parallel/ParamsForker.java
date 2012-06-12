@@ -8,5 +8,5 @@ import java.util.Map;
  * Date: 6/8/12
  */
 public interface ParamsForker {
-    List<Map<String, Object>> fork(Map<String, Object> params);
+    List<Map<String, ?>> fork(Map<String, ?> params);
 }
