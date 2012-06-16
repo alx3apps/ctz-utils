@@ -3,9 +3,6 @@ package ru.concerteza.util.collection.accessor;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Round robin collection accessor. Copies provided collection into inner immutable one on creation. Thread-safe.
  * See usage example in {@link RoundRobinAccessorTest}
@@ -21,7 +18,7 @@ public class RoundRobinAccessor<T> extends AbstractAccessor<T> {
         return new RoundRobinAccessor<T>(target);
     }
 
-    private RoundRobinAccessor(Collection<T> target) {
+    protected RoundRobinAccessor(Collection<T> target) {
         super(target);
     }
 

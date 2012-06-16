@@ -7,6 +7,6 @@ import java.util.Map;
  * User: alexey
  * Date: 6/8/12
  */
-public interface ParamsForker {
+public interface ParallelQueryForker {
     List<Map<String, ?>> fork(Map<String, ?> params);
 }

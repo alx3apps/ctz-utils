@@ -9,8 +9,8 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * User: alexey
  * Date: 6/12/12
  */
-class DataSourceQueryException extends DataAccessException {
-    public DataSourceQueryException(Throwable cause) {
+class ParallelQueryException extends DataAccessException {
+    public ParallelQueryException(Throwable cause) {
         super(format("Thread: '{}', message: {}", currentThread().getName(), cause.getMessage()), cause);
     }
 }

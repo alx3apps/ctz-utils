@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.UnhandledException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -33,7 +34,8 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * @author  alexey
  * Date: 6/8/12
- * @see ParamsForker
+ * @see ParallelQueryForker
+ * @see ParallelQueryListener
  * @see Accessor
  * @see ParallelQueryIteratorTest
  */
@@ -42,14 +44,15 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
     private final Object endOfDataObject = new Object();
     private final FirstValueHolder<RuntimeException> exceptionHolder = new FirstValueHolder<RuntimeException>();
 
-    private final Accessor<DataSource> sources;
+    private final Accessor<? extends DataSource> sources;
     private final String sql;
     private final RowMapper<T> mapper;
-    private final ParamsForker forker;
+    private final ParallelQueryForker forker;
     private final ExecutorService executor;
     // made non-generic to allow endOfDataObject
     private final ArrayBlockingQueue<Object> dataQueue;
     private final Extractor extractor = new Extractor();
+    private final List<ParallelQueryListener> listeners = Lists.newArrayList();
 
     private List<Map<String, ?>> paramsList;
 
@@ -65,7 +68,7 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
      * @param executor executor service to run parallel queries into
      * @param bufferSize size of ArrayBlockingQueue data bufer
      */
-    public ParallelQueryIterator(Accessor<DataSource> sources, String sql, RowMapper<T> mapper, ParamsForker forker, ExecutorService executor, int bufferSize) {
+    public ParallelQueryIterator(Accessor<? extends DataSource> sources, String sql, RowMapper<T> mapper, ParallelQueryForker forker, ExecutorService executor, int bufferSize) {
         this.sources = sources;
         this.sql = sql;
         this.mapper = mapper;
@@ -77,7 +80,7 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
     /**
      * Starts parallel query execution in data sources. May be called multiple times to reuse iterator instance,
      *
-     * @param params query params, will be dived using provided {@link ParamsForker}
+     * @param params query params, will be dived using provided {@link ParallelQueryForker}
      * @return iterator itself
      */
     public ParallelQueryIterator<T> start(Map<String, ?> params) {
@@ -92,7 +95,7 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
 
     /**
      * @return next already read record or block awaiting it
-     * @throws DataSourceQueryException on exception in any data source
+     * @throws ParallelQueryException on exception in any data source
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -124,6 +127,15 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
         return res;
     }
 
+    /**
+     * @param listener data source query events will be reported to this listener
+     * @return iterator itself
+     */
+    public ParallelQueryIterator<T> addListener(ParallelQueryListener listener) {
+        this.listeners.add(listener);
+        return this;
+    }
+
     private void putData(Object data) {
         try {
             dataQueue.put(data);
@@ -141,10 +153,12 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
     }
 
     private class Worker implements Runnable {
+        private final DataSource ds;
         private final NamedParameterJdbcTemplate jt;
         private final Map<String, ?> params;
 
         private Worker(DataSource ds, Map<String, ?> params) {
+            this.ds = ds;
             this.jt = new NamedParameterJdbcTemplate(ds);
             this.params = params;
         }
@@ -153,9 +167,11 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
         public void run() {
             try {
                 jt.query(sql, params, extractor);
+                for(ParallelQueryListener li : listeners) li.success(ds, sql, params);
             } catch (Throwable e) { // we do not believe to JDBC drivers' error reporting
-                exceptionHolder.set(new DataSourceQueryException(e));
+                exceptionHolder.set(new ParallelQueryException(e));
                 putData(exceptionHolder);
+                for(ParallelQueryListener li : listeners) li.error(ds, sql, params, e);
             }
         }
     }
@@ -171,7 +187,7 @@ public class ParallelQueryIterator<T> extends AbstractIterator<T> {
                 }
                 dataQueue.put(endOfDataObject);
             } catch(Throwable e) { // we do not believe to JDBC drivers' error reporting
-                exceptionHolder.set(new DataSourceQueryException(e));
+                exceptionHolder.set(new ParallelQueryException(e));
                 putData(exceptionHolder);
             }
             return null;

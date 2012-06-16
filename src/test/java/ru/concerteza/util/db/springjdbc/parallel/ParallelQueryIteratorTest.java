@@ -135,7 +135,7 @@ public class ParallelQueryIteratorTest {
         }
     }
 
-    private class Forker implements ParamsForker {
+    private class Forker implements ParallelQueryForker {
         private final int forksCount;
 
         private Forker(int forksCount) {
