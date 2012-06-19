@@ -31,7 +31,7 @@ public class EntityMapperTest {
     static {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:mem:foo");
+        ds.setUrl("jdbc:h2:mem:EntityMapperTest1");
         jt = new JdbcTemplate(ds);
     }
 
@@ -89,7 +89,7 @@ public class EntityMapperTest {
     private DataSource createH2DS() {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:mem:foo");
+        ds.setUrl("jdbc:h2:mem:EntityMapperTest2");
         return ds;
     }
 

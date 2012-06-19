@@ -15,14 +15,14 @@ public class SingleUseIterableTest {
 
     @Test(expected = IllegalStateException.class)
     public void testSingle() {
-        Iterable<String> iter = SingleUseIterable.wrap(ImmutableList.of("foo", "bar", "baz").iterator());
+        Iterable<String> iter = SingleUseIterable.of(ImmutableList.of("foo", "bar", "baz").iterator());
         iter.iterator();
         iter.iterator();
     }
 
     @Test
     public void testForEach() {
-        Iterable<String> iter = SingleUseIterable.wrap(ImmutableList.of("foo", "bar", "baz").iterator());
+        Iterable<String> iter = SingleUseIterable.of(ImmutableList.of("foo", "bar", "baz").iterator());
         List<String> list = Lists.newArrayList();
         for(String str : iter) {
             list.add(str);

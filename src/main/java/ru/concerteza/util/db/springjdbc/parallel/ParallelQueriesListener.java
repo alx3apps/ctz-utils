@@ -4,15 +4,15 @@ import javax.sql.DataSource;
 import java.util.Map;
 
 /**
- * Implementors must be registered on iterator using {@link ParallelQueryIterator#addListener(ParallelQueryListener)}
+ * Implementors must be registered on iterator using {@link ParallelQueriesIterator#addListener(ParallelQueriesListener)}
  * method. They will be called on every successful and every errored query from different worker threads.
  * Must be thread-safe.
  *
  * @author  alexey
  * Date: 6/16/12
- * @see ParallelQueryIterator
+ * @see ParallelQueriesIterator
  */
-public interface ParallelQueryListener {
+public interface ParallelQueriesListener {
     /**
      * @param ds data source
      * @param sql SQL query

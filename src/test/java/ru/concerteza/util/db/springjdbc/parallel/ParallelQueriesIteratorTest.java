@@ -35,13 +35,13 @@ import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
  * User: alexey
  * Date: 6/12/12
  */
-public class ParallelQueryIteratorTest {
+public class ParallelQueriesIteratorTest {
 
     @Test
     public void test() {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:mem:foo");
+        ds.setUrl("jdbc:h2:mem:ParallelQueriesIteratorTest");
         JdbcTemplate jt = new JdbcTemplate(ds);
         jt.execute("create table foo(bar varchar(42))");
         jt.update("insert into foo(bar) values('41')");
@@ -49,8 +49,8 @@ public class ParallelQueryIteratorTest {
         jt.update("insert into foo(bar) values('43')");
         Accessor<DataSource> robin = RoundRobinAccessor.of(ImmutableList.<DataSource>of(ds));
         // single thread used, buffer must me bigger than data
-        ParallelQueryIterator<String> iter = new ParallelQueryIterator<String>(robin, "select bar from foo",
-                new SimpleMapper(), new Forker(1), new SameThreadExecutor(), 10);
+        ParallelQueriesIterator<String> iter = new ParallelQueriesIterator<String>(robin, "select bar from foo",
+                new Forker(1), new SameThreadExecutor(), new SimpleMapper(), 10);
         iter.start(ImmutableMap.<String, Object>of());
         assertEquals("41", iter.next());
         assertEquals("42", iter.next());
@@ -82,8 +82,8 @@ public class ParallelQueryIteratorTest {
             for(int i = 0; i < count; i++) builder.add(createDS());
             Accessor<DataSource> robin = RoundRobinAccessor.of(builder.build());
             long start = System.currentTimeMillis();
-            ParallelQueryIterator<String> iter = new ParallelQueryIterator<String>(robin, "select bar from foo",
-                    new SlowpokeMapper(), new Forker(count), Executors.newCachedThreadPool(), 100)
+            ParallelQueriesIterator<String> iter = new ParallelQueriesIterator<String>(robin, "select bar from foo",
+                    new Forker(count), Executors.newCachedThreadPool(), new SlowpokeMapper(), 100)
                     .start(ImmutableMap.<String, Object>of());
             long res = CtzCollectionUtils.fireTransform(iter);
 //          2100
@@ -135,7 +135,7 @@ public class ParallelQueryIteratorTest {
         }
     }
 
-    private class Forker implements ParallelQueryForker {
+    private class Forker implements ParallelQueriesForker {
         private final int forksCount;
 
         private Forker(int forksCount) {

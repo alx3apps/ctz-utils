@@ -2,7 +2,6 @@ package ru.concerteza.util.collection;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
-import ru.concerteza.util.collection.KnownPositionCollection;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class KnownPositionCollectionTest {
     @Test
     public void test() {
         List<String> list = ImmutableList.of("foo", "bar", "baz");
-        KnownPositionCollection<String> col = KnownPositionCollection.wrap(list);
+        KnownPositionCollection<String> col = KnownPositionCollection.of(list);
         int count = 0;
         for (String val : col) {
             assertEquals("Position fail", count, col.position());

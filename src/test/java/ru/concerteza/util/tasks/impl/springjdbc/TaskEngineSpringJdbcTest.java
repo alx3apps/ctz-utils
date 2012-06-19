@@ -68,7 +68,7 @@ public class TaskEngineSpringJdbcTest {
         public DataSource dataSource() {
             BasicDataSource ds = new BasicDataSource();
             ds.setDriverClassName("org.h2.Driver");
-            ds.setUrl("jdbc:h2:mem:foo");
+            ds.setUrl("jdbc:h2:mem:TaskEngineSpringJdbcTest");
             return ds;
         }
 

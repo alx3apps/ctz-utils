@@ -7,13 +7,19 @@ import javax.annotation.Nullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * User: alexey
+ * Guava function, transforms provided String to lower case
+ *
+ * @author alexey
  * Date: 2/9/12
  */
-public class UpperStringMapper implements Function<String, String> {
+public class LowerStringFunction implements Function<String, String> {
+    /**
+     * @param input string
+     * @return <code>input.toLowerCase()</code>
+     */
     @Override
     public String apply(@Nullable String input) {
         checkNotNull(input);
-        return input.toUpperCase();
+        return input.toLowerCase();
     }
 }

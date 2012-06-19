@@ -17,6 +17,12 @@ public class UnboundedQueueRejectionHandler implements RejectedExecutionHandler 
     private final Executor queueExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>(), new ExecutorThreadFactory("pool-rh"));
 
+    /**
+     * Puts rejected runnables into unlimited queue to allow growth of main executor
+     *
+     * @param r runnable rejected by main pool
+     * @param executor main pool
+     */
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
         queueExecutor.execute(new QueueRunnable(r, executor));

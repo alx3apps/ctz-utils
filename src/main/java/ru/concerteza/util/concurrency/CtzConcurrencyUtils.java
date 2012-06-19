@@ -5,10 +5,19 @@ import org.apache.commons.lang.UnhandledException;
 import java.util.concurrent.Callable;
 
 /**
- * User: alexey
+ * Concurrency utils
+ *
+ * @author alexey
  * Date: 5/5/12
  */
 public class CtzConcurrencyUtils {
+    /**
+     * Wraps {@link Callable} into {@link Runnable}, call result will be ignored,
+     * exception will be rethrows as runtime exception
+     *
+     * @param callable callable to wrap
+     * @return runnable
+     */
     public static Runnable runnable(Callable<?> callable) {
         return new CallableWrapper(callable);
     }

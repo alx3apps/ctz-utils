@@ -14,19 +14,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RoundRobinAccessor<T> extends AbstractAccessor<T> {
     private AtomicInteger index = new AtomicInteger(0);
 
+    /**
+     * @param target collection to wrap
+     * @param <T> target collection generic parameter
+     * @return {@link RoundRobinAccessor} over provided collection
+     */
     public static <T> RoundRobinAccessor<T> of(Collection<T> target) {
         return new RoundRobinAccessor<T>(target);
     }
 
+    /**
+     * Protected constructors
+     *
+     * @param target collection to wrap
+     */
     protected RoundRobinAccessor(Collection<T> target) {
         super(target);
     }
 
+    /**
+     * @return next collection element
+     */
     public T get() {
         return target.get(incrementAndGet());
     }
 
-    // atomically increment index using target list size modulus
+    /**
+     * Atomically increments index using target list size modulus
+     * @return incremented index
+     */
     private int incrementAndGet() {
         for (;;) {
             int current = index.get();

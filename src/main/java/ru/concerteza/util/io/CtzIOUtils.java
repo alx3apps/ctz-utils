@@ -173,13 +173,10 @@ public class CtzIOUtils {
     }
 
     private static class DeleteDirsOnExitList extends CallableList<File> {
-        private final Object lock = new Object();
 
         public DeleteDirsOnExitList add(File file) {
-            synchronized(lock) {
-                super.add(new DeleteDirCallable(file));
-                return this;
-            }
+            super.add(new DeleteDirCallable(file));
+            return this;
         }
 
         private class DeleteDirCallable implements Callable<File> {

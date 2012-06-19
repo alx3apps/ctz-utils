@@ -1,9 +1,10 @@
-package ru.concerteza.util.collection;
+package ru.concerteza.util.collection.limited;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
+import ru.concerteza.util.collection.limited.LimitedCatchErrorIterator;
 
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +21,7 @@ public class LimitedCatchErrorIteratorTest {
     @Test
     public void test() {
         Iterator<String> throwingIter = new ThreeIter();
-        Iterator<String> limited = LimitedCatchErrorIterator.wrap(throwingIter, ThreeError.class);
+        Iterator<String> limited = LimitedCatchErrorIterator.of(throwingIter, ThreeError.class);
         List<String> list = ImmutableList.copyOf(limited);
         assertEquals("Size fail", 3, list.size());
     }

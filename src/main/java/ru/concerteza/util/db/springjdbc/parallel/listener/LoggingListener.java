@@ -2,7 +2,7 @@ package ru.concerteza.util.db.springjdbc.parallel.listener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.concerteza.util.db.springjdbc.parallel.ParallelQueryListener;
+import ru.concerteza.util.db.springjdbc.parallel.ParallelQueriesListener;
 
 import javax.sql.DataSource;
 import java.util.Map;
@@ -14,10 +14,10 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  *
  * @author alexey
  * Date: 6/16/12
- * @see ru.concerteza.util.db.springjdbc.parallel.ParallelQueryListener
- * @see ru.concerteza.util.db.springjdbc.parallel.ParallelQueryIterator
+ * @see ru.concerteza.util.db.springjdbc.parallel.ParallelQueriesListener
+ * @see ru.concerteza.util.db.springjdbc.parallel.ParallelQueriesIterator
  */
-public class LoggingListener implements ParallelQueryListener {
+public class LoggingListener implements ParallelQueriesListener {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**

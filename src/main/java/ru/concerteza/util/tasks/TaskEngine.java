@@ -196,6 +196,7 @@ public class TaskEngine implements Runnable {
             while (chain.hasNext(stage)) {
                 if (isSuspended(task.getId())) {
                     logger.info("Task, id: '{}' was suspended, terminating execution", task.getId());
+                    markDefaultOnExit = false;
                     break;
                 }
                 stage = chain.next(stage);

@@ -10,5 +10,8 @@ import java.util.Collection;
  * @see RoundRobinAccessor
  */
 public interface Accessor<T> extends Collection<T> {
+    /**
+     * @return collection element, implementation must choose element to return
+     */
     T get();
 }
