@@ -191,7 +191,7 @@ public class TaskEngine implements Runnable {
         @SuppressWarnings("unchecked")
         private void runStages() {
             final TaskStageChain chain = task.stageChain();
-            TaskStageChain.Stage stage = chain.forName(task.getStage());
+            TaskStageChain.Stage stage = chain.forName(task.getStageName());
             boolean markDefaultOnExit = true;
             while (chain.hasNext(stage)) {
                 if (isSuspended(task.getId())) {
@@ -205,7 +205,9 @@ public class TaskEngine implements Runnable {
                 checkNotNull(provider, "Null processor returned for id: '%s'", stage.getProcessorId());
                 dao.updateStage(task.getId(), stage.getIntermediate());
                 try {
+                    for(TaskStageListener li : processor.beforeListeners()) li.fire(task.getId());
                     processor.process(task.getId());
+                    for(TaskStageListener li : processor.afterListeners()) li.fire(task.getId());
                     logger.debug("Stage: '{}' completed for task, id: '{}'", stage.getCompleted(), task.getId());
                     dao.updateStage(task.getId(), stage.getCompleted());
                 } catch (TaskSuspendedException e) {

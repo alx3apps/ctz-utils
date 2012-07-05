@@ -43,9 +43,9 @@ public class TaskImpl implements Task {
     }
 
     public static TaskStageChain chain() {
-        return TaskStageChain.builder(CREATED.name())
-                .add(RUNNING.name(), DATA_LOADED.name(), DataStageProcessor.class.getSimpleName())
-                .add(REPORTS.name(), FINISHED.name(), ReportStageProcessor.class.getSimpleName())
+        return TaskStageChain.builder(CREATED)
+                .add(RUNNING, DATA_LOADED, DataStageProcessor.class.getSimpleName())
+                .add(REPORTS, FINISHED, ReportStageProcessor.class.getSimpleName())
                 .build();
     }
 
@@ -60,7 +60,7 @@ public class TaskImpl implements Task {
     }
 
     @Override
-    public String getStage() {
+    public String getStageName() {
         return stage.name();
     }
 

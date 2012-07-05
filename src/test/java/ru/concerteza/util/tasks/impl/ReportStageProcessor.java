@@ -2,6 +2,7 @@ package ru.concerteza.util.tasks.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.concerteza.util.tasks.TaskStageProcessorSupertype;
 import ru.concerteza.util.tasks.TaskStageProcessor;
 import ru.concerteza.util.tasks.TaskSuspendedException;
 
@@ -17,7 +18,7 @@ public interface ReportStageProcessor extends TaskStageProcessor {
 }
 
 @Service("ReportStageProcessor")
-class ReportStageProcessorImpl implements ReportStageProcessor {
+class ReportStageProcessorImpl extends TaskStageProcessorSupertype {
     @Inject
     private TaskManagerIface taskManager;
     @Inject

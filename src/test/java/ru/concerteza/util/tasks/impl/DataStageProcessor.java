@@ -1,6 +1,7 @@
 package ru.concerteza.util.tasks.impl;
 
 import org.springframework.stereotype.Service;
+import ru.concerteza.util.tasks.TaskStageProcessorSupertype;
 import ru.concerteza.util.tasks.TaskStageProcessor;
 import ru.concerteza.util.tasks.TaskSuspendedException;
 
@@ -16,11 +17,12 @@ public interface DataStageProcessor extends TaskStageProcessor {
 }
 
 @Service("DataStageProcessor")
-class DataStageProcessorImpl implements DataStageProcessor {
+class DataStageProcessorImpl extends TaskStageProcessorSupertype {
     @Inject
     private TaskManagerIface taskManager;
     @Inject
     private SuspensionChecker checker;
+
 
     @Override
     public void process(long taskId) throws Exception {

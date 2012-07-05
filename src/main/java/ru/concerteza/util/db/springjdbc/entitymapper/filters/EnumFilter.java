@@ -3,7 +3,7 @@ package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 import java.util.Collection;
 
 /**
- * {@link ru.concerteza.util.db.springjdbc.entitymapper.Filter} implementation to convert {@link String} columns to
+ * {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter} implementation to convert {@link String} columns to
  * value of <code>enum</code> type provided to constructor.
  *
  * @author Timofey Gorshkov
@@ -35,6 +35,18 @@ public class EnumFilter<E extends Enum<E>> extends ColumnListFilter<E> {
     }
 
     /**
+     * Simplified, generic friendly creation method
+     *
+     * @param en <code>enum</code> type, to which columns should be converted
+     * @param column column to apply this filter to
+     * @param <E> enum type, will be inferred
+     * @return enum filter instance
+     */
+    public static <E extends Enum<E>> EnumFilter<E> of(Class<E> en, String column) {
+        return new EnumFilter<E>(en, column);
+    }
+
+    /**
      * Method will be called only for columns, provided to constructor
      *
      * @param colname column name
@@ -42,7 +54,7 @@ public class EnumFilter<E extends Enum<E>> extends ColumnListFilter<E> {
      * @return output column value
      */
     @Override
-    protected E filter(String colname, Object value) {
+    protected E filterColumn(String colname, Object value) {
         return Enum.valueOf(en, (String)value);
     }
 }

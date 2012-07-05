@@ -23,6 +23,7 @@ import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
  * Date: 6/9/11
  */
 public class CtzStringUtils {
+    @Deprecated // use ImmutableList.copyOf explicitly
     public static List<String> split(Splitter splitter, String str) {
         return ImmutableList.copyOf(splitter.split(str));
     }

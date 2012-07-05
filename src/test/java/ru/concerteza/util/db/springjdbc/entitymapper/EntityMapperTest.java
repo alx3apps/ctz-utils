@@ -66,11 +66,12 @@ public class EntityMapperTest {
     }
 
     @Test
+    // todo test subclasses filters
     public void testSubclasses() {
         jt.update("create table bar(id bigint, disc varchar(255), first_child_field varchar(255), second_child_field varchar(255))");
         jt.update("insert into bar(id, disc, first_child_field, second_child_field) values(1, 'first', 'foo', null)");
         jt.update("insert into bar(id, disc, first_child_field, second_child_field) values(2, 'second', null, 'bar')");
-        RowMapper<Parent> mapper = EntityMapper.forSubclasses(new ChildChooser());
+        RowMapper<Parent> mapper = EntityMapper.builder(new ChildChooser()).build();
         Parent firstLoaded = jt.queryForObject("select * from bar where id = 1", mapper);
         assertNotNull("Load fail", firstLoaded);
         assertEquals("Inheritance fail", FirstChild.class, firstLoaded.getClass());
@@ -148,7 +149,7 @@ public class EntityMapperTest {
         private String secondChildField;
     }
 
-    private static class ChildChooser implements SubclassChooser<Parent> {
+    private static class ChildChooser implements EntityChooser<Parent> {
 
         @Override
         public Set<Class<? extends Parent>> subclasses() {
@@ -156,7 +157,7 @@ public class EntityMapperTest {
         }
 
         @Override
-        public Class<? extends Parent> choose(Map<String, Object> dataMap) {
+        public Class<? extends Parent> choose(Map<String, ?> dataMap) {
             String disc = (String) dataMap.get("disc");
             if("first".equals(disc)) return FirstChild.class;
             else if("second".equals(disc)) return SecondChild.class;

@@ -1,8 +1,9 @@
-package ru.concerteza.util;
+package ru.concerteza.util.json;
 
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import ru.concerteza.util.json.CtzJsonUtils;
 
 import java.util.Map;
 

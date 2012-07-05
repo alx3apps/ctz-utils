@@ -100,7 +100,7 @@ public class TaskEngineTest {
         }
 
         @Override
-        public String getStage() {
+        public String getStageName() {
             return stage;
         }
 
@@ -117,7 +117,7 @@ public class TaskEngineTest {
         }
     }
 
-    private class DataProcessor implements TaskStageProcessor {
+    private class DataProcessor extends TaskStageProcessorSupertype {
         @Override
         public void process(long taskId) throws Exception {
             if(taskService.isSuspended(taskId)) throw new TaskSuspendedException(taskId);
@@ -125,7 +125,7 @@ public class TaskEngineTest {
         }
     }
 
-    private class ReportsProcessor implements TaskStageProcessor {
+    private class ReportsProcessor extends TaskStageProcessorSupertype {
         @Override
         public void process(long taskId) throws Exception {
             if(43 == taskId && !task43wasSuspendedOnce) {

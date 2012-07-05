@@ -1,8 +1,9 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
 import com.google.common.collect.ImmutableMap;
-import ru.concerteza.util.db.springjdbc.entitymapper.Filter;
+import ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -10,18 +11,19 @@ import java.util.Map;
  *
  * @author alexey
  * Date: 5/16/12
- * @see ru.concerteza.util.db.springjdbc.entitymapper.Filter
+ * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
  */
-public class ColumnsToLowerFilter implements Filter {
+public class ColumnsToLowerFilter implements EntityFilter {
+
     /**
-     * @param input in row data
-     * @return out row data
+     * @param data row data
+     * @return same row data wil lower column names
      */
     @Override
-    public Map<String, Object> apply(Map<String, Object> input) {
+    public Map<String, ?> apply(Map<String, ?> data) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-        for(Map.Entry<String, Object> en : input.entrySet()) {
+        for(Map.Entry<String, ?> en : data.entrySet()) {
             builder.put(en.getKey().toLowerCase(), en.getValue());
         }
         return builder.build();

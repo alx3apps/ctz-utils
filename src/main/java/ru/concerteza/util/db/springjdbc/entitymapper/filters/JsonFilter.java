@@ -50,7 +50,7 @@ public class JsonFilter extends ColumnListFilter<Object> {
      * @return out column value
      */
     @Override
-    protected Object filter(String colname, Object value) {
+    protected Object filterColumn(String colname, Object value) {
         Class<?> clazz = columnMap.get(colname);
         checkNotNull(clazz, "JSON class not found for column: '%s', colmap: '%s'", colname, columnMap);
         return gson.fromJson((String) value, clazz);

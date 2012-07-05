@@ -4,7 +4,7 @@ import java.util.Collection;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
- * {@link ru.concerteza.util.db.springjdbc.entitymapper.Filter} implementation to convert integer columns that may be
+ * {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter} implementation to convert integer columns that may be
  * represented as {@link String} to {@link Integer}.
  *
  * Initially it was created for cases where {@link java.sql.ResultSet} may be provided by
@@ -41,7 +41,7 @@ public class IntegerFilter extends ColumnListFilter<Integer> {
      * @return output column value
      */
     @Override
-    protected Integer filter(String colname, Object value) {
+    protected Integer filterColumn(String colname, Object value) {
         if (value instanceof Integer) return (Integer)value;
         if (value instanceof String) return Integer.parseInt((String)value);
         throw new IllegalArgumentException(format("Illegal argument, column: '{}', class: '{}'", colname, value.getClass().getSimpleName()));

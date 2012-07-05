@@ -9,17 +9,16 @@ import java.util.Set;
  * @author alexey
  * Date: 5/16/12
  * @see EntityMapper
- * @see SubclassesEntityMapper
  */
-public interface SubclassChooser<T> {
+public interface EntityChooser<T> {
     /**
      * @return list of all subclasses, that will be used in row mapping
      */
     Set<Class<? extends T>> subclasses();
 
     /**
-     * @param dataMap row data after applying all filters
+     * @param dataMap row data before applying filters
      * @return class for concrete entity to instantiate for given row data
      */
-    Class<? extends T> choose(Map<String, Object> dataMap);
+    Class<? extends T> choose(Map<String, ?> dataMap);
 }

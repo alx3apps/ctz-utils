@@ -29,5 +29,5 @@ public interface Task {
     /**
      * @return current stage for this task
      */
-    String getStage();
+    String getStageName();
 }

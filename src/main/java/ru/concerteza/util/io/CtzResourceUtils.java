@@ -6,6 +6,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import ru.concerteza.util.CtzConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +79,22 @@ public class CtzResourceUtils {
             }
         } catch (IOException e) {
             throw new RuntimeIOException(e);
+        }
+    }
+
+    public static String readResourceToString(String path) {
+        return readResourceToString(path, CtzConstants.UTF8);
+    }
+
+    public static String readResourceToString(String path, String encoding) {
+        InputStream is = null;
+        try {
+            is = RESOURCE_LOADER.getResource(path).getInputStream();
+            return IOUtils.toString(is, encoding);
+        } catch(IOException e) {
+            throw new RuntimeIOException(e);
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 }

@@ -1,5 +1,7 @@
 package ru.concerteza.util.tasks;
 
+import java.util.List;
+
 /**
  * Interface for separate units of business oriented work on task
  *
@@ -11,6 +13,7 @@ package ru.concerteza.util.tasks;
  * @see TaskProcessorProvider
  */
 public interface TaskStageProcessor {
+
     /**
      * Some business oriented work to do on task.
      * {@link TaskEngine#isSuspended(long)} method should be called periodically,
@@ -21,4 +24,8 @@ public interface TaskStageProcessor {
      * @throws Exception task will rolled back to last completed stage and switched into 'error' status
      */
     void process(long taskId) throws Exception;
+
+    List<? extends TaskStageListener> beforeListeners();
+
+    List<? extends TaskStageListener> afterListeners();
 }

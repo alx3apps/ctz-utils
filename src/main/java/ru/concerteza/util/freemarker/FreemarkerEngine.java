@@ -75,6 +75,23 @@ public class FreemarkerEngine extends Configuration {
      * Frontend method
      * @param path spring's <a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/resources.html">resource</a> path
      * @param params template's model root object
+     * @param output {@link OutputStream} to render template into
+     * @param outputEncoding rendering results encoding
+     * @throws RuntimeIOException on IO error
+     */
+    public void process(String path, Object params, OutputStream output, String outputEncoding) throws RuntimeIOException {
+        try {
+            Writer writer = new OutputStreamWriter(output, outputEncoding);
+            process(path, params, writer);
+        } catch(UnsupportedEncodingException e) {
+            throw new UnhandledException(e);
+        }
+    }
+
+    /**
+     * Frontend method
+     * @param path spring's <a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/resources.html">resource</a> path
+     * @param params template's model root object
      * @param writer {@link Writer} to render template into
      * @throws RuntimeIOException on IO error
      */

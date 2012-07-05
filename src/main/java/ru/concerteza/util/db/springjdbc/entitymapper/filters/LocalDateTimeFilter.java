@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author alexey
  * Date: 4/29/12
- * @see ColumnListFilter
+ * @see ColumnListFilter                         CtzSpri
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
  * @see ru.concerteza.util.date.CtzDateUtils#toLocalDateTime(java.util.Date)
  */
@@ -31,7 +31,7 @@ public class LocalDateTimeFilter extends ColumnListFilter<LocalDateTime> {
      * @return out column value
      */
     @Override
-    protected LocalDateTime filter(String colname, Object value) {
+    protected LocalDateTime filterColumn(String colname, Object value) {
         return CtzDateUtils.toLocalDateTime((Date) value);
     }
 }

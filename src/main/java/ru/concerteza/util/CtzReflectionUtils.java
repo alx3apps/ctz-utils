@@ -6,20 +6,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.UnhandledException;
+import org.apache.commons.lang.WordUtils;
 import ru.concerteza.util.option.Option;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.*;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.WordUtils.capitalize;
 import static ru.concerteza.util.CtzFormatUtils.format;
 
 /**
@@ -44,7 +47,7 @@ public class CtzReflectionUtils {
     }
 
     public static List<Field> collectFields(Class<?> clazz, Predicate<Field> predicate) {
-        ImmutableList.Builder<Field> builder = new ImmutableList.Builder<Field>();
+        ImmutableList.Builder<Field> builder = ImmutableList.builder();
         collectFieldsRecursive(builder, clazz, predicate);
         return builder.build();
     }
@@ -59,6 +62,29 @@ public class CtzReflectionUtils {
         // parent fields
         if (null != clazz.getSuperclass()) {
             collectFieldsRecursive(results, clazz.getSuperclass(), predicate);
+        }
+    }
+
+    // todo: testme
+    public static List<Method> collectMethods(Class<?> clazz) {
+        return collectMethods(clazz, Predicates.<Method>alwaysTrue());
+    }
+
+    public static List<Method> collectMethods(Class<?> clazz, Predicate<Method> predicate) {
+        ImmutableList.Builder<Method> builder = ImmutableList.builder();
+        collectMethodsRecursive(builder, clazz, predicate);
+        return builder.build();
+    }
+
+    private static void collectMethodsRecursive(ImmutableList.Builder<Method> results, Class<?> clazz, Predicate<Method> predicate) {
+        Method[] methods = clazz.getDeclaredMethods();
+        // own fields, fields is not iterable so prevent intermediate list
+        for(Method me : methods) {
+            if(predicate.apply(me)) results.add(me);
+        }
+        // parent fields
+        if (null != clazz.getSuperclass()) {
+            collectMethodsRecursive(results, clazz.getSuperclass(), predicate);
         }
     }
 
@@ -101,6 +127,19 @@ public class CtzReflectionUtils {
             field.setAccessible(true);
             field.set(obj, value);
         } catch (IllegalAccessException e) {
+            throw new UnhandledException(e);
+        }
+    }
+
+    // todo testme
+    @SuppressWarnings("unchecked")
+    public static <T> T invokeMethod(Object obj, Method method, Object... params) {
+        try {
+            if(!method.isAccessible()) method.setAccessible(true);
+            return (T) method.invoke(obj, params);
+        } catch(InvocationTargetException e) {
+            throw new UnhandledException(e);
+        } catch(IllegalAccessException e) {
             throw new UnhandledException(e);
         }
     }
@@ -163,17 +202,34 @@ public class CtzReflectionUtils {
         return res;
     }
 
-    public static Map<String, Object> objectToMap(Object obj, Map<String, Field> fieldMap) {
+    public static Map<String, ?> objectToMap(Object obj, Map<String, Method> getterMap) {
         try {
             Map<String, Object> map = Maps.newHashMap(); // allow nulls
-            for (Map.Entry<String, Field> en : fieldMap.entrySet()) {
-                Field fi = en.getValue();
-                if (!fi.isAccessible()) fi.setAccessible(true);
-                Object val = fi.get(obj);
+            for(Map.Entry<String, Method> en : getterMap.entrySet()) {
+                Method me = en.getValue();
+                if(!me.isAccessible()) me.setAccessible(true);
+                Object val = me.invoke(obj);
                 map.put(en.getKey(), val);
             }
             return map;
-        } catch (IllegalAccessException e) {
+        } catch(IllegalAccessException e) {
+            throw new UnhandledException(e);
+        } catch(InvocationTargetException e) {
+            throw new UnhandledException(e);
+        }
+    }
+
+    // todo testme
+    public static Map<String, Method> fieldGettersMap(Class<?> clazz, Map<String, Field> fieldMap) {
+        try {
+            ImmutableMap.Builder<String, Method> builder = ImmutableMap.builder();
+            for(Map.Entry<String, Field> en : fieldMap.entrySet()) {
+                String getterName = "get" + capitalize(en.getValue().getName());
+                Method getter = clazz.getMethod(getterName);
+                builder.put(en.getKey(), getter);
+            }
+            return builder.build();
+        } catch(NoSuchMethodException e) {
             throw new UnhandledException(e);
         }
     }

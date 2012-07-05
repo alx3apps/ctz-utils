@@ -17,6 +17,8 @@ import java.util.TreeMap;
  * User: alexey
  * Date: 5/9/12
  */
+
+@Deprecated // use CsvDataSource
 public class ResultSetOverCSV implements ResultSet {
     private LineIterator it;
     private String[] row;

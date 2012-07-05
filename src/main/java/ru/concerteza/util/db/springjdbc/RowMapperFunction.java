@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * User: alexey
  * Date: 2/9/12
  */
-public class RowMapperFunction<T> extends AbstractResultSetMapper<T> {
+public class RowMapperFunction<T> extends AbstractResultSetFunction<T> {
     private final RowMapper<T> mapper;
 
     private RowMapperFunction(RowMapper<T> mapper) {

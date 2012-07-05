@@ -23,11 +23,18 @@ import static ru.concerteza.util.CtzReflectionUtils.collectFields;
  * Date: 10/15/11
  */
 public class CtzSpringJdbcUtils {
+
+    // todo: documentme
+    public static long insertBatch(NamedParameterJdbcTemplate jt,
+                                   String sql, Iterable<Map<String, ?>> paramsIter, int batchSize) {
+        return insertBatch(jt, sql, paramsIter.iterator(), batchSize);
+    }
+
     // 2x speed improvement over naive jt inserts
     @SuppressWarnings("unchecked")
     public static long insertBatch(NamedParameterJdbcTemplate jt,
-                                   String sql, Iterator<Map<String, Object>> paramsIter, int batchSize) {
-        List<Map<String, Object>> parList = new ArrayList<Map<String, Object>>(batchSize);
+                                   String sql, Iterator<Map<String, ?>> paramsIter, int batchSize) {
+        List<Map<String, ?>> parList = new ArrayList<Map<String, ?>>(batchSize);
         boolean hasInfoFromDb = true;
         Map<String, Object>[] parArray = new Map[batchSize];
         long updated = 0;
@@ -59,8 +66,8 @@ public class CtzSpringJdbcUtils {
     }
 
     // returns -1 on no info from db
-    private static long doBatch(NamedParameterJdbcTemplate jt, String sql, List<Map<String, Object>> parList,
-                                 Map<String, Object>[] parArray) {
+    private static long doBatch(NamedParameterJdbcTemplate jt, String sql, List<Map<String, ?>> parList,
+                                 Map<String, ?>[] parArray) {
         parList.toArray(parArray);
         int[] res = jt.batchUpdate(sql, parArray);
         parList.clear();

@@ -78,7 +78,7 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
     @Transactional
     public void updateStatusDefault(long taskId) {
         int res = jt.update("update tasks set status=:status where id=:taskId", ImmutableMap.of(
-                "status", Status.NORMAL,
+                "status", Status.NORMAL.name(),
                 "taskId", taskId));
         checkState(1 == res, "Wrong updated rows count for taskId: '%s', must be 1 but was: '%s'", taskId, res);
     }
@@ -87,7 +87,7 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
     @Transactional
     public void updateStatusSuspended(long taskId) {
         int res = jt.update("update tasks set status=:status where id=:taskId", ImmutableMap.of(
-                "status", Status.NORMAL,
+                "status", Status.SUSPENDED.name(),
                 "taskId", taskId));
         checkState(1 == res, "Wrong updated rows count for taskId: '%s', must be 1 but was: '%s'", taskId, res);
     }
@@ -98,7 +98,7 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
         e.printStackTrace();
         Stage stage = Stage.valueOf(lastCompletedStage);
         int res = jt.update("update tasks set status=:status, stage=:stage where id=:taskId", ImmutableMap.of(
-                "status", Status.NORMAL,
+                "status", Status.ERROR.name(),
                 "stage", stage.name(),
                 "taskId", taskId));
         checkState(1 == res, "Wrong updated rows count for taskId: '%s', must be 1 but was: '%s'", taskId, res);
@@ -110,7 +110,7 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
         long id = jt.getJdbcOperations().queryForLong("select nextval('tasks_id_seq')");
         int res = jt.update("insert into tasks (id, stage, status, payload) values (:id, :stage, :status, :payload)", ImmutableMap.of(
                 "id", id,
-                "stage", task.getStage(),
+                "stage", task.getStageName(),
                 "status", task.getStatus().name(),
                 "payload", task.getPayload()));
         checkState(1 == res, "Wrong updated rows count on task create, must be 1 but was: '%s'", res);
@@ -134,7 +134,7 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
         }
 
         @Override
-        protected Enum filter(String colname, Object value) {
+        protected Enum filterColumn(String colname, Object value) {
             if("stage".equals(colname)) return Stage.valueOf((String) value);
             if("status".equals(colname)) return Status.valueOf((String) value);
             throw new IllegalStateException("Unexpected column: " + colname);

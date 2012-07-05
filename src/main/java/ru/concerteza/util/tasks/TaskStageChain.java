@@ -77,6 +77,15 @@ public class TaskStageChain implements Serializable {
     }
 
     /**
+     * @param startStage start stage
+     * @return {@link Builder} builder for chain
+     */
+    public static Builder builder(Enum<?> startStage) {
+        checkNotNull(startStage, "Null startStage provided");
+        return builder(startStage.name());
+    }
+
+    /**
      * @param startStage start stage name
      * @return {@link Builder} builder for chain
      */
@@ -104,6 +113,20 @@ public class TaskStageChain implements Serializable {
         private Builder(String startStage) {
             this.builder.add(new Stage(startStage));
             this.stages.add(startStage);
+        }
+
+        /**
+         * Adds new enum stage to chain
+         *
+         * @param intermediate intermediate stage, e.g. 'running', 'loading_data'
+         * @param completed completed stage, e.g. 'finished', 'data_loaded'
+         * @param processorId id of the processor that will be used for this stage
+         * @return builder instance
+         */
+        public Builder add(Enum<?> intermediate, Enum<?> completed, String processorId) {
+            checkNotNull(intermediate, "Null intermediate stage provided");
+            checkNotNull(completed, "Null completed stage provided");
+            return add(intermediate.name(), completed.name(), processorId);
         }
 
         /**

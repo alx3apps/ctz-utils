@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * User: alexey
  * Date: 10/15/11
  */
-public abstract class AbstractResultSetMapper<T> implements Function<ResultSet, T> {
+public abstract class AbstractResultSetFunction<T> implements Function<ResultSet, T> {
     @Override
     public T apply(ResultSet input) {
         checkNotNull(input);

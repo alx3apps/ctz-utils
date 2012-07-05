@@ -31,7 +31,7 @@ public class TimestampFilter extends ColumnListFilter<Timestamp> {
      * @return out column value
      */
     @Override
-    protected Timestamp filter(String colname, Object value) {
+    protected Timestamp filterColumn(String colname, Object value) {
         if (Timestamp.class.isAssignableFrom(value.getClass())) return (Timestamp)value;
         if (Date.class.isAssignableFrom(value.getClass())) return new Timestamp(((Date)value).getTime());
         if (value instanceof String) return Timestamp.valueOf((String)value);

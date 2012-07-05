@@ -7,28 +7,28 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Set;
-import ru.concerteza.util.db.springjdbc.entitymapper.SubclassChooser;
+import ru.concerteza.util.db.springjdbc.entitymapper.EntityChooser;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * {@link SubclassChooser} implementation that selects subclasses collating value of discriminator column defined in
+ * {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityChooser} implementation that selects subclasses collating value of discriminator column defined in
  * {@link DiscriminatorColumn} annotation of given entity class and their {@link DiscriminatorValue} annotation values.
  *
  *
  * @author Timofey Gorshkov
  * Created 04.06.2012
  * @since  2.5.1
- * @see ru.concerteza.util.db.springjdbc.entitymapper.SubclassChooser
+ * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityChooser
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
  */
-public class DiscriminatedSubclassChooser<T> implements SubclassChooser<T> {
+public class DiscriminatedSubclassChooser<T> implements EntityChooser<T> {
 
     private String discColumn;
     private Map<String, Class<? extends T>> classMap;
     private Set<Class<? extends T>> subclasses;
 
     /**
-     * @param entitySubclasses
+     * @param entitySubclasses subclasses list
      */
     public DiscriminatedSubclassChooser(Class<? extends T>... entitySubclasses) {
 
@@ -60,7 +60,7 @@ public class DiscriminatedSubclassChooser<T> implements SubclassChooser<T> {
      * @return class for concrete entity to instantiate for given row data
      */
     @Override
-    public Class<? extends T> choose(Map<String, Object> dataMap) {
+    public Class<? extends T> choose(Map<String, ?> dataMap) {
         String disc = (String) dataMap.get(discColumn);
         Class<? extends T> clazz = classMap.get(disc);
         checkArgument(clazz != null, "Couldn't find class for column '%s' from '%s' discriminator '%s' in '%s'.", discColumn, dataMap, disc, classMap);

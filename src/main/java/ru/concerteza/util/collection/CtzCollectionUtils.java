@@ -2,10 +2,13 @@ package ru.concerteza.util.collection;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
+import ru.concerteza.util.value.Pair;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Collection utilities
@@ -59,5 +62,23 @@ public class CtzCollectionUtils {
             builder.put(key, valueFunction.apply(key));
         }
         return builder.build();
+    }
+
+    public static <K, V> ImmutableMap<K, V> listsToMap(List<K> keys, List<V> values) {
+        checkArgument(keys.size() == values.size(), "Keys and values sizes differs, keys: '%s', values: '%s'", keys.size(), values.size());
+        ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
+        for(int i = 0; i < keys.size(); i++) {
+            builder.put(keys.get(i), values.get(i));
+        }
+        return builder.build();
+    }
+
+    public static <T> List<T> defaultList(@Nullable List<T> input) {
+        if(null == input) return ImmutableList.of();
+        return input;
+    }
+
+    public static <T> Set<T> newConcurrentHashSet() {
+        return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
     }
 }

@@ -2,6 +2,7 @@ package ru.concerteza.util.db.springjdbc.entitymapper;
 
 import com.google.common.base.Function;
 
+import javax.naming.event.ObjectChangeListener;
 import java.util.Map;
 
 /**
@@ -11,5 +12,5 @@ import java.util.Map;
  * Date: 5/16/12
  * @see EntityMapper
  */
-public interface Filter extends Function<Map<String, Object>, Map<String, Object>> {
+public interface EntityFilter extends Function<Map<String, ?>, Map<String, ?>> {
 }

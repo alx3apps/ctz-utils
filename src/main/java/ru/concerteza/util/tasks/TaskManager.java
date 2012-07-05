@@ -20,7 +20,7 @@ public interface TaskManager<T extends Task> {
      *
      * @return collection of tasks to run
      */
-    Collection<T> markProcessingAndLoad();
+    Collection<? extends T> markProcessingAndLoad();
 
     /**
      * This method will be used to cache all suspended task ids on engine startup.
