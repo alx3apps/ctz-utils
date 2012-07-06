@@ -1,6 +1,7 @@
 package ru.concerteza.util.collection;
 
 import org.junit.Test;
+import ru.concerteza.util.collection.maps.IgnoreNullImmutableMapBuilder;
 
 import java.util.Map;
 

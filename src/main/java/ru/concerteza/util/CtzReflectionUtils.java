@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.UnhandledException;
-import org.apache.commons.lang.WordUtils;
 import ru.concerteza.util.option.Option;
 
 import javax.annotation.Nullable;
@@ -31,7 +30,7 @@ import static ru.concerteza.util.CtzFormatUtils.format;
 */
 public class CtzReflectionUtils {
     private static final AnnotatedColumnPredicate ANNOTATED_COLUMN_PREDICATE = new AnnotatedColumnPredicate();
-    private static final Map<Class<?>, Class<?>> BOXING_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
+    public static final Map<Class<?>, Class<?>> BOXING_MAP = ImmutableMap.<Class<?>, Class<?>>builder()
             .put(Boolean.TYPE, Boolean.class)
             .put(Integer.TYPE, Integer.class)
             .put(Byte.TYPE, Byte.class)
@@ -78,11 +77,11 @@ public class CtzReflectionUtils {
 
     private static void collectMethodsRecursive(ImmutableList.Builder<Method> results, Class<?> clazz, Predicate<Method> predicate) {
         Method[] methods = clazz.getDeclaredMethods();
-        // own fields, fields is not iterable so prevent intermediate list
+        // own methods, methods is not iterable so prevent intermediate list
         for(Method me : methods) {
             if(predicate.apply(me)) results.add(me);
         }
-        // parent fields
+        // parent methods
         if (null != clazz.getSuperclass()) {
             collectMethodsRecursive(results, clazz.getSuperclass(), predicate);
         }
@@ -143,6 +142,8 @@ public class CtzReflectionUtils {
             throw new UnhandledException(e);
         }
     }
+
+
 
     public static <T> T callDefaultConstructor(Class<T> clazz) {
         return callDefaultConstructor(clazz, null);

@@ -1,6 +1,7 @@
 package ru.concerteza.util.db.csv;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.LineIterator;
@@ -25,39 +26,48 @@ import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
  * User: alexey
  * Date: 6/29/12
  */
-public class CsvMapIterable implements Iterable<Map<String, ?>> {
-    private final String resourcePath;
+public class CsvMapIterable<T> implements Iterable<T> {
+    private final Resource resource;
     private final Charset encoding;
     private final Splitter splitter;
-    private final List<Function<Map<String,?>, Map<String,?>>> converters;
+    private final Function<Map<String, String>, T> converter;
 
-    public CsvMapIterable(String resourcePath, String delimiter, Function<Map<String,?>, Map<String, ?>>... converters) {
-        this(resourcePath, delimiter, CtzConstants.UTF8, converters);
+    public CsvMapIterable(String resourcePath, String delimiter) {
+        this(resourcePath, delimiter, CtzConstants.UTF8);
     }
 
-    public CsvMapIterable(String resourcePath, String delimiter, String encoding, Function<Map<String,?>, Map<String, ?>>... filters) {
-        checkArgument(isNotEmpty(resourcePath), "Resource path is empty");
+    @SuppressWarnings("unchecked")
+    public CsvMapIterable(String resourcePath, String delimiter, String encoding) {
+        this(RESOURCE_LOADER.getResource(resourcePath), delimiter, encoding, (Function) Functions.identity());
+    }
+
+    public CsvMapIterable(String resourcePath, String delimiter, Function<Map<String, String>, T> converter) {
+        this(RESOURCE_LOADER.getResource(resourcePath), delimiter, CtzConstants.UTF8, converter);
+    }
+
+    public CsvMapIterable(Resource resource, String delimiter, String encoding, Function<Map<String, String>, T> converter) {
+        checkArgument(null != resource, "Resource is null");
         checkArgument(isNotEmpty(encoding), "Encoding is empty");
         checkArgument(isNotEmpty(encoding), "Splitter is empty");
-        this.resourcePath = resourcePath;
+        checkArgument(null != converter, "Converter is null");
+        this.resource = resource;
         this.encoding = Charset.forName(encoding);
         this.splitter = Splitter.on(delimiter);
-        this.converters = ImmutableList.copyOf(filters);
+        this.converter = converter;
     }
 
     @Override
-    public Iterator<Map<String, ?>> iterator() {
+    public Iterator<T> iterator() {
         return new CsvMapIterator();
     }
 
-    private class CsvMapIterator implements Iterator<Map<String, ?>> {
+    private class CsvMapIterator implements Iterator<T> {
         private final LineIterator li;
         private final List<String> headers;
 
         private CsvMapIterator() {
-            Resource re = RESOURCE_LOADER.getResource(resourcePath);
             try {
-                li = new LineIterator(new InputStreamReader(re.getInputStream(), encoding));
+                li = new LineIterator(new InputStreamReader(resource.getInputStream(), encoding));
                 if(!li.hasNext()) throw new IOException("Cannot read CSV headers, input resource is empty");
                 headers = parseList(li.next());
             } catch(IOException e) {
@@ -73,12 +83,9 @@ public class CsvMapIterable implements Iterable<Map<String, ?>> {
         }
 
         @Override
-        public Map<String, ?> next() {
-            Map<String, ?> data = parseMap(li.next());
-            for(Function<Map<String,?>, Map<String, ?>> fi : converters) {
-                data = fi.apply(data);
-            }
-            return data;
+        public T next() {
+            Map<String, String> data = parseMap(li.next());
+            return converter.apply(data);
         }
 
         @Override
@@ -93,7 +100,7 @@ public class CsvMapIterable implements Iterable<Map<String, ?>> {
         }
 
         private List<String> parseList(String line) {
-            checkArgument(isNotBlank(line), "CSV input line is blank, resource: '%s', line: '%s'", resourcePath, line);
+            checkArgument(isNotBlank(line), "CSV input line is blank, resource: '%s', line: '%s'", resource, line);
             return ImmutableList.copyOf(splitter.split(line));
         }
     }

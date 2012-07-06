@@ -49,7 +49,7 @@ import static ru.concerteza.util.collection.CtzCollectionUtils.defaultList;
  * @see SubclassesEntityMapper
  */
 
-public class EntityMapper<T> implements RowMapper<T>, Function<ResultSet, T> {
+public class EntityMapper<T> implements RowMapper<T> {
     protected final ColumnMapRowMapper mapper = new ColumnMapRowMapper();
     private final EntityChooser<T> chooser;
     private final Map<String, EntityClass<T>> ecMap;
@@ -80,15 +80,6 @@ public class EntityMapper<T> implements RowMapper<T>, Function<ResultSet, T> {
         T res = mapToObject(dataMap, clazz, ec.getColumnMap());
         for(Method me : ec.getPostLoadMethods()) invokeMethod(res, me);
         return res;
-    }
-
-    @Override
-    public T apply(@Nullable ResultSet input) {
-        try {
-            return mapRow(input, 0);
-        } catch(SQLException e) {
-            throw new UnhandledException(e);
-        }
     }
 
     public static class Builder<T> {

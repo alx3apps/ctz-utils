@@ -1,4 +1,4 @@
-package ru.concerteza.util.collection;
+package ru.concerteza.util.collection.maps;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -12,6 +12,11 @@ import java.util.Map;
  * Date: 8/19/11
  */
 public class IgnoreNullImmutableMapBuilder<K, V> extends ImmutableMap.Builder<K, V> {
+
+    public static <K, V> ImmutableMap.Builder<K, V> builder() {
+        return new IgnoreNullImmutableMapBuilder<K, V>();
+    }
+
     /**
      * @param key map key
      * @param value map value, will be ignored if null
