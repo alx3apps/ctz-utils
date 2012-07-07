@@ -1,7 +1,11 @@
-package ru.concerteza.util.io;
+package ru.concerteza.util.io.noclose;
+
+import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 import java.io.OutputStream;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * User: alexey
@@ -9,15 +13,16 @@ import java.io.OutputStream;
  */
 
 // prevent rough libs from closing or flushing my streams
-public class WriteOnlyOutputStream extends OutputStream {
+public class NoCloseOutputStream extends OutputStream {
     private final OutputStream target;
 
-    private WriteOnlyOutputStream(OutputStream target) {
+    private NoCloseOutputStream(OutputStream target) {
+        checkNotNull(target, "Provided output stream is null");
         this.target = target;
     }
 
-    public static WriteOnlyOutputStream wrap(OutputStream target) {
-        return new WriteOnlyOutputStream(target);
+    public static NoCloseOutputStream of(OutputStream target) {
+        return new NoCloseOutputStream(target);
     }
 
     @Override

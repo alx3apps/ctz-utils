@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import org.springframework.jdbc.core.RowMapper;
 import ru.concerteza.util.db.springjdbc.mapper.LowerColumnsIgnoreNullMapper;
 
+import java.sql.ResultSet;
 import java.util.Map;
 
 public abstract class NamedConstructorMapper<T> implements RowMapper<T> {

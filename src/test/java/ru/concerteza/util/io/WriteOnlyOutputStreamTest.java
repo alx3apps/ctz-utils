@@ -2,6 +2,7 @@ package ru.concerteza.util.io;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
+import ru.concerteza.util.io.noclose.NoCloseOutputStream;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,7 +18,7 @@ public class WriteOnlyOutputStreamTest {
     @Test
     public void test() throws IOException {
         ImportantOutputStream out = new ImportantOutputStream();
-        OutputStream guard = WriteOnlyOutputStream.wrap(out);
+        OutputStream guard = NoCloseOutputStream.of(out);
         Writer writer = new CrapWriter(guard);
         writer.flush();
         writer.close();

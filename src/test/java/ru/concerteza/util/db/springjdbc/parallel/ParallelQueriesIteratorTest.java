@@ -107,8 +107,7 @@ public class ParallelQueriesIteratorTest {
     private class Extractor implements ResultSetExtractor<Long> {
         @Override
         public Long extractData(ResultSet rs) throws SQLException, DataAccessException {
-            Iterator<ResultSet> rsIter = ResultSetIterator.identity(rs);
-            Iterator<String> strIter = Iterators.transform(rsIter, RowMapperFunction.of(new SlowpokeMapper()));
+            Iterator<String> strIter = ResultSetIterator.of(rs, new SlowpokeMapper());
             return fireTransform(strIter);
         }
     }
