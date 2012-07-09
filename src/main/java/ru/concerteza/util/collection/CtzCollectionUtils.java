@@ -81,4 +81,16 @@ public class CtzCollectionUtils {
     public static <T> Set<T> newConcurrentHashSet() {
         return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
     }
+
+    public static long sumLongIterable(Iterable<Long> iter) {
+        return sumLongIterator(iter.iterator());
+    }
+
+    public static long sumLongIterator(Iterator<Long> iter) {
+        int sum = 0;
+        while (iter.hasNext()) {
+            sum += iter.next();
+        }
+        return sum;
+    }
 }

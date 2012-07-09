@@ -87,7 +87,7 @@ public class SqlListParser {
                             NamedMatcher matcher = LINE.matcher(line);
                             matcher.matches();
                             String sqlLine = matcher.group("line");
-                            if(sql.length() > 0) sql.append("\n");
+                            if(sql.length() > 0) sql.append(" ");
                             sql.append(sqlLine);
                         }
                         break;
