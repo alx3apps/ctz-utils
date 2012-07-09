@@ -81,6 +81,24 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     }
 
     /**
+     * Shortcut constructor with mapper.
+     *
+     * @param sources list of data sources, will be used in round-robin mode
+     * @param sql query to execute using NamedParameterJdbcTemplate
+     * @param forker function to divide provided parameters between threads
+     * @param mapper will be used to get data from result sets
+     */
+    @SuppressWarnings("unchecked")
+    public ParallelQueriesIterator(List<DataSource> sources, String sql, ParallelQueriesForker forker, RowMapper<T> mapper) {
+        this.sources = RoundRobinAccessor.of(sources);
+        this.sql = sql;
+        this.forker = forker;
+        this.mapper = mapper;
+        this.executor = Executors.newCachedThreadPool();
+        this.dataQueue = new ArrayBlockingQueue<Object>(1024);
+    }
+
+    /**
      * Main constructor
      *
      * @param sources data sources accessor
