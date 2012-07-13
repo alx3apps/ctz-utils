@@ -17,10 +17,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @see LimitedSizeIteratorTest
  */
 
-public class LimitedSizeIterator<T> extends AbstractIterator<T> {
+public class LimitedSizeIterator<T> implements Iterator<T> {
     private final Iterator<T> target;
     private final int limit;
-    private AtomicInteger counter = new AtomicInteger(-1);
+    private AtomicInteger counter = new AtomicInteger(0);
 
     protected LimitedSizeIterator(Iterator<T> target, int limit) {
         checkNotNull(target);
@@ -34,9 +34,18 @@ public class LimitedSizeIterator<T> extends AbstractIterator<T> {
     }
 
     @Override
-    protected T computeNext() {
-        if(counter.incrementAndGet() < limit && target.hasNext()) {
-            return target.next();
-        } else return endOfData();
+    public boolean hasNext() {
+        return counter.get() < limit && target.hasNext();
+    }
+
+    @Override
+    public T next() {
+        counter.incrementAndGet();
+        return target.next();
+    }
+
+    @Override
+    public void remove() {
+        target.remove();
     }
 }

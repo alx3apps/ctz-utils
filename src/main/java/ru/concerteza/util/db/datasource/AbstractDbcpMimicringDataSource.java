@@ -1,6 +1,7 @@
 package ru.concerteza.util.db.datasource;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.UnhandledException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -56,8 +57,12 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
     }
 
     // mimicring BasicDataSource creation interface
-    public void setDriverClassName(String driverClassName) throws ClassNotFoundException {
-        Class.forName(driverClassName);
+    public void setDriverClassName(String driverClassName) {
+        try {
+            Class.forName(driverClassName);
+        } catch(ClassNotFoundException e) {
+            throw new UnhandledException(e);
+        }
     }
 
     public void setUrl(String url) {

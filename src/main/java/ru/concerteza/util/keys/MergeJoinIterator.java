@@ -1,4 +1,4 @@
-package ru.concerteza.util.collection.join;
+package ru.concerteza.util.keys;
 
 import com.google.common.collect.AbstractIterator;
 
@@ -13,29 +13,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 
 // not thread-safe
-public class JoinedIterator<I extends Comparable<I>, S extends I, T extends I, R> extends AbstractIterator<R> {
-    private enum State{CREATED, STARTED, FINISHED}
+class MergeJoinIterator<S extends KeyEntry, T extends KeyEntry, R> extends AbstractIterator<R> {
+    private enum State{CREATED, RUNNING, FINISHED}
 
     private final Iterator<S> sourceIter;
     private final Iterator<T> targetIter;
-    private final Joiner<S, T, R> joiner;
+    private final KeyJoiner<S, T, R> joiner;
 
     private State state = State.CREATED;
     private S sourceEl = null;
     private T targetEl = null;
 
-    public JoinedIterator(Iterator<S> sourceIter, Iterator<T> targetIter, Joiner<S, T, R> joiner) {
+    public MergeJoinIterator(Iterator<S> sourceIter, Iterator<T> targetIter, KeyJoiner<S, T, R> joiner) {
         checkNotNull(sourceIter, "Source iterator must not be null");
         checkNotNull(sourceIter, "Target iterator must not be null");
         checkNotNull(sourceIter, "Joiner must not be null");
         this.sourceIter = sourceIter;
         this.targetIter = targetIter;
         this.joiner = joiner;
-    }
-
-    public static <I extends Comparable<I>, S extends I, T extends I, R>
-        JoinedIterator<I, S, T, R> of(Iterator<S> sourceIter, Iterator<T> targetIter, Joiner<S, T, R> joiner) {
-        return new JoinedIterator<I, S, T, R>(sourceIter, targetIter, joiner);
     }
 
     @Override
@@ -45,10 +40,10 @@ public class JoinedIterator<I extends Comparable<I>, S extends I, T extends I, R
                 if(!(sourceIter.hasNext() && targetIter.hasNext())) return endOfData();
                 sourceEl = sourceIter.next();
                 targetEl = targetIter.next();
-                state = State.STARTED;
-            case STARTED:
+                state = State.RUNNING;
+            case RUNNING:
                 for(;;) {
-                    int comp = sourceEl.compareTo(targetEl);
+                    int comp = sourceEl.key().compareTo(targetEl.key());
                     if(comp < 0 && sourceIter.hasNext()) {
                         sourceEl = nextOrdered(sourceIter, sourceEl);
                     } else if(comp > 0 && targetIter.hasNext()) {
@@ -67,9 +62,9 @@ public class JoinedIterator<I extends Comparable<I>, S extends I, T extends I, R
         }
     }
 
-    private <T extends I> T nextOrdered(Iterator<T> iter, T current) {
-        T res = iter.next();
-        checkArgument(current.compareTo(res) <= 0,
+    private <A extends KeyEntry> A nextOrdered(Iterator<A> iter, A current) {
+        A res = iter.next();
+        checkArgument(current.key().compareTo(res.key()) <= 0,
                 "Iterator order error, current element: '%s', next element: '%s'", current, res);
         return res;
     }

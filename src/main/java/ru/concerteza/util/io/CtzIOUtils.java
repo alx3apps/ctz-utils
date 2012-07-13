@@ -212,16 +212,37 @@ public class CtzIOUtils {
     }
 
     private static class FilesIterator extends AbstractIterator<File> {
+        private final File dir;
         private final IOFileFilter dirFilter;
-        private final Iterator<File> fileChildren;
-        private final Iterator<File> dirChildren;
         private final boolean includeEmptyDirLeafs;
+
+        private Iterator<File> fileChildren;
+        private Iterator<File> dirChildren;
         private Iterator<File> curDirIter = Iterators.emptyIterator();
+        private boolean needInit = true;
 
         private FilesIterator(File dir, IOFileFilter dirFilter, boolean includeEmptyDirLeafs) {
+            this.dir = dir;
             this.dirFilter = dirFilter;
             this.includeEmptyDirLeafs = includeEmptyDirLeafs;
-            // init
+        }
+
+        @Override
+        protected File computeNext() {
+            if(needInit) {
+                init();
+                needInit = false;
+            }
+            if(fileChildren.hasNext()) return fileChildren.next();
+            if(curDirIter.hasNext()) return curDirIter.next();
+            if(dirChildren.hasNext()) {
+                curDirIter = new FilesIterator(dirChildren.next(), dirFilter, includeEmptyDirLeafs);
+                return computeNext();
+            }
+            return endOfData();
+        }
+
+        private void init() {
             File[] childrenArr = dir.listFiles();
             if(null == childrenArr) throw new RuntimeIOException("Cannot list directory: " + dir.getAbsolutePath());
             if(0 == childrenArr.length) {
@@ -233,17 +254,6 @@ public class CtzIOUtils {
                 Predicate<File> dirPredicate = Predicates.and(IOFileFilterPredicate.of(dirFilter), DIRECTORY_PREDICATE);
                 dirChildren = Iterators.filter(children.iterator(), dirPredicate);
             }
-        }
-
-        @Override
-        protected File computeNext() {
-            if(fileChildren.hasNext()) return fileChildren.next();
-            if(curDirIter.hasNext()) return curDirIter.next();
-            if(dirChildren.hasNext()) {
-                curDirIter = new FilesIterator(dirChildren.next(), dirFilter, includeEmptyDirLeafs);
-                return computeNext();
-            }
-            return endOfData();
         }
     }
 
