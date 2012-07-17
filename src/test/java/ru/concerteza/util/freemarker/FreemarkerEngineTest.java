@@ -20,8 +20,8 @@ public class FreemarkerEngineTest {
     public void test() throws IOException {
         FreemarkerEngine engine = new FreemarkerEngine();
         Params params = new Params("bar");
-        String path = engine.process("classpath:/FreemarkerEngineTest.ftl", params);
-        assertEquals("Hello bar", path);
+        String result = engine.process("classpath:/FreemarkerEngineTest.ftl", params);
+        assertEquals("Hello bar", result);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Resource res = CtzResourceUtils.RESOURCE_LOADER.getResource("classpath:/FreemarkerEngineTest.ftl");

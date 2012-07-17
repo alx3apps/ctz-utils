@@ -1,6 +1,7 @@
 package ru.concerteza.util.collection;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.*;
 import ru.concerteza.util.value.Pair;
 
