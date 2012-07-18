@@ -4,6 +4,8 @@ import com.google.common.collect.AbstractIterator;
 
 import java.util.Iterator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
 * User: alexey
 * Date: 7/13/12
@@ -20,6 +22,9 @@ class NestedLoopJoinIterator <S extends KeyEntry, T extends KeyEntry, R> extends
     private Iterator<T> targetIter;
 
     NestedLoopJoinIterator(Iterator<S> sourceIter, Iterable<T> targetIter, KeyJoiner<S, T, R> joiner) {
+        checkNotNull(sourceIter, "Source iterator must not be null");
+        checkNotNull(targetIter, "Target iterator must not be null");
+        checkNotNull(joiner, "Joiner must not be null");
         this.sourceIter = sourceIter;
         this.targetIterable = targetIter;
         this.joiner = joiner;

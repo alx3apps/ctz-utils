@@ -7,6 +7,8 @@ import com.google.common.collect.Multimap;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
 * User: alexey
 * Date: 7/13/12
@@ -20,6 +22,9 @@ class HashJoinIterator<S extends KeyEntry, T, R> extends AbstractIterator<R> {
     private Iterator<T> targetIter = ImmutableList.<T>of().iterator();
 
     HashJoinIterator(Iterator<S> sourceIter, Multimap<String, T> targetMap, KeyJoiner<S, T, R> joiner) {
+        checkNotNull(sourceIter, "Source iterator must not be null");
+        checkNotNull(targetMap, "Target map must not be null");
+        checkNotNull(joiner, "Joiner must not be null");
         this.sourceIter = sourceIter;
         this.targetMap = targetMap;
         this.joiner = joiner;

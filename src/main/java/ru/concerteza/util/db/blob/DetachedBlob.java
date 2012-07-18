@@ -27,6 +27,6 @@ public class DetachedBlob extends AbstractBlob implements Serializable {
 
     @Override
     public void close() throws IOException {
-        // this method is intentionally left blank
+        // this method was intentionally left blank
     }
 }

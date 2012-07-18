@@ -6,6 +6,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+
+import static org.apache.commons.io.IOUtils.closeQuietly;
+import static org.apache.commons.io.IOUtils.copyLarge;
 
 /**
  * User: alexey
@@ -21,6 +25,16 @@ public class ReadableBlob extends AbstractBlob {
 
     public InputStream getInputStream() {
         return inputStream;
+    }
+
+    public long readAndClose(OutputStream out) {
+        try {
+            return copyLarge(inputStream, out);
+        } catch(IOException e) {
+            throw new BlobException(e, "Error on reading blob, id: '{}'", id);
+        } finally {
+            closeQuietly(inputStream);
+        }
     }
 
     @Override

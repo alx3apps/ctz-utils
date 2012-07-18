@@ -1,12 +1,7 @@
 package ru.concerteza.util.keys;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import ru.concerteza.util.value.Holder;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -45,29 +40,12 @@ public class KeyOperations {
     }
 
     // returns sorted collection
-    @SuppressWarnings("unchecked")
     public static <S extends KeyEntry, R> Collection<R> groupByKey(Iterator<S> source, KeyAggregator<S, R> aggregator) {
-        // holder to prevent tree traversal on update
-        TreeMap<String, Holder<R>> map = new TreeMap<String, Holder<R>>();
-        while (source.hasNext()) {
-            S s = source.next();
-            final Holder<R> existed = map.get(s.key());
-            if(null == existed) {
-                R r = aggregator.aggregate(s, null);
-                Holder<R> created = new Holder<R>(r);
-                map.put(s.key(), created);
-            } else {
-                R r = aggregator.aggregate(s, existed.get());
-                existed.set(r);
-            }
-        }
-        return Collections2.transform(map.values(), new UnholderFun<R>());
+        return new GroupByKeyCollection<S, R>(source, aggregator);
     }
 
-    private static class UnholderFun<T> implements Function<Holder<T>, T> {
-        @Override
-        public T apply(Holder<T> input) {
-            return input.get();
-        }
+    public static <S extends KeyEntry, R> Iterator<R> groupOrderedByKey(Iterator<S> source, KeyAggregator<S, R> aggregator) {
+        return new GroupOrderedByKeyIterator<S, R>(source, aggregator);
     }
+
 }

@@ -26,8 +26,8 @@ class MergeJoinIterator<S extends KeyEntry, T extends KeyEntry, R> extends Abstr
 
     public MergeJoinIterator(Iterator<S> sourceIter, Iterator<T> targetIter, KeyJoiner<S, T, R> joiner) {
         checkNotNull(sourceIter, "Source iterator must not be null");
-        checkNotNull(sourceIter, "Target iterator must not be null");
-        checkNotNull(sourceIter, "Joiner must not be null");
+        checkNotNull(targetIter, "Target iterator must not be null");
+        checkNotNull(joiner, "Joiner must not be null");
         this.sourceIter = sourceIter;
         this.targetIter = targetIter;
         this.joiner = joiner;

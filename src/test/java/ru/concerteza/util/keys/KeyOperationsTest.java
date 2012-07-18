@@ -119,6 +119,28 @@ public class KeyOperationsTest {
         assertEquals("Data fail", "foo-42-41", list.get(1));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testAggregateOrderedIAE() {
+        Iterator<Source> source = ImmutableList.of(
+                new Source("foo", "42"),
+                new Source("foo", "41"),
+                new Source("bar", "43")).iterator();
+        fireTransform(KeyOperations.groupOrderedByKey(source, Aggregator.INSTANCE));
+    }
+
+    @Test
+    public void testAggregateOrdered() {
+        Iterator<Source> source = ImmutableList.of(
+                new Source("bar", "43"),
+                new Source("foo", "42"),
+                new Source("foo", "41")).iterator();
+        Iterator<String> col = KeyOperations.groupOrderedByKey(source, Aggregator.INSTANCE);
+        List<String> list = ImmutableList.copyOf(col);
+        assertEquals("Size fail", 2, list.size());
+        assertEquals("Data fail", "bar-43", list.get(0));
+        assertEquals("Data fail", "foo-42-41", list.get(1));
+    }
+
     private void assertJoined(Iterator<String> joined) {
         List<String> list = ImmutableList.copyOf(joined);
         assertEquals("Size fail", 4, list.size());
