@@ -2,20 +2,22 @@ package ru.concerteza.util.db.springjdbc;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterators;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import ru.concerteza.util.CtzReflectionUtils;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import javax.annotation.Nullable;
 import javax.persistence.Column;
-import javax.persistence.Transient;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.lang.System.arraycopy;
+import static java.lang.System.in;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static ru.concerteza.util.CtzReflectionUtils.collectFields;
 
 /**
@@ -24,37 +26,43 @@ import static ru.concerteza.util.CtzReflectionUtils.collectFields;
  */
 public class CtzSpringJdbcUtils {
 
-    // todo: documentme
-    public static long insertBatch(NamedParameterJdbcTemplate jt,
-                                   String sql, Iterable<Map<String, ?>> paramsIter, int batchSize) {
-        return insertBatch(jt, sql, paramsIter.iterator(), batchSize);
-    }
-
     // 2x speed improvement over naive jt inserts
     @SuppressWarnings("unchecked")
     public static long insertBatch(NamedParameterJdbcTemplate jt,
-                                   String sql, Iterator<Map<String, ?>> paramsIter, int batchSize) {
-        List<Map<String, ?>> parList = new ArrayList<Map<String, ?>>(batchSize);
+                                   String sql, Iterator<? extends SqlParameterSource> paramsIter, int batchSize) {
+        checkNotNull(jt, "Provided JDBC Template is null");
+        checkNotNull(paramsIter, "Provided parametricIter is null");
+        checkArgument(isNotBlank(sql), "Provided SQL query is blank");
+        checkArgument(batchSize > 0, "Batch size must be positive, but was: '%s'", batchSize);
+
         boolean hasInfoFromDb = true;
-        Map<String, Object>[] parArray = new Map[batchSize];
+        // mutable for lower overhead
+        SqlParameterSource[] params = new SqlParameterSource[batchSize];
         long updated = 0;
         long counter = 0;
+        int index = 0;
+        // main cycle
         while (paramsIter.hasNext()) {
-            counter += 1;
-            parList.add(paramsIter.next());
-            if(0 == parList.size() % batchSize) {
-                long up = doBatch(jt, sql, parList, parArray);
+            params[index] = paramsIter.next();
+            index += 1;
+            if(0 == index % batchSize) {
+                int[] upArr = jt.batchUpdate(sql, params);
                 if(hasInfoFromDb) {
+                    long up = countUpdatedRows(upArr);
                     if(-1 == up) hasInfoFromDb = false;
                     updated += up;
                 }
+                index = 0;
             }
+            counter += 1;
         }
         // tail
-        if(parList.size() > 0) {
-            Map<String, Object>[] partParArray = new Map[parList.size()];
-            long up = doBatch(jt, sql, parList, partParArray);
-            if (hasInfoFromDb) {
+        if(index > 0) {
+            SqlParameterSource[] partParArray = new SqlParameterSource[index];
+            arraycopy(params, 0, partParArray, 0, index);
+            int[] upArr = jt.batchUpdate(sql, partParArray);
+            if(hasInfoFromDb) {
+                long up = countUpdatedRows(upArr);
                 if(-1 == up) hasInfoFromDb = false;
                 updated += up;
             }
@@ -63,15 +71,6 @@ public class CtzSpringJdbcUtils {
         if(hasInfoFromDb) checkState(counter == updated, "Updated rows count reported by db differs from" +
                 "count of rows sent for batch insert, expected: %s, db reports: %s", counter, updated);
         return counter;
-    }
-
-    // returns -1 on no info from db
-    private static long doBatch(NamedParameterJdbcTemplate jt, String sql, List<Map<String, ?>> parList,
-                                 Map<String, ?>[] parArray) {
-        parList.toArray(parArray);
-        int[] res = jt.batchUpdate(sql, parArray);
-        parList.clear();
-        return countUpdatedRows(res);
     }
 
     // returns -1 on no info from db
@@ -84,6 +83,7 @@ public class CtzSpringJdbcUtils {
         return res;
     }
 
+    // todo: removeme
     public Map<String, Field> createColumnMap(Class<?> clazz) {
         ImmutableMap.Builder<String, Field> builder = ImmutableMap.builder();
         for(Field fi : collectFields(clazz, new ColumnMapPredicate())){
@@ -94,6 +94,7 @@ public class CtzSpringJdbcUtils {
         return builder.build();
     }
 
+    // todo: removeme
     private class ColumnMapPredicate implements Predicate<Field> {
         @Override
         public boolean apply(Field fi) {

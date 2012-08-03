@@ -12,7 +12,6 @@ import java.util.concurrent.*;
  * Date: 6/16/12
  * @see ThreadPoolExecutor
  */
-
 public class UnboundedQueueRejectionHandler implements RejectedExecutionHandler {
     private final Executor queueExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>(), new ExecutorThreadFactory("pool-rh"));

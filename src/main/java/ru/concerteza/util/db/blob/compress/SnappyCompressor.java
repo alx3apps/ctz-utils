@@ -8,16 +8,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * User: alexey
+ * BLOB compressor implementation, uses very fast <a href="https://github.com/dain/snappy">Snappy</a> compression method
+ *
+ * @author alexey
  * Date: 4/14/12
+ * @see NoCompressor
+ * @see GzipCompressor
+ * @see XzCompressor
+ * @see ru.concerteza.util.db.blob.tool.BlobTool
  */
 public class SnappyCompressor extends AbstractCompressor {
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     protected OutputStream wrapCompressInternal(OutputStream out) throws IOException {
         return new SnappyOutputStream(out);
     }
 
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     protected InputStream wrapDecompressInternal(InputStream in) throws IOException {
         return new SnappyInputStream(in);
     }

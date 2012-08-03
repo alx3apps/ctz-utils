@@ -2,7 +2,6 @@ package ru.concerteza.util.db.springjdbc.parallel;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterators;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.UnhandledException;
@@ -11,20 +10,20 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import ru.concerteza.util.collection.CtzCollectionUtils;
 import ru.concerteza.util.collection.accessor.Accessor;
 import ru.concerteza.util.collection.accessor.RoundRobinAccessor;
 import ru.concerteza.util.concurrency.SameThreadExecutor;
 import ru.concerteza.util.db.springjdbc.ResultSetIterator;
-import ru.concerteza.util.db.springjdbc.RowMapperFunction;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,13 +49,13 @@ public class ParallelQueriesIteratorTest {
         Accessor<DataSource> robin = RoundRobinAccessor.of(ImmutableList.<DataSource>of(ds));
         // single thread used, buffer must me bigger than data
         ParallelQueriesIterator<String> iter = new ParallelQueriesIterator<String>(robin, "select bar from foo",
-                new Forker(1), new SameThreadExecutor(), new SimpleMapper(), 10);
-        iter.start(ImmutableMap.<String, Object>of());
+                new SameThreadExecutor(), new SimpleMapper(), 10);
+        iter.start(params(1));
         assertEquals("41", iter.next());
         assertEquals("42", iter.next());
         assertEquals("43", iter.next());
         // check restart
-        iter.start(ImmutableMap.<String, Object>of());
+        iter.start(params(1));
         assertEquals("41", iter.next());
         assertEquals("42", iter.next());
         assertEquals("43", iter.next());
@@ -83,8 +82,8 @@ public class ParallelQueriesIteratorTest {
             Accessor<DataSource> robin = RoundRobinAccessor.of(builder.build());
             long start = System.currentTimeMillis();
             ParallelQueriesIterator<String> iter = new ParallelQueriesIterator<String>(robin, "select bar from foo",
-                    new Forker(count), Executors.newCachedThreadPool(), new SlowpokeMapper(), 100)
-                    .start(ImmutableMap.<String, Object>of());
+                    Executors.newCachedThreadPool(), new SlowpokeMapper(), 100)
+                    .start(params(count));
             long res = CtzCollectionUtils.fireTransform(iter);
 //          2100
             System.out.println("200000 records from 20 threads: " + (System.currentTimeMillis() - start));
@@ -134,20 +133,11 @@ public class ParallelQueriesIteratorTest {
         }
     }
 
-    private class Forker implements ParallelQueriesForker {
-        private final int forksCount;
-
-        private Forker(int forksCount) {
-            this.forksCount = forksCount;
+    private List<? extends SqlParameterSource> params(int count) {
+        ImmutableList.Builder<MapSqlParameterSource> builder = ImmutableList.builder();
+        for(int i = 0; i < count; i++) {
+            builder.add(new MapSqlParameterSource());
         }
-
-        @Override
-        public List<Map<String, ?>> fork(Map<String, ?> params) {
-            ImmutableList.Builder<Map<String, ?>> builder = ImmutableList.builder();
-            for(int i = 0; i < forksCount; i++) {
-                builder.add(ImmutableMap.<String, Object>of());
-            }
-            return builder.build();
-        }
+        return builder.build();
     }
 }

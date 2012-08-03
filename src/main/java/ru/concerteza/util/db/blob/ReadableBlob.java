@@ -1,6 +1,5 @@
 package ru.concerteza.util.db.blob;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -12,21 +11,39 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.io.IOUtils.copyLarge;
 
 /**
- * User: alexey
+ * Input stream connected to persistent compressed BLOB in remote database
+ *
+ * @author alexey
  * Date: 8/11/11
+ * @see AbstractBlob
+ * @see DetachedBlob
+ * @see WritableBlob
  */
 public class ReadableBlob extends AbstractBlob {
     private final InputStream inputStream;
 
-    public ReadableBlob(long oid, InputStream inputStream) {
-        super(oid);
+    /**
+     * @param id BLOB ID
+     * @param inputStream decompressed blob data stream
+     */
+    public ReadableBlob(long id, InputStream inputStream) {
+        super(id);
         this.inputStream = inputStream;
     }
 
+    /**
+     * @return decompressed blob data stream
+     */
     public InputStream getInputStream() {
         return inputStream;
     }
 
+    /**
+     * Shortcut method, reads all BLOB data into provided stream and close BLOB
+     *
+     * @param out stream to write data into
+     * @return number ob bytes read
+     */
     public long readAndClose(OutputStream out) {
         try {
             return copyLarge(inputStream, out);
@@ -37,11 +54,17 @@ public class ReadableBlob extends AbstractBlob {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws IOException {
         inputStream.close();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).

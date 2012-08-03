@@ -7,7 +7,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Iterable, that allows only one call of <code>iterator()</code> method.
+ * Iterable, allows only one call of <code>iterator()</code> method.
  * May be useful for 'foreach' operations over iterators.
  * Thread-safe if target iterator is thread-safe.
  *
@@ -15,33 +15,39 @@ import static com.google.common.base.Preconditions.checkState;
  * Date: 11/19/11
  * @see SingleUseIterableTest
  */
-public abstract class SingleUseIterable<T> implements Iterable<T> {
-    private AtomicBoolean notUsed = new AtomicBoolean(true);
+public class SingleUseIterable<T> implements Iterable<T> {
+    private final Iterator<T> iter;
+    private final AtomicBoolean notUsed = new AtomicBoolean(true);
 
+    /**
+     * Constructor, consider using {@link SingleUseIterable.of(java.util.Iterator)} insteda
+     *
+     * @param iter iterator to wrap
+     */
+    public SingleUseIterable(Iterator<T> iter) {
+        this.iter = iter;
+    }
+
+    /**
+     * Generic-friendly factory method
+     *
+     * @param iter iterator to wrap
+     * @param <T> iterator type
+     * @return
+     */
+    public static <T> Iterable<T> of(Iterator<T> iter) {
+        checkNotNull(iter);
+        return new SingleUseIterable<T>(iter);
+    }
+
+    /**
+     * @return provided iterator
+     * @throws IllegalStateException on more than one usage attempt
+     */
     @Override
     public Iterator<T> iterator() {
         boolean nu = notUsed.getAndSet(false);
         checkState(nu, "SingleUseIterable is already used: %s", this);
-        return singleUseIterator();
-    }
-
-    protected abstract Iterator<T> singleUseIterator();
-
-    public static <T> Iterable<T> of(Iterator<T> iter) {
-        checkNotNull(iter);
-        return new Wrapper<T>(iter);
-    }
-
-    private static class Wrapper<T> extends SingleUseIterable<T> {
-        private final Iterator<T> iter;
-
-        private Wrapper(Iterator<T> iter) {
-            this.iter = iter;
-        }
-
-        @Override
-        protected Iterator<T> singleUseIterator() {
-            return iter;
-        }
+        return this.iter;
     }
 }

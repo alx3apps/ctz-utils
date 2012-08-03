@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Wrapper for collection, that knows current collection position on iteration.
+ * Wrapper for collection, knows current collection position on iteration.
  * May be useful for special processing of first/last elements (e.g. last comma etc.).
  * Thread-safe if target collection is thread-safe,
  *
@@ -20,11 +20,11 @@ public class KnownPositionCollection<T> extends AbstractCollection<T> {
     private KnownPositionIterator<T> kpIterator;
 
     /**
-     * Protected constructor, use {@link KnownPositionCollection#of(java.util.Collection)} instead
+     * Constructor, consider using {@link KnownPositionCollection#of(java.util.Collection)} instead
      *
-     * @param target target collection
+     * @param target target collection, must not be changed during this instance use
      */
-    protected KnownPositionCollection(Collection<T> target) {
+    public KnownPositionCollection(Collection<T> target) {
         this.target = target;
         this.size = target.size();
     }
@@ -32,7 +32,7 @@ public class KnownPositionCollection<T> extends AbstractCollection<T> {
     /**
      * Creates {@link KnownPositionCollection} as a wrapper over provided collection
      *
-     * @param target target collection
+     * @param target target collection, must not be changed during this instance use
      * @param <T> target collection generic parameter
      * @return KnownPositionCollection
      */
@@ -40,12 +40,18 @@ public class KnownPositionCollection<T> extends AbstractCollection<T> {
         return new KnownPositionCollection<T>(target);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<T> iterator() {
         kpIterator = new KnownPositionIterator<T>(target.iterator());
         return kpIterator;
     }
 
+    /**
+     * Number of elements in target collection, cached on instance creation
+     */
     @Override
     public int size() {
         return size;
@@ -87,17 +93,26 @@ public class KnownPositionCollection<T> extends AbstractCollection<T> {
             this.target = target;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean hasNext() {
             return target.hasNext();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public T next() {
             position.incrementAndGet();
             return target.next();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void remove() {
             target.remove();

@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author alexey
  * Date: 5/20/12
- * @see SameThreadExecutor
  */
 public class SameThreadExecutor implements ExecutorService {
     private AtomicBoolean shuttedDown = new AtomicBoolean(false);

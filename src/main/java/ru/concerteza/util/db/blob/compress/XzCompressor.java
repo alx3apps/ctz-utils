@@ -9,8 +9,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * User: alexey
+ * BLOB compressor implementation, uses high ratio <a href="http://tukaani.org/xz/">XZ</a> compression method
+ *
+ * @author alexey
  * Date: 4/14/12
+ * @see SnappyCompressor
+ * @see GzipCompressor
+ * @see NoCompressor
+ * @see ru.concerteza.util.db.blob.tool.BlobTool
  */
 public class XzCompressor extends AbstractCompressor {
     private final int level;

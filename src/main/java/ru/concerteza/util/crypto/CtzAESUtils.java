@@ -1,5 +1,6 @@
 package ru.concerteza.util.crypto;
 
+import com.google.common.base.Function;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.UnhandledException;
 import org.bouncycastle.crypto.BlockCipher;
@@ -16,18 +17,22 @@ import org.bouncycastle.crypto.prng.VMPCRandomGenerator;
 import java.io.*;
 import java.security.SecureRandom;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.System.arraycopy;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.reverse;
 import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
 import static ru.concerteza.util.CtzFormatUtils.format;
 import static ru.concerteza.util.crypto.CtzHashUtils.sha1Digest;
 
 /**
- * User: alexey
+ * AES-256 encryption front-end over Bouncy Castle AES implementation.
+ * Supports streaming with PKCS7 padding.
+ *
+ * @author alexey
  * Date: 12/11/10
  */
-
-
 public class CtzAESUtils {
     // enables AES-256
     private static final int AES_KEY_SIZE = 32;
@@ -41,7 +46,14 @@ public class CtzAESUtils {
         RANDOM_GENERATOR.addSeedMaterial(seed);
     }
 
+    /**
+     * @param messageString message, will be read as UTF-8
+     * @param keyString encryption key
+     * @return encrypted string in base-64 format
+     */
     public static String encrypt(String messageString, String keyString) {
+        checkNotNull(messageString, "Provided message is null");
+        checkArgument(isNotEmpty(keyString), "Provided key is empty");
         byte[] key = createKey(keyString);
         // convert to bytes
         byte[] message = messageString.getBytes(UTF8_CHARSET);
@@ -50,7 +62,14 @@ public class CtzAESUtils {
         return Base64.encodeBase64String(encrypted);
     }
 
+    /**
+     * @param encryptedBase64 encrypted string in base-64 format
+     * @param keyString encryption key
+     * @return decrypted key
+     */
     public static String decrypt(String encryptedBase64, String keyString) {
+        checkNotNull(encryptedBase64, "Provided encrypted base-64 message is null");
+        checkArgument(isNotEmpty(keyString), "Provided key is empty");
         byte[] key = createKey(keyString);
         // convert to bytes
         byte[] encryptedWithIV = Base64.decodeBase64(encryptedBase64);
@@ -59,23 +78,49 @@ public class CtzAESUtils {
         return new String(message, UTF8_CHARSET);
     }
 
+    /**
+     * @return 32-bytes random key
+     */
     public static byte[] createRandomKey() {
         byte[] res = new byte[AES_KEY_SIZE];
         RANDOM_GENERATOR.nextBytes(res);
         return res;
     }
 
+    /**
+     * @param key non-secure encryption key
+     * @param salt salt for the key
+     * @return salted, hashed and transformed encryption key, non-secure,
+     * but better (through obscurity) than input one
+     */
+    @Deprecated // use createHashedKey(String, Function<String, String>) instead
     public static byte[] createHashedKey(String key, String salt) {
         String source = salt + reverse(key);
         String hash = sha1Digest(source);
         return createKey(hash);
     }
 
+    /**
+     * @param key non-secure encryption key
+     * @param transformation transformation to apply to provided key before hashing; must NOT be available in public
+     * @return salted, hashed and transformed encryption key, non-secure,
+     * but better (through obscurity) than input one
+     */
+    public static byte[] createHashedKey(String key, Function<String, String> transformation) {
+        String source = transformation.apply(key);
+        String hash = sha1Digest(source);
+        return createKey(hash);
+    }
+
+    /**
+     * @param keyString encryption key, will be read as UTF-8
+     * @return 32-bytes key representation
+     */
     public static byte[] createKey(String keyString) {
         byte[] key = keyString.getBytes(UTF8_CHARSET);
         if (AES_KEY_SIZE > key.length) {
             throw new IllegalArgumentException(format(
-                    "AES key must be UTF-8 string with length >= {}, but was: {}. " +
+                    "AES key must be UTF-8 string with length >= '{}', but was: '{}'. " +
                             "Length measured in bytes, not chars", AES_KEY_SIZE, key.length));
         } else if(AES_KEY_SIZE == key.length) {
             return key;
@@ -86,13 +131,20 @@ public class CtzAESUtils {
         }
     }
 
+    /**
+     * @return 16-bytes random initialization vector
+     */
     public static byte[] createIV() {
         byte[] iv = new byte[AES_IV_SIZE];
         RANDOM_GENERATOR.nextBytes(iv);
         return iv;
     }
 
-    // first 16 bytes are base64 IV
+    /**
+     * @param message message to encrypt
+     * @param key 32-bytes encryption key
+     * @return decrypted data with IV in first 16 bytes
+     */
     public static byte[] encrypt(byte[] message, byte[] key) {
         validateKey(key);
         // create IV
@@ -109,7 +161,11 @@ public class CtzAESUtils {
         return res;
     }
 
-    // first 16 bytes must be base64 IV
+    /**
+     * @param encryptedWithIV decrypted data with IV in first 16 bytes
+     * @param key 32-bytes encryption key
+     * @return decrypted data
+     */
     public static byte[] decrypt(byte[] encryptedWithIV, byte[] key) {
         validateKey(key);
         // get IV from input
@@ -124,6 +180,12 @@ public class CtzAESUtils {
         return out.toByteArray();
     }
 
+    /**
+     * @param messageStream input stream to encrypt
+     * @param encryptedStream stream to write encrypted data to
+     * @param key 32-bytes encryption key
+     * @param iv 16-bytes initialization vector
+     */
     public static void encryptStream(InputStream messageStream, OutputStream encryptedStream, byte[] key, byte[] iv) {
         validateKey(key);
         validateIV(iv);
@@ -157,6 +219,12 @@ public class CtzAESUtils {
         }
     }
 
+    /**
+     * @param encryptedStream input stream to decrypt
+     * @param messageStream stream to write decrypted data to
+     * @param key 32-bytes encryption key
+     * @param iv 16-bytes initialization vector
+     */
     public static void decryptStream(InputStream encryptedStream, OutputStream messageStream, byte[] key, byte[] iv) {
         validateKey(key);
         validateIV(iv);

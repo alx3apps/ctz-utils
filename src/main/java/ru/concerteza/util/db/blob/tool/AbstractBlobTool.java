@@ -15,18 +15,28 @@ import java.io.OutputStream;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
 /**
- * User: alexey
+ * BLOB tool supertype
+ *
+ * @author alexey
  * Date: 4/13/12
+ * @see BlobTool
  */
 public abstract class AbstractBlobTool implements BlobTool {
     protected final DataSource dataSource;
     protected final Compressor compressor;
 
+    /**
+     * @param dataSource data source
+     * @param compressor compressor
+     */
     protected AbstractBlobTool(DataSource dataSource, Compressor compressor) {
         this.dataSource = dataSource;
         this.compressor = compressor;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WritableBlob create() {
         try {
@@ -38,6 +48,9 @@ public abstract class AbstractBlobTool implements BlobTool {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReadableBlob load(long id) {
         try {
@@ -45,10 +58,13 @@ public abstract class AbstractBlobTool implements BlobTool {
             InputStream wrapped = compressor.wrapDecompress(input);
             return new ReadableBlob(id, wrapped);
         } catch (Exception e) {
-            throw new BlobException(e, "Cannot load blob, id: {}", id);
+            throw new BlobException(e, "Cannot load blob, id: '{}'", id);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DetachedBlob detach(long id) {
         InputStream input = null;
@@ -57,24 +73,46 @@ public abstract class AbstractBlobTool implements BlobTool {
             byte[] compressedData = IOUtils.toByteArray(input);
             return new DetachedBlob(id, compressedData, compressor);
         } catch (Exception e) {
-            throw new BlobException(e, "Cannot detach blob, id: {}", id);
+            throw new BlobException(e, "Cannot detach blob, id: '{}'", id);
         } finally {
             closeQuietly(input);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(long id) {
         try {
             deleteInternal(id);
         } catch (Exception e) {
-            throw new BlobException(e, "Cannot delete blob, id: {}", id);
+            throw new BlobException(e, "Cannot delete blob, id: '{}'", id);
         }
     }
 
+    /**
+     * Must create BLOB in database and return its ID and input stream
+     *
+     * @return BLOB ID and input stream
+     * @throws Exception
+     */
     protected abstract Pair<Long, OutputStream> createInternal() throws Exception;
 
+    /**
+     * Must open BLOB in database and return its input stream
+     *
+     * @param id BLOB ID
+     * @return BLOB input stream
+     * @throws Exception
+     */
     protected abstract InputStream loadInternal(long id) throws Exception;
 
+    /**
+     * Must delete BLOB in database
+     *
+     * @param id BLOB ID
+     * @throws Exception
+     */
     protected abstract void deleteInternal(long id) throws Exception;
 }

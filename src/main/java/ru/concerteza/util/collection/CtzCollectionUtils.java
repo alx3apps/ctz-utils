@@ -16,18 +16,19 @@ import static com.google.common.base.Preconditions.checkArgument;
  *
  * @author alexey
  * Date: 6/9/11
+ * @see CtzCollectionUtilsTest
  */
 public class CtzCollectionUtils {
     @Deprecated // use ImmutableMap.of() directly
     public static final Map<String, Object> EMPTY_MAP = ImmutableMap.of();
 
     /**
-     * Fires guava transform chain for iterators, which may produce nullable elements
+     * Fires guava transform chain for iterators, which may produce nullable elements.
+     * Will be replaced by {@code Iterators.advance(...)} in newer guava versions
      *
      * @param iter input iterator
      * @return count of transformed elements
      */
-
     public static long fireTransform(Iterator<?> iter) {
         int counter = 0;
         while (iter.hasNext()) {
@@ -65,6 +66,15 @@ public class CtzCollectionUtils {
         return builder.build();
     }
 
+    /**
+     * Converts separate keys and values lists into immutable map. Lists must have the same size.
+     *
+     * @param keys keys list
+     * @param values values list
+     * @param <K> key type
+     * @param <V> value type
+     * @return immutable map
+     */
     public static <K, V> ImmutableMap<K, V> listsToMap(List<K> keys, List<V> values) {
         checkArgument(keys.size() == values.size(), "Keys and values sizes differs, keys: '%s', values: '%s'", keys.size(), values.size());
         ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
@@ -74,24 +84,25 @@ public class CtzCollectionUtils {
         return builder.build();
     }
 
+    /**
+     * Sentinel wrapper for API's that may return null instead of empty list
+     *
+     * @param input list or null
+     * @param <T> list value type
+     * @return empty list on null input, provided list otherwise
+     */
     public static <T> List<T> defaultList(@Nullable List<T> input) {
         if(null == input) return ImmutableList.of();
         return input;
     }
 
+    /**
+     * Concurrent hash set factory method
+     *
+     * @param <T> value type
+     * @return set backed by {@link ConcurrentHashMap}
+     */
     public static <T> Set<T> newConcurrentHashSet() {
         return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
-    }
-
-    public static long sumLongIterable(Iterable<Long> iter) {
-        return sumLongIterator(iter.iterator());
-    }
-
-    public static long sumLongIterator(Iterator<Long> iter) {
-        int sum = 0;
-        while (iter.hasNext()) {
-            sum += iter.next();
-        }
-        return sum;
     }
 }

@@ -31,14 +31,26 @@ public class PersistentLocalDateTime implements EnhancedUserType, Serializable {
 
     private static final int[] SQL_TYPES = new int[]{Types.TIMESTAMP,};
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int[] sqlTypes() {
         return SQL_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Class returnedClass() {
         return LocalDateTime.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean equals(Object x, Object y) throws HibernateException {
         if (x == y) {
             return true;
@@ -51,10 +63,18 @@ public class PersistentLocalDateTime implements EnhancedUserType, Serializable {
         return dtx.equals(dty);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int hashCode(Object object) throws HibernateException {
         return object.hashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object nullSafeGet(ResultSet resultSet, String[] strings, Object object) throws HibernateException, SQLException {
         return nullSafeGet(resultSet, strings[0]);
     }
@@ -67,6 +87,10 @@ public class PersistentLocalDateTime implements EnhancedUserType, Serializable {
         return toLocalDateTime((Date) timestamp);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index) throws HibernateException, SQLException {
         if (value == null) {
             Hibernate.TIMESTAMP.nullSafeSet(preparedStatement, null, index);
@@ -75,38 +99,67 @@ public class PersistentLocalDateTime implements EnhancedUserType, Serializable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object deepCopy(Object value) throws HibernateException {
         return value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Serializable disassemble(Object value) throws HibernateException {
         return (Serializable) value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object assemble(Serializable cached, Object value) throws HibernateException {
         return cached;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String objectToSQLString(Object object) {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toXMLString(Object object) {
         return object.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object fromXMLString(String string) {
         return new LocalDateTime(string);
     }
-
 }
-
-

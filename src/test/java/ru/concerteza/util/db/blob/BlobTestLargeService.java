@@ -5,12 +5,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.concerteza.util.crypto.SHA1InputStream;
+import ru.concerteza.util.io.SHA1InputStream;
 import ru.concerteza.util.db.blob.tool.BlobTool;
 
 import javax.inject.Inject;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +18,6 @@ import static org.apache.commons.io.IOUtils.copyLarge;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang.RandomStringUtils.random;
 import static org.junit.Assert.assertArrayEquals;
-import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
 
 /**
  * User: alexey

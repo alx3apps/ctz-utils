@@ -5,7 +5,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Reference holder, hold only first setted value, ignore subsequent values
+ * Reference holder, holds only first setted value, ignores subsequent values.
+ * Thread-safe.
  *
  * @author alexey
  * Date: 6/12/12

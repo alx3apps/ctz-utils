@@ -1,7 +1,8 @@
 package ru.concerteza.util.db.springjdbc.parallel;
 
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+
 import javax.sql.DataSource;
-import java.util.Map;
 
 /**
  * Implementors must be registered on iterator using {@link ParallelQueriesIterator#addListener(ParallelQueriesListener)}
@@ -18,7 +19,7 @@ public interface ParallelQueriesListener {
      * @param sql SQL query
      * @param params query input parameters
      */
-    void success(DataSource ds, String sql, Map<String, ?> params);
+    void success(DataSource ds, String sql, SqlParameterSource params);
 
     /**
      * @param ds data source
@@ -26,5 +27,5 @@ public interface ParallelQueriesListener {
      * @param params query input parameters
      * @param ex exception from JDBC
      */
-    void error(DataSource ds, String sql, Map<String, ?> params, Throwable ex);
+    void error(DataSource ds, String sql, SqlParameterSource params, Throwable ex);
 }

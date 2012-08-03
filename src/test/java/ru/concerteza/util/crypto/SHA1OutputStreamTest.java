@@ -3,6 +3,7 @@ package ru.concerteza.util.crypto;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import ru.concerteza.util.io.SHA1OutputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

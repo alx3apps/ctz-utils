@@ -3,6 +3,8 @@ package ru.concerteza.util.db.springjdbc.named;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.UnhandledException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.concerteza.util.collection.maps.LowerKeysImmutableMapBuilder;
 
 import javax.annotation.Nullable;
@@ -22,6 +24,7 @@ import static ru.concerteza.util.CtzFormatUtils.format;
  * Date: 7/6/12
  */
 public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> {
+    private static final Logger logger = LoggerFactory.getLogger(NamedConstructorFunction.class);
     private final List<NamedConstructor<T>> constructors;
 
     public NamedConstructorFunction(Class<T> clazz) {
@@ -74,11 +77,8 @@ public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> 
         try {
             if(!co.isAccessible()) co.setAccessible(true);
             return co.newInstance(arguments.toArray());
-        } catch(InvocationTargetException e) {
-            throw new UnhandledException(e);
-        } catch(InstantiationException e) {
-            throw new UnhandledException(e);
-        } catch(IllegalAccessException e) {
+        } catch(Exception e) {
+            logger.error("co: '{}', arguments: '{}'", co, arguments);
             throw new UnhandledException(e);
         }
     }

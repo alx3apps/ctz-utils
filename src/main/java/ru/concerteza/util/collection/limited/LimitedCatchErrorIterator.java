@@ -15,17 +15,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 10/28/11
  * @see LimitedCatchErrorIteratorTest
  */
-public class LimitedCatchErrorIterator<T> extends AbstractIterator<T> {
+public class LimitedCatchErrorIterator<T> implements Iterator<T> {
     private final Iterator<T> target;
     private final Class<? extends Error> limitErrorClass;
 
     /**
-     * Protected constructor, use {@link LimitedCatchErrorIterator#of(java.util.Iterator, Class)} instead
+     * Constructor. Consider using {@link LimitedCatchErrorIterator#of(java.util.Iterator, Class)} instead
      *
      * @param target target iterator
      * @param limitErrorClass error class to catch and stop iteration
      */
-    protected LimitedCatchErrorIterator(Iterator<T> target, Class<? extends Error> limitErrorClass) {
+    public LimitedCatchErrorIterator(Iterator<T> target, Class<? extends Error> limitErrorClass) {
         checkNotNull(target);
         checkNotNull(limitErrorClass);
         this.target = target;
@@ -44,14 +44,30 @@ public class LimitedCatchErrorIterator<T> extends AbstractIterator<T> {
         return new LimitedCatchErrorIterator<T>(target, limitErrorClass);
     }
 
+    /**
+     * @return target iterator {@code hasNext()} or {@code false} on expected Error
+     */
     @Override
-    protected T computeNext() {
+    public boolean hasNext() {
         try {
-            return target.hasNext() ? target.next() : endOfData();
-        } catch (Error e) {
+            return target.hasNext();
+        } catch(Error e) {
             if(e.getClass().getName().equals(limitErrorClass.getName())) {
-                return endOfData();
+                return false;
             } else throw new UnhandledException(e);
         }
+    }
+
+    /**
+     * @return next element
+     */
+    @Override
+    public T next() {
+        return target.next();
+    }
+
+    @Override
+    public void remove() {
+        target.remove();
     }
 }

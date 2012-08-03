@@ -1,4 +1,4 @@
-package ru.concerteza.util.concurrency;
+package ru.concerteza.util.function.concurrency;
 
 import com.google.common.base.Function;
 import org.apache.commons.lang.UnhandledException;

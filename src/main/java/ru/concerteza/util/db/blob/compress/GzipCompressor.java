@@ -7,15 +7,23 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * User: alexey
+ * BLOB compressor implementation, uses standard {@code java.util} GZIP implementation
+ *
+ * @author alexey
  * Date: 4/14/12
  */
 public class GzipCompressor extends AbstractCompressor {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected OutputStream wrapCompressInternal(OutputStream out) throws IOException {
         return new GZIPOutputStream(out);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected InputStream wrapDecompressInternal(InputStream in) throws IOException {
         return new GZIPInputStream(in);

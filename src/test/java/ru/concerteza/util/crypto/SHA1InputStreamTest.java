@@ -1,9 +1,9 @@
 package ru.concerteza.util.crypto;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
+import ru.concerteza.util.io.SHA1InputStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

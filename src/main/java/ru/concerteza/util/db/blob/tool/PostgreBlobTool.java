@@ -1,8 +1,6 @@
 package ru.concerteza.util.db.blob.tool;
 
-import org.apache.commons.dbcp.DelegatingConnection;
 import org.postgresql.PGConnection;
-import org.postgresql.copy.PGCopyOutputStream;
 import org.postgresql.largeobject.LargeObject;
 import org.postgresql.largeobject.LargeObjectManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -16,8 +14,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * User: alexey
+ * PostgreSQL specific BLOB tool implementation. Uses Postgre JDBC non-standard LO API.
+ *
+ * @author alexey
  * Date: 2/4/11
+ * @see BlobTool
+ * @see ru.concerteza.util.db.blob.ReadableBlob
+ * @see ru.concerteza.util.db.blob.WritableBlob
+ * @see ru.concerteza.util.db.blob.DetachedBlob
  */
 public class PostgreBlobTool extends AbstractBlobTool {
 
@@ -25,6 +29,9 @@ public class PostgreBlobTool extends AbstractBlobTool {
         super(dataSource, compressor);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Pair<Long, OutputStream> createInternal() throws SQLException {
         Connection conn = DataSourceUtils.doGetConnection(dataSource);
@@ -34,6 +41,9 @@ public class PostgreBlobTool extends AbstractBlobTool {
         return new Pair<Long, OutputStream>(oid, lob.getOutputStream());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected InputStream loadInternal(long oid) throws SQLException {
         Connection conn = DataSourceUtils.doGetConnection(dataSource);
@@ -42,6 +52,9 @@ public class PostgreBlobTool extends AbstractBlobTool {
         return lob.getInputStream();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void deleteInternal(long oid) throws SQLException {
         Connection conn = DataSourceUtils.doGetConnection(dataSource);

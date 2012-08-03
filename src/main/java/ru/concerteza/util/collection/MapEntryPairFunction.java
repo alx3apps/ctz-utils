@@ -11,6 +11,7 @@ import java.util.Map;
  * @author alexey
  * Date: 10/21/11
  */
+@Deprecated // not useful
 public class MapEntryPairFunction<K, V> implements Function<Map.Entry<K,V>, Pair<K, V>> {
     /**
      * @param input map entry

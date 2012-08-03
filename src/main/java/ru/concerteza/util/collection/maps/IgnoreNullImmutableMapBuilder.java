@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 /**
- * Immutable map builder, that ignores input null values.
+ * Immutable map builder, ignores input null values.
  * Solution for <a href="http://code.google.com/p/google-collections/issues/detail?id=234">this problem</a>
  *
  * @author alexey
@@ -13,8 +13,25 @@ import java.util.Map;
  */
 public class IgnoreNullImmutableMapBuilder<K, V> extends ImmutableMap.Builder<K, V> {
 
+    /**
+     * Generic friendly factory method
+     *
+     * @param <K> map key type
+     * @param <V> map value type
+     * @return builder instance
+     */
     public static <K, V> ImmutableMap.Builder<K, V> builder() {
         return new IgnoreNullImmutableMapBuilder<K, V>();
+    }
+
+    /**
+     * @param map map to copy
+     * @param <K> key type
+     * @param <V> value type
+     * @return immutable map
+     */
+    public static <K, V> ImmutableMap<K, V> copyOf(Map<K, V> map) {
+        return new IgnoreNullImmutableMapBuilder<K, V>().putAll(map).build();
     }
 
     /**

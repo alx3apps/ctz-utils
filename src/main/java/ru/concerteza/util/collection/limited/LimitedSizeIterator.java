@@ -1,7 +1,5 @@
 package ru.concerteza.util.collection.limited;
 
-import com.google.common.collect.AbstractIterator;
-
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,22 +20,42 @@ public class LimitedSizeIterator<T> implements Iterator<T> {
     private final int limit;
     private AtomicInteger counter = new AtomicInteger(0);
 
-    protected LimitedSizeIterator(Iterator<T> target, int limit) {
+    /**
+     * Constructor, consider using {@link LimitedSizeIterator.of(java.util.Iterator, int)} instead.
+     *
+     * @param target target iterator
+     * @param limit size limit
+     */
+    public LimitedSizeIterator(Iterator<T> target, int limit) {
         checkNotNull(target);
         checkArgument(limit > 0, "Limit must be >= zero, was: %s", limit);
         this.target = target;
         this.limit = limit;
     }
 
+    /**
+     * Creates {@link LimitedSizeIterator} instance
+     *
+     * @param target target iterator
+     * @param limit size limit
+     * @param <T> target iterator generic parameter
+     * @return {@link LimitedSizeIterator} instance
+     */
     public static <T> LimitedSizeIterator<T> of(Iterator<T> target, int limit) {
         return new LimitedSizeIterator<T>(target, limit);
     }
 
+    /**
+     * @return target iterator {@code hasNext()} or {@code false} on threshold exceed
+     */
     @Override
     public boolean hasNext() {
         return counter.get() < limit && target.hasNext();
     }
 
+    /**
+     * @return next element
+     */
     @Override
     public T next() {
         counter.incrementAndGet();

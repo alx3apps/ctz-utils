@@ -1,29 +1,31 @@
 package ru.concerteza.util.db.springjdbc.parallel;
 
 import com.google.common.base.Function;
-import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.*;
 import org.apache.commons.lang.UnhandledException;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import ru.concerteza.util.collection.accessor.Accessor;
 import ru.concerteza.util.collection.accessor.RoundRobinAccessor;
 import ru.concerteza.util.concurrency.FirstValueHolder;
-import ru.concerteza.util.db.datasource.RoundRobinDataSourceAccessor;
 
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Executes single SQL query to multiple data sources in parallel using provided executor.
@@ -33,11 +35,10 @@ import static com.google.common.base.Preconditions.checkState;
  * with <code>start</code> method and iterate over until end.
  * Data source exceptions will be propagates as runtime exceptions thrown on 'next()' or 'hasNext()' call.
  * All parallel queries will be cancelled on one query error.
- * <b>NOT</b> thread-safe, instance may be reused calling <code>start</code> method, but only in one thread simultaneously.
+ * <b>NOT</b> thread-safe (tbd: specify points that break thread safety), instance may be reused calling <code>start</code> method, but only in one thread simultaneously.
  *
  * @author  alexey
  * Date: 6/8/12
- * @see ParallelQueriesForker
  * @see ParallelQueriesListener
  * @see Accessor
  * @see ParallelQueriesIteratorTest
@@ -49,7 +50,6 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
 
     private final Accessor<? extends DataSource> sources;
     private final String sql;
-    private final ParallelQueriesForker forker;
     private final RowMapper<T> mapper;
     private final ExecutorService executor;
     // was made non-generic to allow endOfDataObject
@@ -57,45 +57,20 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     private final Extractor extractor = new Extractor();
     private final List<ParallelQueriesListener> listeners = Lists.newArrayList();
 
-    private List<Map<String, ?>> paramsList;
-
-    private boolean started = false;
-    private int sourcesRemained;
-    private List<Future<?>> futures;
-
-    /**
-     * Shortcut constructor
-     *
-     * @param sources list of data sources, will be used in round-robin mode
-     * @param sql query to execute using NamedParameterJdbcTemplate
-     * @param forker function to divide provided parameters between threads
-     */
-    @SuppressWarnings("unchecked")
-    public ParallelQueriesIterator(List<DataSource> sources, String sql, ParallelQueriesForker forker) {
-        this.sources = RoundRobinAccessor.of(sources);
-        this.sql = sql;
-        this.forker = forker;
-        this.mapper = (RowMapper) new ColumnMapRowMapper();
-        this.executor = Executors.newCachedThreadPool();
-        this.dataQueue = new ArrayBlockingQueue<Object>(1024);
-    }
+    private AtomicBoolean started = new AtomicBoolean(false);
+    private AtomicInteger sourcesRemained = new AtomicInteger(0);
+    private ImmutableList<Future<?>> futures;
 
     /**
      * Shortcut constructor with mapper.
      *
      * @param sources list of data sources, will be used in round-robin mode
      * @param sql query to execute using NamedParameterJdbcTemplate
-     * @param forker function to divide provided parameters between threads
      * @param mapper will be used to get data from result sets
      */
     @SuppressWarnings("unchecked")
-    public ParallelQueriesIterator(List<DataSource> sources, String sql, ParallelQueriesForker forker, RowMapper<T> mapper) {
-        this.sources = RoundRobinAccessor.of(sources);
-        this.sql = sql;
-        this.forker = forker;
-        this.mapper = mapper;
-        this.executor = Executors.newCachedThreadPool();
-        this.dataQueue = new ArrayBlockingQueue<Object>(1024);
+    public ParallelQueriesIterator(List<DataSource> sources, String sql, RowMapper<T> mapper) {
+        this(RoundRobinAccessor.of(sources), sql, Executors.newCachedThreadPool(), mapper, 1024);
     }
 
     /**
@@ -104,14 +79,18 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
      * @param sources data sources accessor
      * @param sql query to execute using NamedParameterJdbcTemplate
      * @param mapper will be used to get data from result sets
-     * @param forker function to divide provided parameters between threads
      * @param executor executor service to run parallel queries into
      * @param bufferSize size of ArrayBlockingQueue data buffer
      */
-    public ParallelQueriesIterator(Accessor<? extends DataSource> sources, String sql, ParallelQueriesForker forker, ExecutorService executor, RowMapper<T> mapper, int bufferSize) {
+    public ParallelQueriesIterator(Accessor<? extends DataSource> sources, String sql, ExecutorService executor, RowMapper<T> mapper, int bufferSize) {
+        checkNotNull(sources, "Provided data source accessor is null");
+        checkArgument(sources.size() > 0, "No data sources provided");
+        checkArgument(isNotBlank(sql), "Provided sql query is blank");
+        checkNotNull(executor, "Provided executor is null");
+        checkNotNull(mapper, "Provided row mapper is null");
+        checkArgument(bufferSize > 0, "Buffer size mat be positive, but was: '%s'", bufferSize);
         this.sources = sources;
         this.sql = sql;
-        this.forker = forker;
         this.mapper = mapper;
         this.executor = executor;
         this.dataQueue = new ArrayBlockingQueue<Object>(bufferSize);
@@ -120,16 +99,17 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     /**
      * Starts parallel query execution in data sources. May be called multiple times to reuse iterator instance,
      *
-     * @param params query params, will be dived using provided {@link ParallelQueriesForker}
+     * @param params query params
      * @return iterator itself
      */
-    public ParallelQueriesIterator<T> start(Map<String, ?> params) {
+    public ParallelQueriesIterator<T> start(Collection<? extends SqlParameterSource> params) {
+        checkNotNull(params, "Provided parameters collection is null");
+        checkArgument(params.size() > 0, "Provided collection is empty");
         cancel();
         this.dataQueue.clear();
-        this.paramsList = this.forker.fork(params);
-        this.sourcesRemained = this.paramsList.size();
-        this.futures = ImmutableList.copyOf(Iterables.transform(this.paramsList, new SubmitFun()));
-        this.started = true;
+        this.sourcesRemained.set(params.size());
+        this.futures = ImmutableList.copyOf(Collections2.transform(params, new SubmitFun()));
+        this.started.set(true);
         return this;
     }
 
@@ -140,11 +120,10 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     @Override
     @SuppressWarnings("unchecked")
     protected T computeNext() {
-        checkState(started, "Iterator wasn't started, call 'start' method first");
+        checkState(started.get(), "Iterator wasn't started, call 'start' method first");
         Object ob;
         while(endOfDataObject == (ob = takeData())) {
-            sourcesRemained -= 1;
-            if(0 == sourcesRemained) return endOfData();
+            if(0 == sourcesRemained.decrementAndGet()) return endOfData();
         }
         if(exceptionHolder == ob) {
             cancel();
@@ -159,7 +138,7 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
      * @return count of queries that were actually interrupted in processing
      */
     public int cancel() {
-        if(!started) return 0;
+        if(!started.get()) return 0;
         int res = 0;
         for (Future<?> fu : futures) {
             if(fu.cancel(true)) res += 1;
@@ -195,9 +174,9 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     private class Worker implements Runnable {
         private final DataSource ds;
         private final NamedParameterJdbcTemplate jt;
-        private final Map<String, ?> params;
+        private final SqlParameterSource params;
 
-        private Worker(DataSource ds, Map<String, ?> params) {
+        private Worker(DataSource ds, SqlParameterSource params) {
             this.ds = ds;
             this.jt = new NamedParameterJdbcTemplate(ds);
             this.params = params;
@@ -234,9 +213,9 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
         }
     }
 
-    private class SubmitFun implements Function<Map<String, ?>, Future<?>> {
+    private class SubmitFun implements Function<SqlParameterSource, Future<?>> {
         @Override
-        public Future<?> apply(Map<String, ?> params) {
+        public Future<?> apply(@Nullable SqlParameterSource params) {
             Worker worker = new Worker(sources.get(), params);
             return executor.submit(worker);
         }

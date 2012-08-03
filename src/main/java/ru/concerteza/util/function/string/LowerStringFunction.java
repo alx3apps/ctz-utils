@@ -1,4 +1,4 @@
-package ru.concerteza.util.collection.string;
+package ru.concerteza.util.function.string;
 
 import com.google.common.base.Function;
 
@@ -7,19 +7,19 @@ import javax.annotation.Nullable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Guava function, transforms provided String to upper case
+ * Guava function, transforms provided String to lower case
  *
- * @author  alexey
+ * @author alexey
  * Date: 2/9/12
  */
-public class UpperStringFunction implements Function<String, String> {
+public class LowerStringFunction implements Function<String, String> {
     /**
      * @param input string
-     * @return <code>input.toUpperCase()</code>
+     * @return <code>input.toLowerCase()</code>
      */
     @Override
     public String apply(@Nullable String input) {
         checkNotNull(input);
-        return input.toUpperCase();
+        return input.toLowerCase();
     }
 }
