@@ -10,13 +10,20 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * User: alexey
+ * {@link javax.sql.DataSource} implementation that never closes its connections.
+ * Connections are cached per thread.
+ *
+ * @author alexey
  * Date: 10/21/11
  */
 public class NeverendingConnectionDataSource extends AbstractDbcpMimicringDataSource implements SmartDataSource {
     private final ThreadLocal<Connection> conn = new ThreadLocal<Connection>();
     private final Queue<Connection> registry = new ConcurrentLinkedQueue<Connection>();
 
+    /**
+     * @return thread local cached connection
+     * @throws SQLException
+     */
     @Override
     public Connection getConnection() throws SQLException {
         Connection cached = conn.get();
@@ -31,6 +38,9 @@ public class NeverendingConnectionDataSource extends AbstractDbcpMimicringDataSo
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         Connection el;
@@ -39,6 +49,10 @@ public class NeverendingConnectionDataSource extends AbstractDbcpMimicringDataSo
         }
     }
 
+    /**
+     * @param con connection
+     * @return false
+     */
     @Override
     public boolean shouldClose(Connection con) {
         return false;

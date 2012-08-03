@@ -9,7 +9,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * User: alexey
+ * {@link DataSource} implementation, uses JDBC4 {@code java.sql.Connection#isValid()} method
+ * to check connection state before its returning from the pool.
+ *
+ * @author alexey
  * Date: 6/13/12
  */
 public class ValidConnectionDataSource extends DataSource {
@@ -17,18 +20,32 @@ public class ValidConnectionDataSource extends DataSource {
     private int checkValidCyclesCount = -1;
     private boolean checkValidEnable = true;
 
+    /**
+     * @param checkValidTimeoutSeconds timeout ro wait for on validness check
+     */
     public void setCheckValidTimeoutSeconds(int checkValidTimeoutSeconds) {
         this.checkValidTimeoutSeconds = checkValidTimeoutSeconds;
     }
 
+    /**
+     * @param checkValidCyclesCount max number of connections that will be serially failed checked
+     *                              for validness before exception will thrown
+     */
     public void setCheckValidCyclesCount(int checkValidCyclesCount) {
         this.checkValidCyclesCount = checkValidCyclesCount;
     }
 
+    /**
+     * @param checkValidEnable flag that enabled validness checks
+     */
     public void setCheckValidEnable(boolean checkValidEnable) {
         this.checkValidEnable = checkValidEnable;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ConnectionPool createPool() throws SQLException {
         if(pool != null) {
@@ -45,12 +62,22 @@ public class ValidConnectionDataSource extends DataSource {
         }
     }
 
-
+    /**
+     * Not supported method
+     *
+     * @param username username
+     * @param password password
+     * @return UnsupportedOperationException
+     * @throws UnsupportedOperationException
+     */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return poolProperties.getUrl();

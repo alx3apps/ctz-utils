@@ -7,7 +7,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 /**
- * User: alexey
+ * Iterator wrapper over hibernates query results.
+ * Won't work with lazy collections, they cause LazyInitializationException after threshold exceed
+ *
+ * @author alexey
  * Date: 8/18/11
  */
 
@@ -18,12 +21,20 @@ public class EntityIterator<T> extends AbstractIterator<T> {
     private final int threshold;
     private int readCount = 0;
 
+    /**
+     * @param sf session factory
+     * @param target scrollable results
+     * @param threshold rows read before session clean threashold
+     */
     public EntityIterator(SessionFactory sf, ScrollableResults target, int threshold) {
         this.target = target;
         this.sf = sf;
         this.threshold = threshold;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected T computeNext() {
@@ -44,6 +55,9 @@ public class EntityIterator<T> extends AbstractIterator<T> {
         return res;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this).

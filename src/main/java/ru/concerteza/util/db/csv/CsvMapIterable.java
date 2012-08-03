@@ -23,7 +23,9 @@ import static ru.concerteza.util.collection.CtzCollectionUtils.listsToMap;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 /**
- * User: alexey
+ * Map iterable implementation over CSV file
+ *
+ * @author alexey
  * Date: 6/29/12
  */
 public class CsvMapIterable<T> implements Iterable<T> {
@@ -32,19 +34,47 @@ public class CsvMapIterable<T> implements Iterable<T> {
     private final Splitter splitter;
     private final Function<Map<String, String>, T> converter;
 
+    /**
+     * Shortcut constructor
+     *
+     * @param resourcePath spring resource path to CSV file
+     * @param delimiter CSV fields delimiter
+     */
     public CsvMapIterable(String resourcePath, String delimiter) {
         this(resourcePath, delimiter, CtzConstants.UTF8);
     }
 
+    /**
+     * Shortcut constructor
+     *
+     * @param resourcePath spring resource path to CSV file
+     * @param delimiter CSV fields delimiter
+     * @param encoding CSV file encoding
+     */
     @SuppressWarnings("unchecked")
     public CsvMapIterable(String resourcePath, String delimiter, String encoding) {
         this(RESOURCE_LOADER.getResource(resourcePath), delimiter, encoding, (Function) Functions.identity());
     }
 
+    /**
+     * Shortcut constructor
+     *
+     * @param resourcePath spring resource path to CSV file
+     * @param delimiter CSV fields delimiter
+     * @param converter CSV row converter function
+     */
     public CsvMapIterable(String resourcePath, String delimiter, Function<Map<String, String>, T> converter) {
         this(RESOURCE_LOADER.getResource(resourcePath), delimiter, CtzConstants.UTF8, converter);
     }
 
+    /**
+     * Main constructor
+     *
+     * @param resource CSV file as spring resource
+     * @param delimiter CSV fields delimiter
+     * @param encoding CSV file encoding
+     * @param converter CSV row converter function
+     */
     public CsvMapIterable(Resource resource, String delimiter, String encoding, Function<Map<String, String>, T> converter) {
         checkArgument(null != resource, "Resource is null");
         checkArgument(isNotEmpty(encoding), "Encoding is empty");
@@ -56,6 +86,9 @@ public class CsvMapIterable<T> implements Iterable<T> {
         this.converter = converter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<T> iterator() {
         return new CsvMapIterator();
