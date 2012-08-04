@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import static ru.concerteza.util.CtzConstants.UTF8;
+import static ru.concerteza.util.string.CtzConstants.UTF8;
 
 /**
  * {@link javax.sql.DataSource} implementation for CSV file with fixed data

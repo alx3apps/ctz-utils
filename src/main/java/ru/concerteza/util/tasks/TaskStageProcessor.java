@@ -25,7 +25,17 @@ public interface TaskStageProcessor {
      */
     void process(long taskId) throws Exception;
 
+    /**
+     * List of additional operations, that will be called by {@link TaskEngine} before stage processing
+     *
+     * @return before listeners
+     */
     List<? extends TaskStageListener> beforeListeners();
 
+    /**
+     * List of additional operations, that will be called by {@link TaskEngine} after stage processing
+     *
+     * @return after listeners
+     */
     List<? extends TaskStageListener> afterListeners();
 }

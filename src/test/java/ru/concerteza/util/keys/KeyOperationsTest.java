@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;

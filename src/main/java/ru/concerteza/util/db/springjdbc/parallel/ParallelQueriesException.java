@@ -3,11 +3,14 @@ package ru.concerteza.util.db.springjdbc.parallel;
 import org.springframework.dao.DataAccessException;
 
 import static java.lang.Thread.currentThread;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
- * User: alexey
+ * Exception for errors in async query workers
+ *
+ * @author alexey
  * Date: 6/12/12
+ * @see ParallelQueriesIterator
  */
 class ParallelQueriesException extends DataAccessException {
     public ParallelQueriesException(Throwable cause) {

@@ -6,7 +6,7 @@ import javax.inject.Named;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * User: alexey

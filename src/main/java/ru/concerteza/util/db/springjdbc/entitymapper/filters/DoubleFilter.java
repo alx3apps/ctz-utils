@@ -2,7 +2,7 @@ package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
 import java.util.Collection;
 
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 // todo: document me
 public class DoubleFilter extends ColumnListFilter<Double> {

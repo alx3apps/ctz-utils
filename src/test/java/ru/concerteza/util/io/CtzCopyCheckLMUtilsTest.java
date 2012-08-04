@@ -1,14 +1,14 @@
-package ru.concerteza.util;
+package ru.concerteza.util.io;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import ru.concerteza.util.io.CtzIOUtils;
+import ru.concerteza.util.io.CtzCopyCheckLMUtils;
 
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
-import static ru.concerteza.util.CtzConstants.*;
+import static ru.concerteza.util.string.CtzConstants.*;
 import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 
 /**

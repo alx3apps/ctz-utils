@@ -3,7 +3,7 @@ package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Filter implementation to parse string representation of dates into {@link java.sql.Timestamp}

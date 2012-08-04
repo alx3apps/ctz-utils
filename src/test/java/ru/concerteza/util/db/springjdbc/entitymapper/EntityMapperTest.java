@@ -31,7 +31,7 @@ public class EntityMapperTest {
     static {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:mem:EntityMapperTest1");
+        ds.setUrl("jdbc:h2:mem:");
         jt = new JdbcTemplate(ds);
     }
 
@@ -87,12 +87,6 @@ public class EntityMapperTest {
         jt.update("drop table bar");
     }
 
-    private DataSource createH2DS() {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:mem:EntityMapperTest2");
-        return ds;
-    }
 
     @Entity
     @Table(name = "foo")

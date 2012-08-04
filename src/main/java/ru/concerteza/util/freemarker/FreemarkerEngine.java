@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static freemarker.ext.beans.BeansWrapper.EXPOSE_PROPERTIES_ONLY;
-import static ru.concerteza.util.CtzConstants.UTF8;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzConstants.UTF8;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.io.CtzResourceUtils.path;
 
 /**

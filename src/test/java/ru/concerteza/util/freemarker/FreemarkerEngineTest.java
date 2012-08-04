@@ -2,7 +2,7 @@ package ru.concerteza.util.freemarker;
 
 import org.junit.Test;
 import org.springframework.core.io.Resource;
-import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.string.CtzConstants;
 import ru.concerteza.util.io.CtzResourceUtils;
 
 import java.io.ByteArrayOutputStream;

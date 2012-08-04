@@ -12,10 +12,17 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * User: alexey
+ * <a href="http://static.springsource.org/spring/docs/3.1.x/javadoc-api/org/springframework/jdbc/core/RowMapper.html">RowMapper</a> implementation,
+ * converts row into lower case keyed map ignoring null values
+ *
+ * @author alexey
  * Date: 7/6/12
  */
 public class LowerColumnsIgnoreNullMapper implements RowMapper<Map<String, ?>> {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, ?> mapRow(ResultSet rs, int rowNum) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columnCount = rsmd.getColumnCount();

@@ -49,7 +49,6 @@ public abstract class Option<T> {
      * @return {@link Some} containing provided value
      */
     public static <T> Some<T> some(T t) {
-        checkNotNull(t, "Some value cannot be null");
         return new Some<T>(t);
     }
 
@@ -103,14 +102,5 @@ public abstract class Option<T> {
     @Override
     public int hashCode() {
         return this.isNone() ? super.hashCode() : get().hashCode();
-    }
-
-    /**
-     * {@code toString()}
-     * @return {@code value.toString()} on {@link Some}, "None" on {@link None}
-     */
-    @Override
-    public String toString() {
-        return this.isNone() ? "None" : get().toString();
     }
 }

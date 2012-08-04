@@ -6,7 +6,7 @@ import org.apache.commons.io.filefilter.NotFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.junit.Test;
-import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.string.CtzConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.junit.Assert.assertEquals;
-import static ru.concerteza.util.CtzConstants.UTF8;
+import static ru.concerteza.util.string.CtzConstants.UTF8;
 import static ru.concerteza.util.io.CtzIOUtils.*;
 
 /**

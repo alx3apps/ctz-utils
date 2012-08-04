@@ -4,7 +4,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Application version representation, parsed from MANIFEST.MF file by {@link CtzVersionUtils}

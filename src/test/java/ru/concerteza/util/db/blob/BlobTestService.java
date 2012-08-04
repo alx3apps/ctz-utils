@@ -14,7 +14,7 @@ import static org.apache.commons.io.IOUtils.copyLarge;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.apache.commons.lang.RandomStringUtils.random;
 import static org.junit.Assert.assertArrayEquals;
-import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
+import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
 /**
  * User: alexey

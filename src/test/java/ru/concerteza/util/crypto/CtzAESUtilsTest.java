@@ -1,11 +1,15 @@
 package ru.concerteza.util.crypto;
 
+import com.google.common.base.Function;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
-import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.string.CtzConstants;
 
+import javax.annotation.Nullable;
 import java.io.*;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang.StringUtils.reverse;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -54,7 +58,7 @@ public class CtzAESUtilsTest {
     @Test
     public void testEncryptDecryptHashed() {
         byte[] secret = randomAscii(42).getBytes(CtzConstants.UTF8_CHARSET);
-        byte[] key = CtzAESUtils.createHashedKey(KEY_STRING, "bar");
+        byte[] key = CtzAESUtils.createHashedKey(KEY_STRING, SecretFun.INSTANCE);
         byte[] encrypted = CtzAESUtils.encrypt(secret, key);
         byte[] decrypted = CtzAESUtils.decrypt(encrypted, key);
         assertArrayEquals("decrypted not equals", secret, decrypted);
@@ -97,5 +101,15 @@ public class CtzAESUtilsTest {
         decryptedOut.close();
         byte[] decrypted = decryptedOut.toByteArray();
         assertArrayEquals("decrypted not equals", secret, decrypted);
+    }
+
+    private enum SecretFun implements Function<String, String> {
+        INSTANCE;
+        @Override
+        public String apply(@Nullable String input) {
+            // don't do this in code, use real random generators instead
+            String salt = RandomStringUtils.random(42);
+            return salt + reverse(input);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package ru.concerteza.util;
+package ru.concerteza.util.math;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;

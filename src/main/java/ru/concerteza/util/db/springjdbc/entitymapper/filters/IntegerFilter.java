@@ -1,7 +1,7 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
 import java.util.Collection;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter} implementation to convert integer columns that may be

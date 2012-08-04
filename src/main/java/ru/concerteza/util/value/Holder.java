@@ -51,4 +51,17 @@ public class Holder<T> {
                 append("target", target).
                 toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Holder holder = (Holder) o;
+        return !(target != null ? !target.equals(holder.target) : holder.target != null);
+    }
+
+    @Override
+    public int hashCode() {
+        return target != null ? target.hashCode() : 0;
+    }
 }

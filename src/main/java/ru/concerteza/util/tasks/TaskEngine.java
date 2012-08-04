@@ -10,7 +10,7 @@ import java.util.concurrent.Executor;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Collections.newSetFromMap;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Engine for asynchronous multistage suspendable tasks.

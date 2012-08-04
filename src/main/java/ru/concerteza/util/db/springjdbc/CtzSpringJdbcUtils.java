@@ -2,8 +2,6 @@ package ru.concerteza.util.db.springjdbc;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterators;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -16,9 +14,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.System.arraycopy;
-import static java.lang.System.in;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static ru.concerteza.util.CtzReflectionUtils.collectFields;
+import static ru.concerteza.util.reflect.CtzReflectionUtils.collectFields;
 
 /**
  * User: alexey

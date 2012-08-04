@@ -22,8 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.System.arraycopy;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.reverse;
-import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.crypto.CtzHashUtils.sha1Digest;
 
 /**

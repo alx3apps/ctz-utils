@@ -1,6 +1,6 @@
 package ru.concerteza.util.io.holder;
 
-import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.string.CtzConstants;
 
 
 /**

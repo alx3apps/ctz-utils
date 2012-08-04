@@ -1,7 +1,6 @@
 package ru.concerteza.util.io.holder;
 
-import ru.concerteza.util.CtzConstants;
-import ru.concerteza.util.io.SqlListParser;
+import ru.concerteza.util.string.CtzConstants;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;

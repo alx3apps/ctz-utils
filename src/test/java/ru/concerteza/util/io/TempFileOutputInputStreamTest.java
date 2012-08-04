@@ -3,20 +3,16 @@ package ru.concerteza.util.io;
 import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
-import org.junit.Assert;
 import org.junit.Test;
-import ru.concerteza.util.CtzConstants;
 import ru.concerteza.util.value.Holder;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static ru.concerteza.util.CtzConstants.UTF8;
+import static ru.concerteza.util.string.CtzConstants.UTF8;
 
 /**
  * User: alexey

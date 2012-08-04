@@ -1,11 +1,8 @@
 package ru.concerteza.util.crypto;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import ru.concerteza.util.CtzConstants;
-import ru.concerteza.util.io.CtzIOUtils;
+import ru.concerteza.util.string.CtzConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +13,7 @@ import java.security.NoSuchProviderException;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 import static org.apache.commons.lang.RandomStringUtils.random;
 import static org.junit.Assert.assertEquals;
-import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
+import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 
 /**

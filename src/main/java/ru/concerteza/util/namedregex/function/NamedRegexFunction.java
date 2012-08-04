@@ -1,4 +1,4 @@
-package ru.concerteza.util.function.regex;
+package ru.concerteza.util.namedregex.function;
 
 import com.google.common.base.Function;
 import ru.concerteza.util.namedregex.NamedMatcher;

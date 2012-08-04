@@ -13,14 +13,34 @@ import java.util.regex.MatchResult;
  */
 public interface NamedMatchResult extends MatchResult {
 
+    /**
+     * @return ordered list of matched groups
+     */
     public List<String> orderedGroups();
 
+    /**
+     * @return map of named groups
+     */
     public Map<String, String> namedGroups();
 
+    /**
+     * Returns group by name
+     *
+     * @param groupName name
+     * @return group
+     */
     public String group(String groupName);
 
+    /**
+     * @param groupName name
+     * @return start index of the group
+     */
     public int start(String groupName);
 
+    /**
+     * @param groupName name
+     * @return end index of the group
+     */
     public int end(String groupName);
 
 }

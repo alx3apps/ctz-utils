@@ -1,7 +1,7 @@
 package ru.concerteza.util.io;
 
 import org.apache.commons.io.LineIterator;
-import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.string.CtzConstants;
 
 import java.io.File;
 import java.io.IOException;

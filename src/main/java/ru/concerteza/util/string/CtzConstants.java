@@ -1,9 +1,11 @@
-package ru.concerteza.util;
+package ru.concerteza.util.string;
 
 import java.nio.charset.Charset;
 
 /**
- * User: alexey
+ * Common constants
+ *
+ * @author alexey
  * Date: 4/27/11
  */
 public class CtzConstants {

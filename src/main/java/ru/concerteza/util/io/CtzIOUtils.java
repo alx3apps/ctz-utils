@@ -24,7 +24,7 @@ import java.util.concurrent.Callable;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
 import static org.apache.commons.io.FileUtils.openOutputStream;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.concurrency.CtzConcurrencyUtils.runnable;
 
 /**

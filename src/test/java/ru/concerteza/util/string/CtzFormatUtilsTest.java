@@ -1,6 +1,7 @@
-package ru.concerteza.util;
+package ru.concerteza.util.string;
 
 import org.junit.Test;
+import ru.concerteza.util.string.CtzFormatUtils;
 
 import static org.junit.Assert.*;
 

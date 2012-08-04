@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
-import ru.concerteza.util.CtzConstants;
+import ru.concerteza.util.string.CtzConstants;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

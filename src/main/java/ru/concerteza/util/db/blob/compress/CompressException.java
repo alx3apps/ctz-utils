@@ -2,8 +2,6 @@ package ru.concerteza.util.db.blob.compress;
 
 import ru.concerteza.util.except.MessageException;
 
-import static ru.concerteza.util.CtzFormatUtils.format;
-
 /**
  * * Exception for compression related errors
  *

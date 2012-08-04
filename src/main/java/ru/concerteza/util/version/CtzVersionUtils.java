@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.jar.Manifest;
 
 import static com.google.common.base.Preconditions.checkState;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 
 /**

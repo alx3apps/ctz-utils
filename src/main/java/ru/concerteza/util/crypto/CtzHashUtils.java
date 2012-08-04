@@ -7,6 +7,7 @@ import java.io.InputStream;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.springframework.core.io.Resource;
 import ru.concerteza.util.io.RuntimeIOException;
@@ -15,8 +16,8 @@ import ru.concerteza.util.io.SHA1InputStream;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.io.IOUtils.copyLarge;
-import static ru.concerteza.util.CtzConstants.UTF8_CHARSET;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 
@@ -88,5 +89,18 @@ public class CtzHashUtils {
         } finally {
             closeQuietly(is);
         }
+    }
+
+    /**
+     * @param data input data
+     * @return MD5 digest as hex string
+     */
+    public static String md5Digest(byte[] data) {
+        MD5Digest digest = new MD5Digest();
+        digest.update(data, 0, data.length);
+        byte[] dig = new byte[digest.getDigestSize()];
+        digest.doFinal(dig, 0);
+        byte[] hex = org.bouncycastle.util.encoders.Hex.encode(dig);
+        return new String(hex, UTF8_CHARSET);
     }
 }

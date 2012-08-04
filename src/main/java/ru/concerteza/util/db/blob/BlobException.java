@@ -2,7 +2,7 @@ package ru.concerteza.util.db.blob;
 
 import ru.concerteza.util.except.MessageException;
 
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Exception for BLOB related errors

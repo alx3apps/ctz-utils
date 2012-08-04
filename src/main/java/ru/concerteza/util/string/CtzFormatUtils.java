@@ -1,4 +1,4 @@
-package ru.concerteza.util;
+package ru.concerteza.util.string;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,12 +7,23 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
- * User: alexey
+ * Formatting utilities, borrowed from <a href="http://www.slf4j.org/">slf4j</a> project.
+ *
+ * @author alexey
  * Date: 4/19/11
+ * @see CtzFormatUtilsTest
  */
 public class CtzFormatUtils {
     private static final String DELIM_STR = "{}";
 
+    /**
+     * {@code {}} placeholders will be replaced by positional arguments
+     * (if they provided, left intact otherwise)
+     *
+     * @param messagePattern pattern with placehholders
+     * @param args positional arguments to replace placeholders
+     * @return formatted message
+     */
     public static String format(final String messagePattern, Object... args) {
         return formatArray(messagePattern, args);
     }

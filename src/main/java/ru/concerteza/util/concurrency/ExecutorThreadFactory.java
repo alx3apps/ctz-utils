@@ -3,7 +3,7 @@ package ru.concerteza.util.concurrency;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Daemon thread factory, uses provided prefix for threads names, and keeps thread counter.

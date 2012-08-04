@@ -5,7 +5,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import ru.concerteza.util.CtzReflectionUtils;
+import ru.concerteza.util.reflect.CtzReflectionUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;

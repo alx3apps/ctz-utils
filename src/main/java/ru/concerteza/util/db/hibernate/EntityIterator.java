@@ -13,8 +13,6 @@ import org.hibernate.SessionFactory;
  * @author alexey
  * Date: 8/18/11
  */
-
-// do not use with lazy collections, they cause LIE after threshold exceed
 public class EntityIterator<T> extends AbstractIterator<T> {
     private final ScrollableResults target;
     private final SessionFactory sf;

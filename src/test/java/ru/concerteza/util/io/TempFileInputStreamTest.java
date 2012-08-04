@@ -1,11 +1,8 @@
 package ru.concerteza.util.io;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
-import ru.concerteza.util.CtzConstants;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +11,7 @@ import java.io.InputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static ru.concerteza.util.CtzConstants.UTF8;
+import static ru.concerteza.util.string.CtzConstants.UTF8;
 import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 
 /**

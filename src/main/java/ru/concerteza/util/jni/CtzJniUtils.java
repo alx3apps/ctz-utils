@@ -1,11 +1,11 @@
-package ru.concerteza.util;
+package ru.concerteza.util.jni;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static java.lang.System.getProperty;
-import static ru.concerteza.util.CtzFormatUtils.format;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.io.CtzIOUtils.codeSourceDir;
 
 /**

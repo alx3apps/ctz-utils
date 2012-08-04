@@ -1,4 +1,4 @@
-package ru.concerteza.util;
+package ru.concerteza.util.reflect;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -9,13 +9,14 @@ import ru.concerteza.util.option.Option;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-import static ru.concerteza.util.CtzReflectionUtils.*;
-import static ru.concerteza.util.CtzReflectionUtils.assign;
+import static ru.concerteza.util.reflect.CtzReflectionUtils.*;
+import static ru.concerteza.util.reflect.CtzReflectionUtils.assign;
 
 /**
  * User: alexey
@@ -33,9 +34,24 @@ public class CtzReflectionUtilsTest {
 
     @Test
     public void testFieldsPredicate() {
-        List<Field> fields = collectFields(TestParams.class, new NotFooPredicate());
+        List<Field> fields = collectFields(TestParams.class, NotFooFieldPredicate.INSTANCE);
         assertEquals("size fail", 1, fields.size());
         assertEquals("child fail", "bar", fields.get(0).getName());
+    }
+
+    @Test
+    public void testMethods() {
+        List<Method> methods = collectMethods(TestParams.class, NotObjectMethodPredicate.INSTANCE);
+        assertEquals("size fail", 2, methods.size());
+        assertEquals("child fail", "bar", methods.get(0).getName());
+        assertEquals("parent fail", "foo", methods.get(1).getName());
+    }
+
+    @Test
+    public void testMethodsPredicate() {
+        List<Method> methods = collectMethods(TestParams.class, NotFooMethodPredicate.INSTANCE);
+        assertEquals("size fail", 1, methods.size());
+        assertEquals("child fail", "bar", methods.get(0).getName());
     }
 
     @Test
@@ -54,55 +70,45 @@ public class CtzReflectionUtilsTest {
         assertEquals("baz", foo.bar);
     }
 
-    @Test
-    public void testAssignPrimitive() throws NoSuchFieldException {
-        PrimitiveFields obj = new PrimitiveFields();
-        Class<PrimitiveFields> clazz = PrimitiveFields.class;
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("stringField"), "foo");
-        assertEquals("String fail", "foo", obj.stringField);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("booleanField"), "true");
-        assertEquals("Boolean fail", true, obj.booleanField);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("intField"), "424242");
-        assertEquals("Integer fail", 424242, obj.intField);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("byteField"), "42");
-        assertEquals("Byte fail", 42, obj.byteField);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("shortField"), "4242");
-        assertEquals("Short fail", 4242, obj.shortField);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("longField"), "2147483648");
-        assertEquals("Long fail", 2147483648L, obj.longField);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("floatField"), "42.42");
-        assertEquals("Float fail", 42.42, obj.floatField, 0.0001);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("doubleField"), "4242.4242");
-        assertEquals("Double fail", 4242.4242, obj.doubleField, 0.0001);
-        assignPrimitiveOrString(obj, clazz.getDeclaredField("charField"), "0");
-        assertEquals("Char fail", '0', obj.charField);
-    }
+//    @Test
+//    public void testAssignPrimitive() throws NoSuchFieldException {
+//        PrimitiveFields obj = new PrimitiveFields();
+//        Class<PrimitiveFields> clazz = PrimitiveFields.class;
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("stringField"), "foo");
+//        assertEquals("String fail", "foo", obj.stringField);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("booleanField"), "true");
+//        assertEquals("Boolean fail", true, obj.booleanField);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("intField"), "424242");
+//        assertEquals("Integer fail", 424242, obj.intField);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("byteField"), "42");
+//        assertEquals("Byte fail", 42, obj.byteField);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("shortField"), "4242");
+//        assertEquals("Short fail", 4242, obj.shortField);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("longField"), "2147483648");
+//        assertEquals("Long fail", 2147483648L, obj.longField);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("floatField"), "42.42");
+//        assertEquals("Float fail", 42.42, obj.floatField, 0.0001);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("doubleField"), "4242.4242");
+//        assertEquals("Double fail", 4242.4242, obj.doubleField, 0.0001);
+//        assignPrimitiveOrString(obj, clazz.getDeclaredField("charField"), "0");
+//        assertEquals("Char fail", '0', obj.charField);
+//    }
 
     @Test(expected = UnhandledException.class)
     public void testConstructorFail() {
-        callDefaultConstructor(NoDefaultConstructor.class, this);
+        invokeDefaultConstructor(NoDefaultConstructor.class, this);
     }
 
     @Test
     public void testConstructor() {
-        Enclosed enc = callDefaultConstructor(Enclosed.class, this);
+        Enclosed enc = invokeDefaultConstructor(Enclosed.class, this);
         assertNotNull(enc);
 
-        NonEnclosed notEnc = callDefaultConstructor(NonEnclosed.class, null);
+        NonEnclosed notEnc = invokeDefaultConstructor(NonEnclosed.class, null);
         assertNotNull(notEnc);
 
-        NonEnclosed notEnc1 = callDefaultConstructor(NonEnclosed.class, this);
+        NonEnclosed notEnc1 = invokeDefaultConstructor(NonEnclosed.class, this);
         assertNotNull(notEnc1);
-    }
-
-    @Test
-    public void testColumnsFieldsMap() {
-        Map<String, Field> map = columnFieldMap(Entity.class);
-        assertEquals("Size fail", 2, map.size());
-        assertTrue("Unnamed fail", map.containsKey("foo"));
-        assertEquals("Unnamed wrong field fail", "foo", map.get("foo").getName());
-        assertTrue("Named fail", map.containsKey("dummy"));
-        assertEquals("Named wrong field fail", "bar", map.get("dummy").getName());
     }
 
     @Test
@@ -131,18 +137,6 @@ public class CtzReflectionUtilsTest {
         }
     }
 
-//    todo fixme
-//    @Test
-//    public void testObjectToMap() throws NoSuchFieldException {
-//        Bar bar = new Bar("baz", 42L);
-//        Map<String, Field> columnMap = ImmutableMap.of("foo", Bar.class.getDeclaredField("foo"), "bar", Bar.class.getDeclaredField("bar"));
-//        Map<String, ?> map = objectToMap(bar, columnMap);
-//        assertNotNull("Create fail", map);
-//        assertEquals("Size fail", 2, map.size());
-//        assertEquals("Field fail", "baz", map.get("foo"));
-//        assertEquals("Field fail", 42L, map.get("bar"));
-//    }
-
     class InnerOne{}
     private class PrivateInnerOne{}
     static class NotInnerOne{}
@@ -166,20 +160,33 @@ public class CtzReflectionUtilsTest {
         private NoDefaultConstructor(String dummy) {}
     }
 
-    private class NotFooPredicate implements Predicate<Field> {
+    private enum NotFooFieldPredicate implements Predicate<Field> {
+        INSTANCE;
         @Override
         public boolean apply(Field input) {
             return !"foo".equals(input.getName());
         }
     }
 
-    private class Entity {
-        @Id
-        @Column
-        private long foo;
-        @Column(name = "dummy")
-        private String bar;
-        private String throwaway;
+    private enum NotObjectMethodPredicate implements Predicate<Method> {
+        INSTANCE;
+        @Override
+        public boolean apply(Method input) {
+            try {
+                Object.class.getDeclaredMethod(input.getName(), input.getParameterTypes());
+                return false;
+            } catch(NoSuchMethodException e) {
+                return true;
+            }
+        }
+    }
+
+    private enum NotFooMethodPredicate implements Predicate<Method> {
+        INSTANCE;
+        @Override
+        public boolean apply(Method input) {
+            return NotObjectMethodPredicate.INSTANCE.apply(input) && !"foo".equals(input.getName());
+        }
     }
 
     private class Foo {
@@ -203,7 +210,7 @@ public class CtzReflectionUtilsTest {
 abstract class SomeParent {
     protected String foo;
 
-    public String getFoo() {
+    private String foo() {
         return foo;
     }
 }
@@ -211,7 +218,7 @@ abstract class SomeParent {
 class TestParams extends SomeParent {
     private String bar;
 
-    public String getBar() {
+    private String bar() {
         return bar;
     }
 }

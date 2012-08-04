@@ -1,8 +1,5 @@
 package ru.concerteza.util.db.springjdbc.named;
 
-import org.apache.commons.lang.UnhandledException;
-
-import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ru.concerteza.util;
+package ru.concerteza.util.io;
 
 import org.apache.commons.io.IOUtils;
 
