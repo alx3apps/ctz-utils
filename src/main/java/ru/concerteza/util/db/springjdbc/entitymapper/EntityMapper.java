@@ -33,7 +33,6 @@ import static ru.concerteza.util.collection.CtzCollectionUtils.defaultList;
  * Date: 4/14/12
  * @see EntityFilter
  * @see EntityChooser
- * @see ru.concerteza.util.reflect.CtzReflectionUtils#columnFieldMap
  * @see SingleEntityMapper
  * @see SubclassesEntityMapper
  */

@@ -20,7 +20,7 @@ public class SingleUseIterable<T> implements Iterable<T> {
     private final AtomicBoolean notUsed = new AtomicBoolean(true);
 
     /**
-     * Constructor, consider using {@link SingleUseIterable.of(java.util.Iterator)} insteda
+     * Constructor, consider using {@link SingleUseIterable#of(java.util.Iterator)} instead
      *
      * @param iter iterator to wrap
      */
@@ -33,7 +33,7 @@ public class SingleUseIterable<T> implements Iterable<T> {
      *
      * @param iter iterator to wrap
      * @param <T> iterator type
-     * @return
+     * @return SingleUseIterable instance
      */
     public static <T> Iterable<T> of(Iterator<T> iter) {
         checkNotNull(iter);

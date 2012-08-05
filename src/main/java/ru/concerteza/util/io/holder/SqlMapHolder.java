@@ -1,21 +1,20 @@
 package ru.concerteza.util.io.holder;
 
-import org.springframework.core.io.Resource;
+import ru.concerteza.util.string.CtzConstants;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static ru.concerteza.util.json.CtzJsonUtils.parseStringMap;
-import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
+import static ru.concerteza.util.io.SqlListParser.parseToMap;
 
 /**
- * Abstract class for parsing JSON map files (e.g. with SQL queries)
+ * Abstract class for parsing SQL list files into name->query maps
  *
  * @author alexey
  * Date: 6/25/12
  */
-public abstract class MapJsonHolder extends JsonHolder {
+public abstract class SqlMapHolder {
     private Map<String, String> queries;
 
     /**
@@ -23,8 +22,7 @@ public abstract class MapJsonHolder extends JsonHolder {
      */
     @PostConstruct
     protected void postConstruct() {
-        Resource resource = RESOURCE_LOADER.getResource(jsonFilePath());
-        this.queries = parseStringMap(resource);
+        this.queries = parseToMap(sqlFilePath(), encoding());
     }
 
     /**
@@ -34,7 +32,19 @@ public abstract class MapJsonHolder extends JsonHolder {
      */
     public String get(String key) {
         String res = queries.get(key);
-        checkArgument(null != res, "No queries for key: %s, existed keys: %s", key, queries.keySet());
+        checkArgument(null != res, "No queries for key: '%s', existed keys: '%s'", key, queries.keySet());
         return res;
+    }
+
+    /**
+     * @return SQL file spring resource path
+     */
+    protected abstract String sqlFilePath();
+
+    /**
+     * @return resource encoding, UTF-8 by default
+     */
+    protected String encoding() {
+        return CtzConstants.UTF8;
     }
 }

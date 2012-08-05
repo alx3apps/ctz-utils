@@ -21,7 +21,7 @@ public class LimitedSizeIterator<T> implements Iterator<T> {
     private AtomicInteger counter = new AtomicInteger(0);
 
     /**
-     * Constructor, consider using {@link LimitedSizeIterator.of(java.util.Iterator, int)} instead.
+     * Constructor, consider using {@link LimitedSizeIterator#of(java.util.Iterator, int)} instead.
      *
      * @param target target iterator
      * @param limit size limit

@@ -19,15 +19,15 @@ public class CopyingInputStreamTest {
     public void test() throws IOException {
         String source = RandomStringUtils.random(42001);
         InputStream is = new ByteArrayInputStream(source.getBytes(UTF8_CHARSET));
-        ByteArrayOutputStream out1 = new ByteArrayOutputStream();
-        ByteArrayOutputStream out2 = new ByteArrayOutputStream();
-        InputStream copying = new CopyingInputStream(is, out1);
-        IOUtils.copyLarge(copying, out2);
+        ByteArrayOutputStream copy = new ByteArrayOutputStream();
+        ByteArrayOutputStream target = new ByteArrayOutputStream();
+        InputStream copying = new CopyingInputStream(is, copy);
+        IOUtils.copyLarge(copying, target);
         copying.close();
-        out1.close();
-        out2.close();
-        String target1 = new String(out1.toByteArray(), UTF8_CHARSET);
-        String target2 = new String(out2.toByteArray(), UTF8_CHARSET);
+        copy.close();
+        target.close();
+        String target1 = new String(copy.toByteArray(), UTF8_CHARSET);
+        String target2 = new String(target.toByteArray(), UTF8_CHARSET);
         assertEquals("Copying fail", source, target1);
         assertEquals("Main fail", source, target2);
     }

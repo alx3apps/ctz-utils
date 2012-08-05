@@ -8,11 +8,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * User: alexey
+ * Zero copy, lazy merge left join implementation. Not thread-safe.
+ *
+ * @author  alexey
  * Date: 7/4/12
+ * @see KeyOperations
  */
-
-// not thread-safe
 class MergeLeftJoinIterator<S extends KeyEntry, T extends KeyEntry, R> extends AbstractIterator<R> {
     private enum State {CREATED, SEARCHING, FOUND, TARGET_EXHAUSTED}
 
@@ -24,7 +25,12 @@ class MergeLeftJoinIterator<S extends KeyEntry, T extends KeyEntry, R> extends A
     private S sourceEl = null;
     private T targetEl = null;
 
-    public MergeLeftJoinIterator(Iterator<S> sourceIter, Iterator<T> targetIter, KeyJoiner<S, T, R> joiner) {
+    /**
+     * @param sourceIter source iterator, must be ordered by key
+     * @param targetIter target iterator, must be ordered by key
+     * @param joiner joiner instance
+     */
+    MergeLeftJoinIterator(Iterator<S> sourceIter, Iterator<T> targetIter, KeyJoiner<S, T, R> joiner) {
         checkNotNull(sourceIter, "Source iterator must not be null");
         checkNotNull(targetIter, "Target iterator must not be null");
         checkNotNull(joiner, "Joiner must not be null");
@@ -33,6 +39,9 @@ class MergeLeftJoinIterator<S extends KeyEntry, T extends KeyEntry, R> extends A
         this.joiner = joiner;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected R computeNext() {
         switch(state) {

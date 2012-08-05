@@ -1,20 +1,23 @@
 package ru.concerteza.util.io.holder;
 
+import org.springframework.core.io.Resource;
 import ru.concerteza.util.string.CtzConstants;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static ru.concerteza.util.io.SqlListParser.parseToMap;
+import static ru.concerteza.util.json.CtzJsonUtils.parseStringMap;
+import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 /**
  * Abstract class for parsing JSON map files (e.g. with SQL queries)
  *
  * @author alexey
  * Date: 6/25/12
+ * @see JsonMapHolderTest
  */
-public abstract class SqlListHolder {
+public abstract class JsonMapHolder {
     private Map<String, String> queries;
 
     /**
@@ -22,7 +25,8 @@ public abstract class SqlListHolder {
      */
     @PostConstruct
     protected void postConstruct() {
-        this.queries = parseToMap(sqlFilePath(), encoding());
+        Resource resource = RESOURCE_LOADER.getResource(jsonFilePath());
+        this.queries = parseStringMap(resource);
     }
 
     /**
@@ -36,8 +40,14 @@ public abstract class SqlListHolder {
         return res;
     }
 
-    protected abstract String sqlFilePath();
+    /**
+     * @return spring resource path to json file containing string->string map
+     */
+    protected abstract String jsonFilePath();
 
+    /**
+     * @return resource encoding, UTF-8 by default
+     */
     protected String encoding() {
         return CtzConstants.UTF8;
     }

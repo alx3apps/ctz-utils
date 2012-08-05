@@ -12,13 +12,20 @@ import java.util.TreeMap;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * User: alexey
+ * Zero copy group by key implementation, eager
+ *
+ * @author alexey
  * Date: 7/18/12
+ * @see KeyOperations
  */
 class GroupByKeyCollection<S extends KeyEntry, R> extends ForwardingCollection<R> {
     private final Collection<R> delegate;
 
-    public GroupByKeyCollection(Iterator<S> source, KeyAggregator<S, R> aggregator) {
+    /**
+     * @param source source iterator
+     * @param aggregator aggregator instance
+     */
+    GroupByKeyCollection(Iterator<S> source, KeyAggregator<S, R> aggregator) {
         checkNotNull(source, "Source iterator must not be null");
         checkNotNull(aggregator, "Aggregator must not be null");
         // holder to prevent tree traversal on update
@@ -38,6 +45,9 @@ class GroupByKeyCollection<S extends KeyEntry, R> extends ForwardingCollection<R
         this.delegate = Collections2.transform(map.values(), new UnholderFun<R>());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Collection<R> delegate() {
         return this.delegate;

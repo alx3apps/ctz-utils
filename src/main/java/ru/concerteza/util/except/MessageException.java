@@ -5,7 +5,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
 /**
  * Runtime exception, that carries important business-logic error message,
  * that should be finally returned to app client.You may use {@link CtzExceptionUtils}
- * to extact message from exception stack
+ * to extract message from exception stack
  *
  * @author alexey,
  * Date: 10/18/11

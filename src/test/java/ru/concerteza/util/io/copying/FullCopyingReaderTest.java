@@ -19,11 +19,11 @@ public class FullCopyingReaderTest {
     public void test() throws IOException {
         String source = RandomStringUtils.random(42001);
         Reader is = new StringReader(source);
-        StringWriter out1 = new StringWriter();
-        Reader copying = new FullCopyingReader(is, out1);
+        StringWriter copy = new StringWriter();
+        Reader copying = new FullCopyingReader(is, copy);
         copying.read(new char[40000], 0,  40000);
         copying.close();
-        out1.close();
-        assertEquals("Copying fail", source, out1.toString());
+        copy.close();
+        assertEquals("Copying fail", source, copy.toString());
     }
 }

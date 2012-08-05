@@ -1,5 +1,8 @@
 package ru.concerteza.util.jni;
 
+import org.apache.commons.lang.UnhandledException;
+import ru.concerteza.util.io.RuntimeIOException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,13 +12,15 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.io.CtzIOUtils.codeSourceDir;
 
 /**
- * User: alexey
+ * Utility methods for loading JNI libraries without specifying {@code java.library.path}
+ *
+ * @author alexey
  * Date: 5/17/11
  */
 public class CtzJniUtils {
-
     private static final Platform CURRENT_PLATFORM;
 
+    // todo: use GNU triplets
     private enum Platform {
         UNKNOWN("unknown", "unknown"),
         WINDOWS_X86_32("windows-x86_32", "dll"), WINDOWS_X86_64("windows-x86_64", "dll"),
@@ -70,28 +75,43 @@ public class CtzJniUtils {
         }
     }
 
-    public static void loadJniLib(String name, File dirPath) throws IOException {
+    /**
+     * Loads JNI library with proper platform postfix from provided directory
+     *
+     * @param name library name
+     * @param dirPath directory to load library from
+     * @throws ru.concerteza.util.io.RuntimeIOException
+     */
+    public static void loadJniLib(String name, File dirPath) {
         final String filename;
         switch (CURRENT_PLATFORM) {
             case UNKNOWN:
-                throw new IOException(format(
+                throw new RuntimeIOException(format(
                         "Cannot determine platform, os.name: {}, os.arch: {}", getProperty("os.name"), getProperty("os.arch")));
             default:
                 filename = format("{}-{}.{}", name, CURRENT_PLATFORM.getClassifier(), CURRENT_PLATFORM.getType());
         }
         File target = new File(dirPath, filename);
-        if (!(target.exists() && target.isFile())) throw new FileNotFoundException(target.getPath());
+        if (!(target.exists() && target.isFile())) throw new RuntimeIOException(format("File not found: '{}'", target.getPath()));
         try {
             System.load(target.getPath());
-        } catch (Throwable e) {
-            throw new IOException(e);
+        } catch (Exception e) {
+            throw new RuntimeIOException(e);
+        } catch (Error e) {
+            throw new RuntimeIOException(new UnhandledException(e));
         }
     }
 
-    public static void loadJniLibsFromStandardPath(Class<?> mainClass, String... names) throws IOException {
+    /**
+     * Loads JNI library with proper platform postfix from {@code <provided_class_jar>/lib/native} directory
+     *
+     * @param mainClass class to build path from
+     * @param names list of libraries names
+     */
+    public static void loadJniLibsFromStandardPath(Class<?> mainClass, String... names) {
         File jarPath = codeSourceDir(mainClass);
         String postfix = "lib" + File.separator + "native";
-        File nativeLibsPath = new File(jarPath, postfix).getCanonicalFile();
+        File nativeLibsPath = new File(jarPath, postfix).getAbsoluteFile();
         for(String na : names) loadJniLib(na, nativeLibsPath);
     }
 }

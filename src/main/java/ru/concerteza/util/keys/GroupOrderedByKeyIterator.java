@@ -8,8 +8,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * User: alexey
+ * Zero copy, lazy group by key implementation
+ *
+ * @author alexey
  * Date: 7/18/12
+ * @see KeyOperations
  */
 class GroupOrderedByKeyIterator<S extends KeyEntry, R> extends AbstractIterator<R> {
     private enum State{CREATED, RUNNING, FINISHED}
@@ -21,6 +24,10 @@ class GroupOrderedByKeyIterator<S extends KeyEntry, R> extends AbstractIterator<
     private String key;
     private S sourceEl;
 
+    /**
+     * @param sourceIter source iterator, must be ordered by key
+     * @param aggregator aggregator instance
+     */
     GroupOrderedByKeyIterator(Iterator<S> sourceIter, KeyAggregator<S, R> aggregator) {
         checkNotNull(sourceIter, "Source iterator must not be null");
         checkNotNull(aggregator, "Aggregator must not be null");
@@ -28,6 +35,9 @@ class GroupOrderedByKeyIterator<S extends KeyEntry, R> extends AbstractIterator<
         this.aggregator = aggregator;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected R computeNext() {
         switch (state) {
