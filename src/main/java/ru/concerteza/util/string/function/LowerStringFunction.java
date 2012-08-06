@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 
 import javax.annotation.Nullable;
 
+import java.util.Locale;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -20,6 +22,6 @@ public class LowerStringFunction implements Function<String, String> {
     @Override
     public String apply(@Nullable String input) {
         checkNotNull(input);
-        return input.toLowerCase();
+        return input.toLowerCase(Locale.ENGLISH);
     }
 }

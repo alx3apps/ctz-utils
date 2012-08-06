@@ -6,6 +6,7 @@ import ru.concerteza.util.io.RuntimeIOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Locale;
 
 import static java.lang.System.getProperty;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
@@ -48,8 +49,8 @@ public class CtzJniUtils {
     }
 
     static {
-        String name = getProperty("os.name").toLowerCase();
-        String arch = getProperty("os.arch").toLowerCase();
+        String name = getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        String arch = getProperty("os.arch").toLowerCase(Locale.ENGLISH);
         if (name.startsWith("windows") && "x86".equals(arch)) {
             CURRENT_PLATFORM = Platform.WINDOWS_X86_32;
         } else if (name.startsWith("windows") && ("x86_64".equals(arch) || "amd64".equals(arch))) {

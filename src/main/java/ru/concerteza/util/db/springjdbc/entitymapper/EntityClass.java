@@ -10,6 +10,7 @@ import javax.persistence.PostLoad;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -73,7 +74,7 @@ class EntityClass<T> {
         for (Field fi : collectFields(clazz, AnnotatedColumnPredicate.INSTANCE)) {
             Column col = fi.getAnnotation(Column.class);
             String name = isNotEmpty(col.name()) ? col.name() : fi.getName();
-            builder.put(name.toLowerCase(), fi);
+            builder.put(name.toLowerCase(Locale.ENGLISH), fi);
         }
         return builder.build();
     }

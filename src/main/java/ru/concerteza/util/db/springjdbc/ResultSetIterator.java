@@ -1,6 +1,5 @@
 package ru.concerteza.util.db.springjdbc;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.AbstractIterator;
 import org.springframework.jdbc.InvalidResultSetAccessException;
 import org.springframework.jdbc.core.RowMapper;

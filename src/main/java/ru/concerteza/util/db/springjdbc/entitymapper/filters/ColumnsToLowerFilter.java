@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ public class ColumnsToLowerFilter implements EntityFilter {
     public Map<String, ?> apply(Map<String, ?> data) {
         ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
         for(Map.Entry<String, ?> en : data.entrySet()) {
-            builder.put(en.getKey().toLowerCase(), en.getValue());
+            builder.put(en.getKey().toLowerCase(Locale.ENGLISH), en.getValue());
         }
         return builder.build();
     }
