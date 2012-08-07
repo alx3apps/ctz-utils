@@ -41,7 +41,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
      * @return named constructor instance
      */
     public static <T> NamedConstructorMapper<T> forClass(Class<T> clazz) {
-        NamedConstructorFunction<T> fun = NamedConstructorFunction.of(clazz, false);
+        NamedConstructorFunction<T> fun = new NamedConstructorFunction<T>(clazz, false);
         return new NamedConstructorSingleMapper<T>(fun);
     }
 
@@ -79,8 +79,9 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
          * @param subclass subclass type
          * @return builder itself
          */
+        @SuppressWarnings("unchecked")
         public Builder<T> addSubclass(String discriminator, Class<? extends T> subclass) {
-            builder.put(discriminator, NamedConstructorFunction.of(subclass, false));
+            builder.put(discriminator, new NamedConstructorFunction(subclass, false));
             return this;
         }
 
@@ -88,19 +89,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
          * @return named mapper instance
          */
         public NamedConstructorMapper<T> build() {
-            Map<String, NamedConstructorFunction<? extends T>> funMap = builder.build();
-            Set<String> intersection = null;
-            for(NamedConstructorFunction<?> fu : funMap.values()) {
-                ImmutableSet.Builder<String> union = ImmutableSet.builder();
-                for(NamedConstructor<?> nc : fu.getConstructors().values()) {
-                    union.addAll(nc.names);
-                }
-                if(null == intersection) intersection = union.build();
-                else intersection = Sets.intersection(intersection, union.build());
-            }
-            // intersects returns live view, we don't want it here
-            Set<String> commonColumns = ImmutableSet.copyOf(intersection);
-            return new NamedConstructorSubclassesMapper<T>(builder.build(), discColumn, commonColumns);
+            return new NamedConstructorSubclassesMapper<T>(builder.build(), discColumn);
         }
     }
 

@@ -2,6 +2,7 @@ package ru.concerteza.util.handlers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -9,7 +10,5 @@ import java.util.regex.Pattern;
  * Date: 7/22/12
  */
 public interface RequestHandler {
-    Pattern pattern();
-
-    void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    void handleRequest(HttpServletRequest request, HttpServletResponse response, Map<String, String> urlParams) throws Exception;
 }

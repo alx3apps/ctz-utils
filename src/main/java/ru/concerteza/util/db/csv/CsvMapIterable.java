@@ -32,7 +32,7 @@ public class CsvMapIterable<T> implements Iterable<T> {
     private final Resource resource;
     private final Charset encoding;
     private final Splitter splitter;
-    private final Function<Map<String, String>, T> converter;
+    private final Function<Map<String, ?>, T> converter;
 
     /**
      * Shortcut constructor
@@ -63,7 +63,7 @@ public class CsvMapIterable<T> implements Iterable<T> {
      * @param delimiter CSV fields delimiter
      * @param converter CSV row converter function
      */
-    public CsvMapIterable(String resourcePath, String delimiter, Function<Map<String, String>, T> converter) {
+    public CsvMapIterable(String resourcePath, String delimiter, Function<Map<String, ?>, T> converter) {
         this(RESOURCE_LOADER.getResource(resourcePath), delimiter, CtzConstants.UTF8, converter);
     }
 
@@ -75,7 +75,7 @@ public class CsvMapIterable<T> implements Iterable<T> {
      * @param encoding CSV file encoding
      * @param converter CSV row converter function
      */
-    public CsvMapIterable(Resource resource, String delimiter, String encoding, Function<Map<String, String>, T> converter) {
+    public CsvMapIterable(Resource resource, String delimiter, String encoding, Function<Map<String, ?>, T> converter) {
         checkArgument(null != resource, "Resource is null");
         checkArgument(isNotEmpty(encoding), "Encoding is empty");
         checkArgument(isNotEmpty(encoding), "Splitter is empty");

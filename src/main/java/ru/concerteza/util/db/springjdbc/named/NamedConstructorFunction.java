@@ -2,10 +2,8 @@ package ru.concerteza.util.db.springjdbc.named;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -27,8 +25,10 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * constructor names in runtime, see <a href="http://paranamer.codehaus.org/">paranamer project</a>, but we use
  * {@code @Named} annotations only). Constructors without {@code @Named} annotations on arguments will be ignored.
  * Constructors with {@code @Named} annotations must have all they arguments annotated with not blank values without
- * duplicates. All reflection introspection is done on function instantiation. For case insensitive names all
- * {@code @Named} values must be locale insensitive.
+ * duplicates. {@code Optional} constructor arguments values will be wrapped into {@code Optional} before
+ * constructor invocation. All reflection introspection is done on function instantiation.
+ * For case insensitive names all {@code @Named} values must be locale insensitive. Null values are allowed
+ * only for {@code com.google.common.base.Optional} arguments.
  *
  * @param <T> object type to instantiate
  * @author alexey
@@ -37,8 +37,10 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @see NamedConstructorMapper
  */
 public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> {
+    private final NamesPredicate namesPredicate = new NamesPredicate();
     private final Map<String, NamedConstructor<T>> constructors;
     private final boolean caseSensitiveNames;
+    private final Set<String> allNames = new HashSet<String>();
 
     /**
      * Constructor
@@ -48,20 +50,19 @@ public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> 
      */
     public NamedConstructorFunction(Class<T> clazz, boolean caseSensitiveNames) {
         checkNotNull(clazz, "Provided class is null");
-        this.constructors = buildConstructorsMap(clazz);
         this.caseSensitiveNames = caseSensitiveNames;
+        this.constructors = buildConstructorsMap(clazz);
     }
 
     /**
-     * Generic-friendly factory method
+     * Generic-friendly shortcut factory method, creates case sensitive function
      *
      * @param clazz class to introspect and instantiate
-     * @param caseSensitiveNames whether too keep case of {@link Named} values
      * @param <T> class type
      * @return named constructor function instance
      */
-    public static <T> NamedConstructorFunction<T> of(Class<T> clazz, boolean caseSensitiveNames) {
-        return new NamedConstructorFunction<T>(clazz, caseSensitiveNames);
+    public static <T> NamedConstructorFunction<T> of(Class<T> clazz) {
+        return new NamedConstructorFunction<T>(clazz, true);
     }
 
     /**
@@ -70,12 +71,14 @@ public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> 
      * @param input unordered data map
      * @return instantiated object
      */
+    // todo: add support of arbitrary hierarchies of named objects
     @Override
     public T apply(@Nullable Map<String, ?> input) {
         checkNotNull(input, "Input data map is null");
-        NamedConstructor<T> nc = constructors.get(hashNames(input.keySet()));
+        Map<String, ?> data = Maps.filterKeys(input, namesPredicate);
+        NamedConstructor<T> nc = constructors.get(hashNames(data.keySet()));
         checkArgument(null != nc, "No named constructor found for input: '%s', existed constructors: '%s'", input, constructors);
-        return nc.invoke(input);
+        return nc.invoke(data);
     }
 
     /**
@@ -91,10 +94,10 @@ public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> 
     /**
      * Inner use method
      *
-     * @return named constructors for inner use
+     * @return set of all named arguments for this class
      */
-    Map<String, NamedConstructor<T>> getConstructors() {
-        return constructors;
+    Set<String> getAllNames() {
+        return allNames;
     }
 
     private Map<String, NamedConstructor<T>> buildConstructorsMap(Class<T> clazz) {
@@ -114,22 +117,28 @@ public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> 
     private List<NamedConstructor<T>> extractNamedConstructors(Class<T> clazz) {
         ImmutableList.Builder<NamedConstructor<T>> builder = ImmutableList.builder();
         for(Constructor<?> co : clazz.getDeclaredConstructors()) {
-            Annotation[][] anArray = co.getParameterAnnotations();
-            LinkedHashSet<String> names = extractNames(anArray, co.toGenericString());
-            if(names.size() > 0) builder.add(new NamedConstructor<T>(co, names));
+            LinkedHashSet<NamedConstructorArgument> args = extractNames(co);
+            if(args.size() > 0) builder.add(new NamedConstructor<T>(co, args));
         }
         return builder.build();
     }
 
-    private LinkedHashSet<String> extractNames(Annotation[][] anArray, String coStr) {
-        LinkedHashSet<String> res = Sets.newLinkedHashSet();
-        for(Annotation[] anns : anArray) {
+    private LinkedHashSet<NamedConstructorArgument> extractNames(Constructor<?> co) {
+        LinkedHashSet<NamedConstructorArgument> res = Sets.newLinkedHashSet();
+        String coStr = co.toGenericString();
+        Annotation[][] anArray = co.getParameterAnnotations();
+        Class<?>[] typesArray = co.getParameterTypes();
+        for(int i=0; i < anArray.length; i++) {
+            Annotation[] anns = anArray[i];
+            Class<?> type = typesArray[i];
             for(Annotation an : anns) {
                 if(Named.class.getName().equals(an.annotationType().getName())) {
                     Named na = (Named) an;
                     checkArgument(isNotBlank(na.value()), "@Named annotation with empty value found, constructor: '%s'", coStr);
-                    boolean unique = res.add(caseSensitiveNames ? na.value() : na.value().toLowerCase(Locale.ENGLISH));
+                    String name = caseSensitiveNames ? na.value() : na.value().toLowerCase(Locale.ENGLISH);
+                    boolean unique = res.add(new NamedConstructorArgument(name, type));
                     checkArgument(unique, "Not unique @Named value: '%s', constructor: '%s'", na.value(), coStr);
+                    this.allNames.add(name);
                 }
             }
         }
@@ -140,5 +149,12 @@ public class NamedConstructorFunction<T> implements Function<Map<String, ?>, T> 
     private String hashNames(Collection<String> names) {
         List<String> ordered = Ordering.natural().immutableSortedCopy(names);
         return Joiner.on(", ").join(ordered);
+    }
+
+    private class NamesPredicate implements Predicate<String> {
+        @Override
+        public boolean apply(@Nullable String input) {
+            return allNames.contains(input);
+        }
     }
 }

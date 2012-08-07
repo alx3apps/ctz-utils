@@ -1,6 +1,8 @@
 package ru.concerteza.util.io;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.springframework.core.io.Resource;
@@ -58,7 +60,7 @@ public class SqlListParser {
     }
 
     public static Map<String, String> parseToMap(Reader reader) {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+        Map<String, String> res = Maps.newLinkedHashMap();
         LineIterator li = null;
         try {
             li = new LineIterator(NoCloseReader.of(reader));
@@ -79,7 +81,8 @@ public class SqlListParser {
                         NamedMatcher nameMatcher = REQUEST_NAME.matcher(line);
                         if(nameMatcher.matches()) {
                             checkArgument(sql.length() > 0, "No SQL found for request name: '%s'", name);
-                            builder.put(name, sql.toString());
+                            String existed = res.put(name, sql.toString());
+                            checkArgument(null == existed, "Duplicate SQL query name: '%s'", name);
                             sql = new StringBuilder();
                             name = nameMatcher.group("name");
                         } else {
@@ -94,10 +97,11 @@ public class SqlListParser {
                 }
             }
             // tail
-            builder.put(name, sql.toString());
+            String existed = res.put(name, sql.toString());
+            checkArgument(null == existed, "Duplicate SQL query name: '%s'", name);
         } finally {
             LineIterator.closeQuietly(li);
         }
-        return builder.build();
+        return res;
     }
 }

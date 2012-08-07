@@ -1,16 +1,18 @@
 package ru.concerteza.util.db.springjdbc.named;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import ru.concerteza.util.db.springjdbc.RowIterable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Locale;
 
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
- * Named constructor mapper implementation for single class. Does not allow null values in result set.
+ * Named constructor mapper implementation for single class.
  * Converts result set row into lower case map and applies {@link NamedConstructorFunction} to it.
  *
  * @author alexey
@@ -34,13 +36,10 @@ class NamedConstructorSingleMapper<T> extends NamedConstructorMapper<T> {
      */
     @Override
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
+        HashMap<String, Object> map = Maps.newHashMap();
         for(RowIterable.Cell cell : RowIterable.of(rs)) {
-            if(null == cell.getValue()) throw new IllegalArgumentException(format(
-                    "Null value in column: '{}', row data: '{}', constructors: '{}'",
-                    cell.getColumnName(), logRS(rs, rowNum), fun));
-            builder.put(cell.getColumnName().toLowerCase(Locale.ENGLISH), cell.getValue());
+            map.put(cell.getColumnName().toLowerCase(Locale.ENGLISH), cell.getValue());
         }
-        return fun.apply(builder.build());
+        return fun.apply(map);
     }
 }

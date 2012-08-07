@@ -1,5 +1,6 @@
 package ru.concerteza.util.date;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import org.joda.time.Duration;
 import org.joda.time.LocalDateTime;
@@ -22,6 +23,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class CtzDateUtils {
     public static final LocalDateTime DEFAULT_DATE = new LocalDateTime(0, 1, 1, 0, 0);
+
+    /**
+     * Converts optional {@link java.util.Date} into optional joda-time {@code LocalDateTime}
+     *
+     * @param optional optional date
+     * @return {@code Optional.absent()} on absent input, converted {@code LocalDateTime}
+     *  wrapped into optional otherwise
+     */
+    public static Optional<LocalDateTime> toLocalDateTime(Optional<? extends Date> optional) {
+        if(!optional.isPresent()) return Optional.absent();
+        Date date = optional.get();
+        Calendar cal = new GregorianCalendar(0, 0, 0);
+        cal.setTime(date);
+        return Optional.of(toLocalDateTime(cal));
+    }
 
     /**
      * Converts {@link java.util.Date} to joda-time {@code LocalDateTime}

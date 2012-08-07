@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.output.NullOutputStream;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.core.io.Resource;
 import ru.concerteza.util.io.RuntimeIOException;
 import ru.concerteza.util.io.SHA1InputStream;
@@ -22,7 +22,7 @@ import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 
 /**
- * SHA1 hash utility methods over Bouncy Castle SHA1 implementation.
+ * Hash utility methods over Bouncy Castle SHA1 abd MD5 implementations.
  *
  * @author alexey
  */
@@ -34,7 +34,8 @@ public class CtzHashUtils {
      */
     public static String sha1Digest(String str) {
         byte[] dig = sha1DigestBytes(str);
-        return Hex.encodeHexString(dig);
+        byte[] hex = Hex.encode(dig);
+        return new String(hex, UTF8_CHARSET);
     }
 
     /**
@@ -100,7 +101,7 @@ public class CtzHashUtils {
         digest.update(data, 0, data.length);
         byte[] dig = new byte[digest.getDigestSize()];
         digest.doFinal(dig, 0);
-        byte[] hex = org.bouncycastle.util.encoders.Hex.encode(dig);
+        byte[] hex = Hex.encode(dig);
         return new String(hex, UTF8_CHARSET);
     }
 }

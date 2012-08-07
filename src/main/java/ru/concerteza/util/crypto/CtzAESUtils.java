@@ -1,7 +1,6 @@
 package ru.concerteza.util.crypto;
 
 import com.google.common.base.Function;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.UnhandledException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -13,6 +12,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.crypto.prng.RandomGenerator;
 import org.bouncycastle.crypto.prng.VMPCRandomGenerator;
+import org.bouncycastle.util.encoders.Base64;
 
 import java.io.*;
 import java.security.SecureRandom;
@@ -59,7 +59,8 @@ public class CtzAESUtils {
         byte[] message = messageString.getBytes(UTF8_CHARSET);
         byte[] encrypted = encrypt(message, key);
         // return base64 string
-        return Base64.encodeBase64String(encrypted);
+        byte[] res = Base64.encode(encrypted);
+        return new String(res, UTF8_CHARSET);
     }
 
     /**
@@ -72,7 +73,7 @@ public class CtzAESUtils {
         checkArgument(isNotEmpty(keyString), "Provided key is empty");
         byte[] key = createKey(keyString);
         // convert to bytes
-        byte[] encryptedWithIV = Base64.decodeBase64(encryptedBase64);
+        byte[] encryptedWithIV = Base64.decode(encryptedBase64);
         byte[] message = decrypt(encryptedWithIV, key);
         // return UTF-8 String
         return new String(message, UTF8_CHARSET);

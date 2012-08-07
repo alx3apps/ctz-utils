@@ -1,13 +1,15 @@
 package ru.concerteza.util.io;
 
-import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.util.encoders.Hex;
+import ru.concerteza.util.string.CtzConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
 /**
  * User: alexey
@@ -62,6 +64,7 @@ public class SHA1InputStream extends InputStream {
 
     public String digest() {
         byte[] dig = digestBytes();
-        return Hex.encodeHexString(dig);
+        byte[] hex = Hex.encode(dig);
+        return new String(hex, UTF8_CHARSET);
     }
 }
