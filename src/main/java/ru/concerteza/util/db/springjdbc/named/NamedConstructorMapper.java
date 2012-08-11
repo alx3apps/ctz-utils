@@ -1,15 +1,11 @@
 package ru.concerteza.util.db.springjdbc.named;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Spring's <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/jdbc/core/RowMapper.html">RowMapper</a>
@@ -26,7 +22,7 @@ import java.util.Set;
  * method to create subclasses mapper and see {@link NamedConstructorSubclassesMapper} for details.
  *
  * @param <T> object type to map data row to
- * @see NamedConstructor
+ * @see NamedConstructor_OLD
  * @see NamedConstructorFunction
  * @see NamedConstructorSingleMapper
  * @see NamedConstructorSubclassesMapper
@@ -41,7 +37,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
      * @return named constructor instance
      */
     public static <T> NamedConstructorMapper<T> forClass(Class<T> clazz) {
-        NamedConstructorFunction<T> fun = new NamedConstructorFunction<T>(clazz, false);
+        NamedConstructorFunction<T> fun = new NamedConstructorFunction<T>(clazz, false, false);
         return new NamedConstructorSingleMapper<T>(fun);
     }
 
@@ -81,7 +77,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
          */
         @SuppressWarnings("unchecked")
         public Builder<T> addSubclass(String discriminator, Class<? extends T> subclass) {
-            builder.put(discriminator, new NamedConstructorFunction(subclass, false));
+            builder.put(discriminator, new NamedConstructorFunction(subclass, false, false));
             return this;
         }
 

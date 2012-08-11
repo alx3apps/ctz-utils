@@ -13,29 +13,33 @@ import javax.annotation.Nullable;
  *
  * @author alexey
  * Date: 8/7/12
- * @see NamedConstructor
+ * @see NamedConstructor_OLD
  */
-class NamedConstructorArgument {
-    static final Function<NamedConstructorArgument, String> NAME_FUNCTION = new NameFun();
-    static final Predicate<NamedConstructorArgument> OPTIONAL_PREDICATE = new OptionalPredicate();
+class NCArg {
+    static final Function<NCArg, String> NAME_FUNCTION = new NameFun();
+    static final Predicate<NCArg> OPTIONAL_PREDICATE = new OptionalPredicate();
+    static final Predicate<NCArg> ITERABLE_PREDICATE = new IterablePredicate();
 
     final String name;
-    final Class<?> type;
+    final Class type;
+    final boolean optional;
 
     /**
      * @param name argument name extracted from {@code @Named} annotation
      * @param type argument type
+     * @param optional
      */
-    NamedConstructorArgument(String name, Class<?> type) {
+    NCArg(String name, Class type, boolean optional) {
         this.name = name;
         this.type = type;
+        this.optional = optional;
     }
 
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        NamedConstructorArgument that = (NamedConstructorArgument) o;
+        NCArg that = (NCArg) o;
         return name.equals(that.name);
 
     }
@@ -56,17 +60,24 @@ class NamedConstructorArgument {
                 toString();
     }
 
-    private static final class NameFun implements Function<NamedConstructorArgument, String> {
+    private static final class NameFun implements Function<NCArg, String> {
         @Override
-        public String apply(NamedConstructorArgument input) {
+        public String apply(NCArg input) {
             return input.name;
         }
     }
 
-    private static final class OptionalPredicate implements Predicate<NamedConstructorArgument> {
+    private static final class OptionalPredicate implements Predicate<NCArg> {
         @Override
-        public boolean apply(NamedConstructorArgument input) {
+        public boolean apply(NCArg input) {
             return Optional.class.getName().equals(input.type.getName());
+        }
+    }
+
+    private static final class IterablePredicate implements Predicate<NCArg> {
+        @Override
+        public boolean apply(@Nullable NCArg input) {
+            return Iterable.class.isAssignableFrom(input.type);
         }
     }
 }

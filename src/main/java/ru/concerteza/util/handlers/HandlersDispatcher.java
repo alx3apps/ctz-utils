@@ -1,56 +1,99 @@
 package ru.concerteza.util.handlers;
 
-import org.apache.commons.lang.UnhandledException;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import ru.concerteza.util.namedregex.NamedMatcher;
+import ru.concerteza.util.namedregex.NamedPattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * User: alexey
  * Date: 4/4/12
  */
 public class HandlersDispatcher {
+    private final Multimap<HttpMethod, Entry<?>> mapping;
+    private final HandlersErrorReporter errorReporter;
 
-    private final HandlersProvider provider;
-    private final List<HandlersMappingEntry> handlers;
-    private final boolean sendExceptionsToClient;
-
-
-    public HandlersDispatcher(HandlersProvider provider, boolean sendExceptionsToClient, List<HandlersMappingEntry> handlers) {
-        this.sendExceptionsToClient = sendExceptionsToClient;
-        this.handlers = handlers;
-        this.provider = provider;
+    private HandlersDispatcher(Multimap<HttpMethod, Entry<?>> mapping, HandlersErrorReporter errorReporter) {
+        this.mapping = mapping;
+        this.errorReporter = errorReporter;
     }
 
+    public static Builder builder(HandlersErrorReporter errorReporter) {
+        return new Builder(errorReporter);
+    }
+
+    @SuppressWarnings("unchecked")
     public void dispatch(HttpServletRequest req, HttpServletResponse resp) {
         try {
-            dispatchInternal(req, resp);
-        } catch(Exception e) {
-            if(sendExceptionsToClient) throw new UnhandledException(e);
-            else sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private void dispatchInternal(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        for(HandlersMappingEntry en : handlers) {
-            NamedMatcher matcher = en.matcher(req.getPathInfo());
-            if(matcher.matches()) {
-                RequestHandler ha = provider.get(en.handlerClass());
-                ha.handleRequest(req, resp, matcher.namedGroups());
-                return;
+            HttpMethod method = HttpMethod.valueOf(req.getMethod());
+            for(Entry en : mapping.get(method)) {
+                NamedMatcher matcher = en.matcher(req.getPathInfo());
+                if(matcher.matches()) {
+                    en.ra.handle(en.clazz, matcher.namedGroups(), req, resp);
+                    return;
+                }
             }
+            errorReporter.report404(req, resp);
+        } catch(Exception e) {
+            errorReporter.reportException(req, resp, e);
         }
-        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
-    private void sendError(HttpServletResponse resp, int code) {
-        try {
-            resp.sendError(code);
-        } catch(IOException e) {
-            throw new UnhandledException(e);
+    private static class Entry<T> {
+        private final HttpMethod method;
+        private final NamedPattern pattern;
+        private final RequestAdapter<T> ra;
+        private final Class<? extends T> clazz;
+
+        private Entry(HttpMethod method, String pattern, RequestAdapter<T> ra, Class<? extends T> clazz) {
+            checkArgument(isNotBlank(pattern), "Provided pattern is blank");
+            checkNotNull(method, "Provided http method is null");
+            checkNotNull(clazz, "Provided handler class is null");
+            this.method = method;
+            this.pattern = NamedPattern.compile(pattern);
+            this.ra = ra;
+            this.clazz = clazz;
+        }
+
+        private NamedMatcher matcher(String input) {
+            return pattern.matcher(input);
+        }
+    }
+
+    public static class Builder {
+        private final HandlersErrorReporter errorReporter;
+        private final ImmutableList.Builder<Entry<?>> handlers = ImmutableList.builder();
+
+
+        public Builder(HandlersErrorReporter errorReporter) {
+            this.errorReporter = errorReporter;
+        }
+
+        public <T> Builder add(HttpMethod method, String pattern, RequestAdapter<T> ra, Class<? extends T> clazz) {
+            handlers.add(new Entry<T>(method, pattern, ra, clazz));
+            return this;
+        }
+
+        public HandlersDispatcher build() {
+            Multimap<HttpMethod, Entry<?>> mapping = Multimaps.index(handlers.build(), EntryKeyFun.INSTANCE);
+            return new HandlersDispatcher(mapping, errorReporter);
+        }
+    }
+
+    private enum EntryKeyFun implements Function<Entry, HttpMethod> {
+        INSTANCE;
+        @Override
+        public HttpMethod apply(Entry input) {
+            return input.method;
         }
     }
 }

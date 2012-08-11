@@ -1,8 +1,6 @@
 package ru.concerteza.util.db.springjdbc.named;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import ru.concerteza.util.db.springjdbc.RowIterable;
 
 import java.sql.ResultSet;
@@ -10,7 +8,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -24,7 +21,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * Date: 7/6/12
  * @see NamedConstructorMapper
  * @see NamedConstructorFunction
- * @see NamedConstructor
+ * @see NamedConstructor_OLD
  */
 class NamedConstructorSubclassesMapper<T> extends NamedConstructorMapper<T> {
     private final String discColumn;

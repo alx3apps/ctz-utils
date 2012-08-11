@@ -21,21 +21,26 @@ public class HandlersDispatcherServlet extends HttpServlet {
         this.dispatcherBeanName = this.getServletConfig().getInitParameter("dispatcherBeanName");
     }
 
-    public void doGet (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        dispatch(req, res);
+    @Override
+    public void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispatch(req, resp);
     }
 
-    public void doPost (HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        dispatch(req, res);
+    @Override
+    public void doPost (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispatch(req, resp);
     }
 
-    private void dispatch(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        // dispatch
-        HandlersDispatcher dispatcher = obtainDispatcher();
-        dispatcher.dispatch(req, res);
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispatch(req, resp);
     }
 
-    private HandlersDispatcher obtainDispatcher() {
+    private void dispatch(HttpServletRequest req, HttpServletResponse resp) {
+        dispatcher().dispatch(req, resp);
+    }
+
+    private HandlersDispatcher dispatcher() {
 //      WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE replaced by literal to remove spring-web dependency
         BeanFactory ctx = (BeanFactory) getServletContext().getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
         final HandlersDispatcher res;

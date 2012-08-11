@@ -2,6 +2,8 @@ package ru.concerteza.util.json;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
@@ -10,6 +12,7 @@ import ru.concerteza.util.io.CtzResourceUtils;
 import ru.concerteza.util.io.RuntimeIOException;
 import ru.concerteza.util.string.CtzConstants;
 
+import javax.crypto.MacSpi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +25,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
+import static ru.concerteza.util.io.CtzResourceUtils.readResourceToString;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**

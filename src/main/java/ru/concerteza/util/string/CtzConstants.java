@@ -21,4 +21,13 @@ public class CtzConstants {
     public static final Charset ASCII_CHARSET = Charset.forName(ASCII);
     public static final String UTF16 = "UTF-16";
     public static final Charset UTF16_CHARSET = Charset.forName(UTF16);
+
+    // http methods
+    public static final String GET = "GET";
+    public static final String POST = "POST";
+    public static final String PUT = "PUT";
+    public static final String DELETE = "DELETE";
+    public static final String HEAD = "HEAD";
+    public static final String OPTIONS = "OPTIONS";
+    public static final String TRACE = "TRACE";
 }

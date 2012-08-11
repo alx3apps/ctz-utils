@@ -1,6 +1,5 @@
 package ru.concerteza.util.db.springjdbc.named;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import ru.concerteza.util.db.springjdbc.RowIterable;
 
@@ -8,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
-
-import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Named constructor mapper implementation for single class.
@@ -19,7 +16,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * Date: 7/6/12
  * @see NamedConstructorMapper
  * @see NamedConstructorFunction
- * @see NamedConstructor
+ * @see NamedConstructor_OLD
  */
 class NamedConstructorSingleMapper<T> extends NamedConstructorMapper<T> {
     private final NamedConstructorFunction<T> fun;

@@ -4,6 +4,8 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import org.joda.time.Duration;
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import javax.annotation.Nullable;
 import java.util.Calendar;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Date utilities
@@ -23,6 +26,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class CtzDateUtils {
     public static final LocalDateTime DEFAULT_DATE = new LocalDateTime(0, 1, 1, 0, 0);
+    public static final DateTimeFormatter DEFAULT_LDT_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DEFAULT_LD_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd");
 
     /**
      * Converts optional {@link java.util.Date} into optional joda-time {@code LocalDateTime}
