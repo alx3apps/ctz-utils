@@ -3,13 +3,14 @@ package ru.concerteza.util.db.springjdbc.named;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
+import ru.concerteza.util.reflect.named.NamedConstructor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Spring's <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/jdbc/core/RowMapper.html">RowMapper</a>
- * implementation using {@link NamedConstructorFunction}. Designed to use with immutable classes (with final fields) -
+ * implementation using {@link ru.concerteza.util.reflect.named.NamedConstructor}. Designed to use with immutable classes (with final fields) -
  * only constructor invocation is used without any field access.
  * Constructor arguments must be annotated with JSR330 {@link javax.inject.Named} annotations
  * (there are other ways to access constructor names in runtime,see
@@ -23,7 +24,7 @@ import java.sql.SQLException;
  *
  * @param <T> object type to map data row to
  * @see NamedConstructor_OLD
- * @see NamedConstructorFunction
+ * @see ru.concerteza.util.reflect.named.NamedConstructor
  * @see NamedConstructorSingleMapper
  * @see NamedConstructorSubclassesMapper
  */
@@ -37,7 +38,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
      * @return named constructor instance
      */
     public static <T> NamedConstructorMapper<T> forClass(Class<T> clazz) {
-        NamedConstructorFunction<T> fun = new NamedConstructorFunction<T>(clazz, false, false);
+        NamedConstructor<T> fun = NamedConstructor.of(clazz);
         return new NamedConstructorSingleMapper<T>(fun);
     }
 
@@ -59,7 +60,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
      */
     public static class Builder<T> {
         private final String discColumn;
-        private final ImmutableMap.Builder<String, NamedConstructorFunction<? extends T>> builder = ImmutableMap.builder();
+        private final ImmutableMap.Builder<String, NamedConstructor<? extends T>> builder = ImmutableMap.builder();
 
         /**
          * @param discColumn discriminator column
@@ -77,7 +78,7 @@ public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
          */
         @SuppressWarnings("unchecked")
         public Builder<T> addSubclass(String discriminator, Class<? extends T> subclass) {
-            builder.put(discriminator, new NamedConstructorFunction(subclass, false, false));
+            builder.put(discriminator, NamedConstructor.of(subclass));
             return this;
         }
 

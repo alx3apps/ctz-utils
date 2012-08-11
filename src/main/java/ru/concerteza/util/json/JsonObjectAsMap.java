@@ -1,16 +1,15 @@
 package ru.concerteza.util.json;
 
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import org.apache.commons.lang.UnhandledException;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import javax.annotation.Nullable;
 import java.io.Reader;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +58,6 @@ public class JsonObjectAsMap implements Map<String, Object> {
         throw new IllegalStateException("Unknown type of input object: " + el);
     }
 
-    // todo removeme
     private Object extractValue(JsonPrimitive obj) {
         if(obj.isBoolean()) return obj.getAsBoolean();
         if(obj.isNumber()) return obj.getAsNumber();
@@ -74,20 +72,31 @@ public class JsonObjectAsMap implements Map<String, Object> {
         }
     }
 
-    // not implementation for other methods
-
-    @Override
-    public boolean containsValue(Object value) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return delegate.entrySet().size();
     }
 
     @Override
     public boolean isEmpty() {
+        return 0 == delegate.entrySet().size();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<Entry<String, Object>> entrySet() {
+        return (Set) delegate.entrySet();
+    }
+
+    @Override
+    public String toString() {
+        return delegate.toString();
+    }
+
+    // not implementation for other methods
+
+    @Override
+    public boolean containsValue(Object value) {
         throw new UnsupportedOperationException();
     }
 
@@ -118,11 +127,6 @@ public class JsonObjectAsMap implements Map<String, Object> {
 
     @Override
     public Collection<Object> values() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Set<Entry<String, Object>> entrySet() {
         throw new UnsupportedOperationException();
     }
 }

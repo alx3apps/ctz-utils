@@ -1,13 +1,13 @@
-package ru.concerteza.util.db.springjdbc.named;
+package ru.concerteza.util.reflect.named;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import org.junit.Test;
 import ru.concerteza.util.json.JsonObjectAsMap;
+import ru.concerteza.util.reflect.named.NamedConstructor;
+import ru.concerteza.util.reflect.named.NamedGenericRef;
 
 import javax.inject.Named;
 import java.util.List;
@@ -21,17 +21,17 @@ import static junit.framework.Assert.assertTrue;
  * User: alexey
  * Date: 8/9/12
  */
-public class NamedConstructorFunctionTest {
+public class NamedConstructorTest {
     private static final Map<String, ?> DATA = ImmutableMap.<String, Object>builder()
             .put("foo", "42")
             .put("child", ImmutableMap.of("bar", "40"))
             .put("nodes", ImmutableList.of(ImmutableMap.of("val", 41), ImmutableMap.of("val", 42)))
             .build();
 
-//    @Test
+    @Test
     public void test() {
-        NamedConstructorFunction<Parent> fu = NamedConstructorFunction.of(Parent.class);
-        Parent pa = fu.apply(DATA);
+        NamedConstructor<Parent> nc = NamedConstructor.of(Parent.class);
+        Parent pa = nc.invoke(DATA);
         assertNotNull("Creation fail", pa);
         assertEquals("Parent field fail", "42", pa.foo);
         assertTrue("Child fail", pa.child.isPresent());
@@ -45,8 +45,8 @@ public class NamedConstructorFunctionTest {
     public void testJson() {
         String json = new Gson().toJson(DATA);
         Map<String, ?> parsed = JsonObjectAsMap.of(json);
-        NamedConstructorFunction<Parent> fu = NamedConstructorFunction.of(Parent.class);
-        Parent pa = fu.apply(parsed);
+        NamedConstructor<Parent> nc = NamedConstructor.of(Parent.class);
+        Parent pa = nc.invoke(parsed);
         assertNotNull("Creation fail", pa);
         assertEquals("Parent field fail", "42", pa.foo);
         assertTrue("Child fail", pa.child.isPresent());

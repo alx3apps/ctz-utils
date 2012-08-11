@@ -2,6 +2,7 @@ package ru.concerteza.util.db.springjdbc.named;
 
 import com.google.common.collect.Maps;
 import ru.concerteza.util.db.springjdbc.RowIterable;
+import ru.concerteza.util.reflect.named.NamedConstructor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,18 +21,18 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @author alexey
  * Date: 7/6/12
  * @see NamedConstructorMapper
- * @see NamedConstructorFunction
+ * @see ru.concerteza.util.reflect.named.NamedConstructor
  * @see NamedConstructor_OLD
  */
 class NamedConstructorSubclassesMapper<T> extends NamedConstructorMapper<T> {
     private final String discColumn;
-    private final Map<String, NamedConstructorFunction<? extends T>> ncMap;
+    private final Map<String, NamedConstructor<? extends T>> ncMap;
 
     /**
      * @param ncMap discriminator value -> named constructor function mapping
      * @param discColumn discriminator column
      */
-    NamedConstructorSubclassesMapper(Map<String, NamedConstructorFunction<? extends T>> ncMap, String discColumn) {
+    NamedConstructorSubclassesMapper(Map<String, NamedConstructor<? extends T>> ncMap, String discColumn) {
         checkArgument(ncMap.size() > 0, "Provided functions map is empty");
         checkArgument(isNotBlank(discColumn), "Provided discriminator column is blank");
         this.ncMap = ncMap;
@@ -51,9 +52,9 @@ class NamedConstructorSubclassesMapper<T> extends NamedConstructorMapper<T> {
         }
         if(null == discVal) throw new IllegalArgumentException(format(
                 "Null or absent value of discriminator column: '{}' in row data: '{}'", discColumn, logRS(rs, rowNum)));
-        NamedConstructorFunction<? extends T> ef = ncMap.get(discVal);
-        if(null == ef) throw new IllegalArgumentException(format(
+        NamedConstructor<? extends T> nc = ncMap.get(discVal);
+        if(null == nc) throw new IllegalArgumentException(format(
                 "Cannot find subclass for discriminator: '{}', keys: '{}', row data: '{}'", discVal, ncMap.keySet(), logRS(rs, rowNum)));
-        return ef.apply(map);
+        return nc.invoke(map, false);
     }
 }

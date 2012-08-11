@@ -1,4 +1,4 @@
-package ru.concerteza.util.db.springjdbc.named;
+package ru.concerteza.util.reflect.named;
 
 import javax.inject.Qualifier;
 import java.lang.annotation.Documented;

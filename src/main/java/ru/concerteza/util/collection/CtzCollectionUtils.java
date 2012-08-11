@@ -2,6 +2,7 @@ package ru.concerteza.util.collection;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
 import ru.concerteza.util.value.Pair;
 
@@ -10,6 +11,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Collection utilities
@@ -104,5 +106,23 @@ public class CtzCollectionUtils {
      */
     public static <T> Set<T> newConcurrentHashSet() {
         return Collections.newSetFromMap(new ConcurrentHashMap<T, Boolean>());
+    }
+
+    /**
+     * Copies provided map into {@link LinkedHashMap} converting keys to lower case.
+     * Keys must be locale insensitive.
+     *
+     * @param map input map
+     * @param <V> map value type
+     * @return map with lower case keys
+     */
+    public static <V> LinkedHashMap<String, V> toLowerKeysMap(Map<String, V> map) {
+        checkNotNull(map, "Provided map is null");
+        LinkedHashMap<String, V> res = new LinkedHashMap<String, V>(map.size());
+        for(Map.Entry<String, V> en : map.entrySet()) {
+            V existed = res.put(en.getKey().toLowerCase(Locale.ENGLISH), en.getValue());
+            checkArgument(null == existed, "Duplicate key: '%s' after lowering", en.getKey());
+        }
+        return res;
     }
 }

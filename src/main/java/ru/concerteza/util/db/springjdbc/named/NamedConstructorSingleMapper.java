@@ -2,6 +2,7 @@ package ru.concerteza.util.db.springjdbc.named;
 
 import com.google.common.collect.Maps;
 import ru.concerteza.util.db.springjdbc.RowIterable;
+import ru.concerteza.util.reflect.named.NamedConstructor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,22 +11,22 @@ import java.util.Locale;
 
 /**
  * Named constructor mapper implementation for single class.
- * Converts result set row into lower case map and applies {@link NamedConstructorFunction} to it.
+ * Converts result set row into lower case map and applies {@link ru.concerteza.util.reflect.named.NamedConstructor} to it.
  *
  * @author alexey
  * Date: 7/6/12
  * @see NamedConstructorMapper
- * @see NamedConstructorFunction
+ * @see ru.concerteza.util.reflect.named.NamedConstructor
  * @see NamedConstructor_OLD
  */
 class NamedConstructorSingleMapper<T> extends NamedConstructorMapper<T> {
-    private final NamedConstructorFunction<T> fun;
+    private final NamedConstructor<T> nc;
 
     /**
-     * @param fun function to apply to row
+     * @param nc function to apply to row
      */
-    NamedConstructorSingleMapper(NamedConstructorFunction<T> fun) {
-        this.fun = fun;
+    NamedConstructorSingleMapper(NamedConstructor<T> nc) {
+        this.nc = nc;
     }
 
     /**
@@ -37,6 +38,6 @@ class NamedConstructorSingleMapper<T> extends NamedConstructorMapper<T> {
         for(RowIterable.Cell cell : RowIterable.of(rs)) {
             map.put(cell.getColumnName().toLowerCase(Locale.ENGLISH), cell.getValue());
         }
-        return fun.apply(map);
+        return nc.invoke(map, false);
     }
 }
