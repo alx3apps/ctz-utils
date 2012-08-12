@@ -1,6 +1,8 @@
 package ru.concerteza.util.json;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -65,13 +67,6 @@ public class JsonObjectAsMap implements Map<String, Object> {
         throw new IllegalStateException("Unknown type of input object: " + obj);
     }
 
-    private class WrapFun implements Function<JsonElement, Object> {
-        @Override
-        public Object apply(@Nullable JsonElement input) {
-            return wrap(input);
-        }
-    }
-
     @Override
     public int size() {
         return delegate.entrySet().size();
@@ -91,6 +86,39 @@ public class JsonObjectAsMap implements Map<String, Object> {
     @Override
     public String toString() {
         return delegate.toString();
+    }
+
+    @Override
+    public Set<String> keySet() {
+        return ImmutableSet.copyOf(Collections2.transform(delegate.entrySet(), KeyFun.INSTANCE));
+    }
+
+    @Override
+    public Collection<Object> values() {
+        return Collections2.transform(delegate.entrySet(), ValueFun.INSTANCE);
+    }
+
+    private class WrapFun implements Function<JsonElement, Object> {
+        @Override
+        public Object apply(@Nullable JsonElement input) {
+            return wrap(input);
+        }
+    }
+
+    private enum KeyFun implements Function<Entry<String,JsonElement>, String> {
+        INSTANCE;
+        @Override
+        public String apply(Entry<String, JsonElement> input) {
+            return input.getKey();
+        }
+    }
+
+    private enum ValueFun implements Function<Entry<String,JsonElement>, Object> {
+        INSTANCE;
+        @Override
+        public JsonElement apply(Entry<String, JsonElement> input) {
+            return input.getValue();
+        }
     }
 
     // not implementation for other methods
@@ -117,16 +145,6 @@ public class JsonObjectAsMap implements Map<String, Object> {
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Set<String> keySet() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Collection<Object> values() {
         throw new UnsupportedOperationException();
     }
 }

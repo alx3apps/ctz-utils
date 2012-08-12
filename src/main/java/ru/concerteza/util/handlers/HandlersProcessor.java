@@ -9,6 +9,6 @@ import java.util.Map;
  * Date: 8/9/12
  */
 
-public interface RequestAdapter<T> {
-    void handle(Class<? extends T> clazz, Map<String, String> urlParams, HttpServletRequest request, HttpServletResponse response) throws Exception;
+public interface HandlersProcessor<T> {
+    void process(Class<? extends T> clazz, Map<String, String> urlParams, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }

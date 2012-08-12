@@ -156,7 +156,7 @@ public class CtzReflectionUtils {
 
     /**
      * Invoking methods wrapping IAE and ITE into runtime exception
-     * and making method accessible
+     * and making method accessible if necessary
      *
      * @param obj object containing method
      * @param method method to invoke
@@ -172,6 +172,28 @@ public class CtzReflectionUtils {
         } catch(InvocationTargetException e) {
             throw new UnhandledException(e);
         } catch(IllegalAccessException e) {
+            throw new UnhandledException(e);
+        }
+    }
+
+    /**
+     * Invokes provided constructor wrapping checked exceptions into runtime ones
+     * and making it accessible if necessary
+     *
+     * @param constr constructor to invoke
+     * @param args constructor arguments
+     * @param <T> instantiated class type
+     * @return instantiated object
+     */
+    public static <T> T invokeConstructor(Constructor<T> constr, Object... args) {
+        try {
+            if(!constr.isAccessible()) constr.setAccessible(true);
+            return constr.newInstance(args);
+        } catch(InstantiationException e) {
+            throw new UnhandledException(e);
+        } catch(IllegalAccessException e) {
+            throw new UnhandledException(e);
+        } catch(InvocationTargetException e) {
             throw new UnhandledException(e);
         }
     }

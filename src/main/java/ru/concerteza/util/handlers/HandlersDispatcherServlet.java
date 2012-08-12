@@ -1,6 +1,7 @@
 package ru.concerteza.util.handlers;
 
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,8 +42,7 @@ public class HandlersDispatcherServlet extends HttpServlet {
     }
 
     private HandlersDispatcher dispatcher() {
-//      WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE replaced by literal to remove spring-web dependency
-        BeanFactory ctx = (BeanFactory) getServletContext().getAttribute("org.springframework.web.context.WebApplicationContext.ROOT");
+        BeanFactory ctx = (BeanFactory) getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         final HandlersDispatcher res;
         if(null != dispatcherBeanName) {
             res = ctx.getBean(dispatcherBeanName, HandlersDispatcher.class);

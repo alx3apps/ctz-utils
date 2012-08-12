@@ -15,6 +15,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 2/9/12
  */
 public class LowerStringFunction implements Function<String, String> {
+    public static LowerStringFunction INSTANCE = new LowerStringFunction();
+
     /**
      * @param input string
      * @return <code>input.toLowerCase()</code>

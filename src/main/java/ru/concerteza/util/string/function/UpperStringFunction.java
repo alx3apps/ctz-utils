@@ -13,6 +13,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 2/9/12
  */
 public class UpperStringFunction implements Function<String, String> {
+    public static UpperStringFunction INSTANCE = new UpperStringFunction();
+
     /**
      * @param input string
      * @return <code>input.toUpperCase()</code>

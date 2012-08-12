@@ -60,12 +60,22 @@ public class NamedConstructorTest {
         private final String foo;
         private final Optional<Child> child;
         private final List<Node> nodes;
+        private final boolean boo;
 
         private Parent(@Named("foo") String foo, @NamedGenericRef(name = "child", type = Child.class) Optional<Child> child,
                        @NamedGenericRef(name = "nodes", type = Node.class) List<Node> nodes) {
             this.foo = foo;
             this.child = child;
             this.nodes = nodes;
+            this.boo = false;
+        }
+
+        private Parent(@Named("foo") String foo, @NamedGenericRef(name = "child", type = Child.class) Optional<Child> child,
+                       @NamedGenericRef(name = "nodes", type = Node.class) List<Node> nodes, @Named("boo") boolean boo) {
+            this.foo = foo;
+            this.child = child;
+            this.nodes = nodes;
+            this.boo = boo;
         }
     }
 

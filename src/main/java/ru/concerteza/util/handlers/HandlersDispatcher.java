@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import org.springframework.http.HttpMethod;
 import ru.concerteza.util.namedregex.NamedMatcher;
 import ru.concerteza.util.namedregex.NamedPattern;
 
@@ -38,7 +39,7 @@ public class HandlersDispatcher {
             for(Entry en : mapping.get(method)) {
                 NamedMatcher matcher = en.matcher(req.getPathInfo());
                 if(matcher.matches()) {
-                    en.ra.handle(en.clazz, matcher.namedGroups(), req, resp);
+                    en.ra.process(en.clazz, matcher.namedGroups(), req, resp);
                     return;
                 }
             }
@@ -51,10 +52,10 @@ public class HandlersDispatcher {
     private static class Entry<T> {
         private final HttpMethod method;
         private final NamedPattern pattern;
-        private final RequestAdapter<T> ra;
+        private final HandlersProcessor<T> ra;
         private final Class<? extends T> clazz;
 
-        private Entry(HttpMethod method, String pattern, RequestAdapter<T> ra, Class<? extends T> clazz) {
+        private Entry(HttpMethod method, String pattern, HandlersProcessor<T> ra, Class<? extends T> clazz) {
             checkArgument(isNotBlank(pattern), "Provided pattern is blank");
             checkNotNull(method, "Provided http method is null");
             checkNotNull(clazz, "Provided handler class is null");
@@ -78,7 +79,7 @@ public class HandlersDispatcher {
             this.errorReporter = errorReporter;
         }
 
-        public <T> Builder add(HttpMethod method, String pattern, RequestAdapter<T> ra, Class<? extends T> clazz) {
+        public <T> Builder add(HttpMethod method, String pattern, HandlersProcessor<T> ra, Class<? extends T> clazz) {
             handlers.add(new Entry<T>(method, pattern, ra, clazz));
             return this;
         }
