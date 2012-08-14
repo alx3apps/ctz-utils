@@ -1,14 +1,11 @@
 package ru.concerteza.util.db.springjdbc.entitymapper;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import org.apache.commons.lang.UnhandledException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -71,7 +68,8 @@ public abstract class EntityMapper<T> implements RowMapper<T> {
      */
     public static class Builder<T> {
         private final EntityChooser<T> chooser;
-        private final Map<String, ArrayList<EntityFilter>> filterMap = Maps.newHashMap();
+        private final LinkedHashMultimap<String, EntityFilter> filterMap = LinkedHashMultimap.create();
+        private final ImmutableSet.Builder<EntityFilter> commonFilters = ImmutableSet.builder();
 
         /**
          * @param chooser subclasses chooser
@@ -86,26 +84,23 @@ public abstract class EntityMapper<T> implements RowMapper<T> {
          * @param filters preprocessing filters
          * @return builder itself
          */
-        @SuppressWarnings("unchecked")
         public Builder<T> addFilters(EntityFilter... filters) {
-            // type reifying workaround here, don't want additional Class<T> argument
-            return addFilters((Class) Object.class, filters);
+            checkArgument(filters.length > 0, "At least one filter must be provided");
+            commonFilters.add(filters);
+            return this;
         }
 
         /**
          * Add filters for specific subclass
          *
-         * @param clazz superclass (or interface), that subclasses must inherit (implement) for filters to be applied
+         * @param clazz exact class (inheritance is not supported) to apply filter to
          * @param filters preprocessing filters
          * @return builder itself
          */
         public Builder<T> addFilters(Class<? extends T> clazz, EntityFilter... filters) {
             checkNotNull(clazz, "Provided class must be non null");
             checkArgument(filters.length > 0, "At least one filter must be provided");
-            if(!filterMap.containsKey(clazz.getName())) filterMap.put(clazz.getName(), new ArrayList<EntityFilter>());
-            for(Map.Entry<String, ArrayList<EntityFilter>> en : filterMap.entrySet()) {
-                if(isAssignableFromName(clazz, en.getKey())) en.getValue().addAll(asList(filters));
-            }
+            filterMap.putAll(clazz.getName(), asList(filters));
             return this;
         }
 
@@ -116,8 +111,8 @@ public abstract class EntityMapper<T> implements RowMapper<T> {
         public EntityMapper<T> build() {
             ImmutableMap.Builder<String, EntityClass<T>> builder = ImmutableMap.builder();
             for(Class<? extends T> cl : chooser.subclasses()) {
-                List<EntityFilter> filters = defaultList(filterMap.get(cl.getName()));
-                builder.put(cl.getName(), new EntityClass(cl, filters));
+                Set<EntityFilter> filters = filterMap.get(cl.getName());
+                builder.put(cl.getName(), new EntityClass(cl, Sets.union(filters, commonFilters.build())));
             }
             return new SubclassesEntityMapper<T>(chooser, builder.build());
         }

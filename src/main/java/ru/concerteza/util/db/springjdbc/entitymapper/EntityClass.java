@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.PostLoad;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,7 +35,7 @@ class EntityClass<T> {
      * @param clazz class of target entity
      * @param filters list of preprocessing filters that will be applied to row data
      */
-    EntityClass(Class<T> clazz, List<EntityFilter> filters) {
+    EntityClass(Class<T> clazz, Collection<EntityFilter> filters) {
         this.clazz = clazz;
         this.columnMap = columnFieldMap(clazz);
         this.filters = ImmutableList.copyOf(filters);
