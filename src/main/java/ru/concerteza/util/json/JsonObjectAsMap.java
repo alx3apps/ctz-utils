@@ -49,6 +49,7 @@ public class JsonObjectAsMap implements Map<String, Object> {
     @Override
     public Object get(Object key) {
         JsonElement el = delegate.get((String) key);
+        if(null == el) return null;
         return wrap(el);
     }
 

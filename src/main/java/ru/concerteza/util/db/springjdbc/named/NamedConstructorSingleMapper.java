@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static ru.concerteza.util.reflect.named.NamedConstructor.CaseType.INSENSITIVE;
+import static ru.concerteza.util.reflect.named.NamedConstructor.MatchMode.ADDITIONAL_ALLOWED;
+
 /**
  * Named constructor mapper implementation for single class.
  * Converts result set row into lower case map and applies {@link ru.concerteza.util.reflect.named.NamedConstructor} to it.
@@ -38,6 +41,6 @@ class NamedConstructorSingleMapper<T> extends NamedConstructorMapper<T> {
         for(RowIterable.Cell cell : RowIterable.of(rs)) {
             map.put(cell.getColumnName().toLowerCase(Locale.ENGLISH), cell.getValue());
         }
-        return nc.invoke(map, false);
+        return nc.invoke(map, ADDITIONAL_ALLOWED, INSENSITIVE);
     }
 }

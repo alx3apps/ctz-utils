@@ -35,11 +35,11 @@ public class CtzDateUtilsTest {
 
     @Test
     public void testOptional() {
-        Optional<LocalDateTime> opt = toLocalDateTime(Optional.<Date>absent());
+        Optional<LocalDateTime> opt = CtzDateUtils.toOptionalLDT(Optional.<Date>absent());
         assertFalse("Absent fail", opt.isPresent());
         Calendar cal = new GregorianCalendar(42, 5, 4, 3, 2, 1);
         Date date = new Date(cal.getTimeInMillis());
-        Optional<LocalDateTime> ldtOpt = toLocalDateTime(Optional.of(date));
+        Optional<LocalDateTime> ldtOpt = CtzDateUtils.toOptionalLDT(Optional.of(date));
         assertTrue("Present fail", ldtOpt.isPresent());
         LocalDateTime ldt = ldtOpt.get();
         assertEquals(cal.get(Calendar.YEAR), ldt.getYear());

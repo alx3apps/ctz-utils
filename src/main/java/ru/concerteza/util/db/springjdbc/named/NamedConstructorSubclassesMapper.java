@@ -12,6 +12,9 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static ru.concerteza.util.reflect.named.NamedConstructor.CaseType;
+import static ru.concerteza.util.reflect.named.NamedConstructor.CaseType.INSENSITIVE;
+import static ru.concerteza.util.reflect.named.NamedConstructor.MatchMode.ADDITIONAL_ALLOWED;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
@@ -55,6 +58,6 @@ class NamedConstructorSubclassesMapper<T> extends NamedConstructorMapper<T> {
         NamedConstructor<? extends T> nc = ncMap.get(discVal);
         if(null == nc) throw new IllegalArgumentException(format(
                 "Cannot find subclass for discriminator: '{}', keys: '{}', row data: '{}'", discVal, ncMap.keySet(), logRS(rs, rowNum)));
-        return nc.invoke(map, false);
+        return nc.invoke(map, ADDITIONAL_ALLOWED, INSENSITIVE);
     }
 }

@@ -2,12 +2,16 @@ package ru.concerteza.util.handlers;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.web.context.WebApplicationContext;
+import ru.concerteza.util.string.CtzConstants;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import static ru.concerteza.util.string.CtzConstants.UTF8;
 
 /**
  * User: alexey
@@ -37,7 +41,9 @@ public class HandlersDispatcherServlet extends HttpServlet {
         dispatch(req, resp);
     }
 
-    private void dispatch(HttpServletRequest req, HttpServletResponse resp) {
+    private void dispatch(HttpServletRequest req, HttpServletResponse resp) throws UnsupportedEncodingException {
+        req.setCharacterEncoding(UTF8);
+        resp.setCharacterEncoding(UTF8);
         dispatcher().dispatch(req, resp);
     }
 
