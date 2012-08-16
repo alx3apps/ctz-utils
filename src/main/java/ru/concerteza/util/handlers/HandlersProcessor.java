@@ -10,5 +10,5 @@ import java.util.Map;
  */
 
 public interface HandlersProcessor<T> {
-    void process(Class<? extends T> clazz, Map<String, String> urlParams, HttpServletRequest request, HttpServletResponse response) throws Exception;
+    void process(Class<? extends T> handlerClazz, Map<String, String> urlParams, HttpServletRequest request, HttpServletResponse response) throws Exception;
 }
