@@ -21,6 +21,8 @@ import java.util.TreeMap;
 @Deprecated // use CsvDataSource
 public class ResultSetOverCSV implements ResultSet {
     private LineIterator it;
+    private String line;
+    private int lineNumber;
     private String[] row;
     private Map<String, Integer> columnIndexes;
     private String[] columnNames;
@@ -36,7 +38,7 @@ public class ResultSetOverCSV implements ResultSet {
         if (!it.hasNext()) {
             throw new IOException("No data, please check source.");
         }
-        row = it.nextLine().split(this.delimiter, Integer.MAX_VALUE);
+        nextLine();
         columnIndexes = new TreeMap<String, Integer>();
         columnNames = row.clone();
         for (int i = 0; i < row.length; i++) {
@@ -49,10 +51,24 @@ public class ResultSetOverCSV implements ResultSet {
         metaData = new MetaData();
     }
 
+    private void nextLine() {
+        line = it.nextLine();
+        lineNumber += 1;
+        row = line.split(delimiter, Integer.MAX_VALUE);
+    }
+
+    public String getLine() {
+        return line;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
     @Override
     public boolean next() throws SQLException {
         if (it.hasNext()) {
-            row = it.nextLine().split(delimiter, Integer.MAX_VALUE);
+            nextLine();
             rowNumber += 1;
             return true;
         } else {
