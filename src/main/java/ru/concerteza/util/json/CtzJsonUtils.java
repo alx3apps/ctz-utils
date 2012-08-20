@@ -1,9 +1,12 @@
 package ru.concerteza.util.json;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.UnhandledException;
@@ -12,6 +15,7 @@ import ru.concerteza.util.io.CtzResourceUtils;
 import ru.concerteza.util.io.RuntimeIOException;
 import ru.concerteza.util.string.CtzConstants;
 
+import javax.annotation.Nullable;
 import javax.crypto.MacSpi;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +33,11 @@ import static ru.concerteza.util.io.CtzResourceUtils.readResourceToString;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
- * JSON utilities
+ * JSON utilities using Gson
  *
  * @author alexey
  * Date: 10/17/11
+ * @see CtzJsonUtilsTest
  */
 public class CtzJsonUtils {
     /**
@@ -98,6 +103,36 @@ public class CtzJsonUtils {
             throw new RuntimeIOException(e);
         } finally {
             closeQuietly(jsonStream);
+        }
+    }
+
+    /**
+     * Wraps {@code JsonElement} into java map/iterable or extracts value from {@code JsonPrimitive}
+     *
+     * @param el json elementt
+     * @return wrapped object or extracted value
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T wrapJson(JsonElement el) {
+        if(el.isJsonNull()) return null;
+        if(el.isJsonPrimitive()) return (T) extractPrimitive(el.getAsJsonPrimitive());
+        if(el.isJsonObject()) return (T) new JsonObjectAsMap(el.getAsJsonObject());
+        if(el.isJsonArray()) return (T) Iterables.transform(el.getAsJsonArray(), WrapJsonFunction.INSTANCE);
+        throw new IllegalStateException("Unknown type of input object: " + el);
+    }
+
+    private static Object extractPrimitive(JsonPrimitive obj) {
+        if(obj.isBoolean()) return obj.getAsBoolean();
+        if(obj.isNumber()) return obj.getAsNumber();
+        if(obj.isString()) return obj.getAsString();
+        throw new IllegalStateException(format("Unknown type of input object: '{}'", obj));
+    }
+
+    private enum WrapJsonFunction implements Function<JsonElement, Object> {
+        INSTANCE;
+        @Override
+        public Object apply(JsonElement input) {
+            return wrapJson(input);
         }
     }
 }

@@ -50,11 +50,10 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
 
     private final Accessor<? extends DataSource> sources;
     private final String sql;
-    private final RowMapper<T> mapper;
+    private final RowMapperFactory<T> mapperFactory;
     private final ExecutorService executor;
     // was made non-generic to allow endOfDataObject
     private final ArrayBlockingQueue<Object> dataQueue;
-    private final Extractor extractor = new Extractor();
     private final List<ParallelQueriesListener> listeners = Lists.newArrayList();
 
     private AtomicBoolean started = new AtomicBoolean(false);
@@ -62,7 +61,7 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     private ImmutableList<Future<?>> futures;
 
     /**
-     * Shortcut constructor with mapper.
+     * Shortcut constructor with mapper
      *
      * @param sources list of data sources, will be used in round-robin mode
      * @param sql query to execute using NamedParameterJdbcTemplate
@@ -74,24 +73,37 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     }
 
     /**
+     * Shortcut constructor
+     *
+     * @param sources list of data sources, will be used in round-robin mode
+     * @param sql query to execute using NamedParameterJdbcTemplate
+     * @param executor executor service to run parallel queries into
+     * @param mapper will be used to get data from result sets
+     * @param bufferSize size of ArrayBlockingQueue data buffer
+     */
+    public ParallelQueriesIterator(Accessor<? extends DataSource> sources, String sql, ExecutorService executor, RowMapper<T> mapper, int bufferSize) {
+        this(sources, sql, executor, SingletoneRowMapperFactory.of(mapper), bufferSize);
+    }
+
+    /**
      * Main constructor
      *
      * @param sources data sources accessor
      * @param sql query to execute using NamedParameterJdbcTemplate
-     * @param mapper will be used to get data from result sets
+     * @param mapperFactory will be used to get data from result sets
      * @param executor executor service to run parallel queries into
      * @param bufferSize size of ArrayBlockingQueue data buffer
      */
-    public ParallelQueriesIterator(Accessor<? extends DataSource> sources, String sql, ExecutorService executor, RowMapper<T> mapper, int bufferSize) {
+    public ParallelQueriesIterator(Accessor<? extends DataSource> sources, String sql, ExecutorService executor, RowMapperFactory<T> mapperFactory, int bufferSize) {
         checkNotNull(sources, "Provided data source accessor is null");
         checkArgument(sources.size() > 0, "No data sources provided");
         checkArgument(isNotBlank(sql), "Provided sql query is blank");
         checkNotNull(executor, "Provided executor is null");
-        checkNotNull(mapper, "Provided row mapper is null");
+        checkNotNull(mapperFactory, "Provided row mapper factory is null");
         checkArgument(bufferSize > 0, "Buffer size mat be positive, but was: '%s'", bufferSize);
         this.sources = sources;
         this.sql = sql;
-        this.mapper = mapper;
+        this.mapperFactory = mapperFactory;
         this.executor = executor;
         this.dataQueue = new ArrayBlockingQueue<Object>(bufferSize);
     }
@@ -185,6 +197,7 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
         @Override
         public void run() {
             try {
+                Extractor extractor = new Extractor(mapperFactory.produce(params));
                 jt.query(sql, params, extractor);
                 for(ParallelQueriesListener li : listeners) li.success(ds, sql, params);
             } catch (Throwable e) { // we do not believe to JDBC drivers' error reporting
@@ -196,6 +209,12 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     }
 
     private class Extractor implements ResultSetExtractor<Void> {
+        private final RowMapper<T> mapper;
+
+        private Extractor(RowMapper<T> mapper) {
+            this.mapper = mapper;
+        }
+
         @Override
         public Void extractData(ResultSet rs) throws SQLException, DataAccessException {
             try {

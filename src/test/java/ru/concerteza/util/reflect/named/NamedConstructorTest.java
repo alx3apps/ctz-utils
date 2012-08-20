@@ -63,18 +63,19 @@ public class NamedConstructorTest {
         private final boolean boo;
 
         private Parent(@Named("foo") String foo, @NamedGenericRef(name = "child", type = Child.class) Optional<Child> child,
-                       @NamedGenericRef(name = "nodes", type = Node.class) List<Node> nodes) {
+                       @NamedGenericRef(name = "nodes", type = Node.class) Iterable<Node> nodes) {
             this.foo = foo;
             this.child = child;
-            this.nodes = nodes;
+            // Iterable input is needed for JSON array parsed by Gson
+            this.nodes = ImmutableList.copyOf(nodes);
             this.boo = false;
         }
 
         private Parent(@Named("foo") String foo, @NamedGenericRef(name = "child", type = Child.class) Optional<Child> child,
-                       @NamedGenericRef(name = "nodes", type = Node.class) List<Node> nodes, @Named("boo") boolean boo) {
+                       @NamedGenericRef(name = "nodes", type = Node.class) Iterable<Node> nodes, @Named("boo") boolean boo) {
             this.foo = foo;
             this.child = child;
-            this.nodes = nodes;
+            this.nodes = ImmutableList.copyOf(nodes);
             this.boo = boo;
         }
     }

@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static ru.concerteza.util.collection.CtzCollectionUtils.toLowerKeysMap;
@@ -23,15 +24,16 @@ import static ru.concerteza.util.reflect.named.NamedConstructor.CaseType.INSENSI
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
- * // todo improve docs
- * Designed
- * to use with immutable classes (with final fields) - only constructor invocation is used without any field access.
+ * Holds reflection information about specific class and can instantiate it using constructor with fields marked
+ * {@link Named} or {@link NamedGenericRef}.
+ * Designed to use with immutable classes (with final fields) - only constructor invocation is used without any field access.
  * Constructor arguments must be annotated with JSR330 {@link Named} annotations (there are other ways to access
  * constructor names in runtime, see <a href="http://paranamer.codehaus.org/">paranamer project</a>, but we use
- * {@code @Named} annotations only). Constructors without {@code @Named} annotations on arguments will be ignored.
- * Constructors with {@code @Named} annotations must have all they arguments annotated with not blank values without
- * duplicates. {@code Optional} constructor arguments values will be wrapped into {@code Optional} before
- * constructor invocation. All reflection introspection is done on function instantiation.
+ * {@code @Named} annotations only) or {@link NamedGenericRef} annotation for generic arguments.
+ * Constructors without {@code @Named} or {@link NamedGenericRef} annotations on arguments will be ignored.
+ * Constructors with {@code @Named} or {@link NamedGenericRef} annotations must have all they arguments annotated with
+ * not blank values without duplicates. {@code Optional} constructor arguments values will be wrapped into {@code Optional} before
+ * constructor invocation. All reflection introspection is done on named constructor instantiation.
  * For case insensitive names all {@code @Named} values must be locale insensitive. Null values are allowed
  * only for {@code com.google.common.base.Optional} arguments.
  *
@@ -41,15 +43,32 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @see ru.concerteza.util.db.springjdbc.named.NamedConstructorMapper
  */
 public class NamedConstructor<T> {
+    /**
+     * Specifies, whether to treat names of provided constructor arguments as case sensitive on constructor invocation
+     */
     public enum CaseType {SENSITIVE, INSENSITIVE}
+
+    /**
+     * Arguments match mode on constructor invocation
+     *
+     * {@code EXACT} - provided arguments must match one of the constructor arguments exactly
+     * {@code OPTIONAL_MISSED_ALLOWED} - optional arguments may be missed -
+     * they will be replaced with Optional.absent values
+     * {@code ADDITIONAL_ALLOWED} - more arguments then needed may be provided,
+     * arguments not used by selected constructor eill be ignored
+     */
     public enum MatchMode {EXACT, OPTIONAL_MISSED_ALLOWED, ADDITIONAL_ALLOWED}
 
     // Lists (with linear search) is deliberate, they will be small
     private final List<SingleNamedConstr<T>> entries;
     private final boolean optional;
 
+    /**
+     * @param type class to instantiate
+     * @param genericType optional generic argument for provided class
+     */
     @SuppressWarnings("unchecked") // declared constructor generic type
-    public NamedConstructor(Class<T> type, Optional<Class> genericType) {
+    private NamedConstructor(Class<T> type, Optional<Class> genericType) {
         checkNotNull(type, "Provided type is null");
         checkNotNull(genericType, "Provided genericType is null");
         this.optional = Optional.class.isAssignableFrom(type);
@@ -78,14 +97,36 @@ public class NamedConstructor<T> {
         }
     }
 
+    /**
+     * Factory method
+     *
+     * @param clazz class to instantiate
+     * @param <T> clazz type
+     * @return named constructor for that class
+     * @throws IllegalArgumentException on unsuccessful search of appropriate constructors
+     */
     public static <T> NamedConstructor<T> of(Class<T> clazz) {
         return new NamedConstructor<T>(clazz, Optional.<Class>absent());
     }
 
+    /**
+     * Invokes named constructor on arguments map using {@code MatchMode.EXACT} and {@code CaseType.SENSITIVE}
+     *
+     * @param map named arguments map
+     * @return instantiated object
+     */
     public T invoke(Map<String, ?> map) {
         return invoke(map, MatchMode.EXACT, CaseType.SENSITIVE);
     }
 
+    /**
+     * Invokes named constructor on arguments map
+     *
+     * @param map named arguments map
+     * @param matchMode match mode
+     * @param caseType case sensivity settings
+     * @return instantiated object
+     */
     public T invoke(Map<String, ?> map, MatchMode matchMode, CaseType caseType) {
         checkNotNull(map, "Provided map is null");
         Map<String, ?> inputMap = INSENSITIVE.equals(caseType) ? toLowerKeysMap(map) : map;
@@ -93,15 +134,21 @@ public class NamedConstructor<T> {
         return invokeSNC(snc, inputMap, matchMode, caseType);
     }
 
+    /**
+     * Invokes named constructor on arguments iterable
+     *
+     * @param iter named arguments iterable
+     * @param matchMode match mode
+     * @param caseType case sensivity settings
+     * @return iterable of instantiated object
+     */
     @SuppressWarnings("unchecked")
-    public List<T> invoke(Iterable<?> iter, MatchMode matchMode, CaseType caseType) {
+    public Iterable<T> invoke(Iterable<?> iter, MatchMode matchMode, CaseType caseType) {
         checkNotNull(iter, "Provided iter is null, constructor: '%s'", this);
-        ImmutableList.Builder<T> builder = ImmutableList.builder();
-        for(Object ob : iter) {
-            checkNotNull(ob, "Null value in provided iter: '%s', constructor: '%S'", iter, this);
-            builder.add(invoke(ob, matchMode, caseType));
-        }
-        return builder.build();
+        Function<Object, T> invoker = new InvokerFun(matchMode, caseType, iter);
+        if(iter instanceof List) return Lists.transform((List) iter, invoker);
+        if(iter instanceof Collection) return Collections2.transform((Collection) iter, invoker);
+        return Iterables.transform(iter, invoker);
     }
 
     @SuppressWarnings("unchecked")
@@ -158,7 +205,7 @@ public class NamedConstructor<T> {
         return res;
     }
 
-        // todo: move state checks to nc creation
+    // todo: maybe move state checks to nc creation
     private SingleNamedConstr<T> findSNC(Set<String> keys, MatchMode matchMode, CaseType caseType) {
         ImmutableList.Builder<SingleNamedConstr<T>> builder = ImmutableList.builder();
         for(SingleNamedConstr<T> snc : entries) {
@@ -307,11 +354,21 @@ public class NamedConstructor<T> {
         }
     }
 
-    private enum ArgNameFun implements Function<NamedConstructorArg, String> {
-        INSTANCE;
+    private class InvokerFun implements Function<Object, T> {
+        private final MatchMode mode;
+        private final CaseType caseType;
+        private final Iterable<?> iterForLogging;
+
+        private InvokerFun(MatchMode mode, CaseType caseType, Iterable<?> iterForLogging) {
+            this.mode = mode;
+            this.caseType = caseType;
+            this.iterForLogging = iterForLogging;
+        }
+
         @Override
-        public String apply(NamedConstructorArg input) {
-            return input.name;
+        public T apply(@Nullable Object input) {
+            checkNotNull(input, "Null value in provided iterable: '%s', constructor: '%s'", iterForLogging, NamedConstructor.this);
+            return invoke(input, mode, caseType);
         }
     }
 }

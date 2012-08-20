@@ -123,14 +123,25 @@ public class TaskEngine implements Runnable {
     }
 
     /**
-     * Processors must use this method periodically and throw {@link TaskSuspendedException} on successful suspension check.
-     * Will return <code>true</code> only once for given suspended taskId
+     * Processors must use this method periodically and throw {@link TaskSuspendedException}
+     * on successful suspension check. Will return <code>true</code> only once for given suspended taskId
      *
      * @param taskId task id
      * @return <code>true</code> if task was suspended and not successful check happened since that time
      */
     public boolean isSuspended(long taskId) {
         return suspended.remove(taskId);
+    }
+
+    /**
+     * Alternative method to {@link #isSuspended(long)},
+     * throws {@link TaskSuspendedException} on successful suspension check
+     *
+     * @param taskId task id
+     * @throws TaskSuspendedException if task was already suspended
+     */
+    public void checkSuspended(long taskId) {
+        if(suspended.remove(taskId)) throw new TaskSuspendedException(taskId);
     }
 
     /**
