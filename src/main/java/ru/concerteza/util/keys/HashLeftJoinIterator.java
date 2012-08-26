@@ -24,6 +24,11 @@ class HashLeftJoinIterator<S extends KeyEntry, T, R> extends AbstractIterator<R>
     private S sourceEl;
     private Iterator<T> targetIter = ImmutableList.<T>of().iterator();
 
+    /**
+     * @param sourceIter source iterator
+     * @param targetMap target multimap
+     * @param joiner joiner instance
+     */
     HashLeftJoinIterator(Iterator<S> sourceIter, Multimap<String, T> targetMap, KeyJoiner<S, T, R> joiner) {
         checkNotNull(sourceIter, "Source iterator must not be null");
         checkNotNull(targetMap, "Target map must not be null");
@@ -33,6 +38,9 @@ class HashLeftJoinIterator<S extends KeyEntry, T, R> extends AbstractIterator<R>
         this.joiner = joiner;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected R computeNext() {
         if(targetIter.hasNext()) return joiner.join(sourceEl, targetIter.next());

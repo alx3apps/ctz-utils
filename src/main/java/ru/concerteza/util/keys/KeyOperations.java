@@ -110,6 +110,23 @@ public class KeyOperations {
     }
 
     /**
+     * Zero copy, lazy hash right join.
+     * <b>NOTE!</b> removes all elements from provided multimap.
+     *
+     * @param source source iterator
+     * @param target target multimap
+     * @param joiner joiner instance
+     * @param <S> source elements type
+     * @param <T> target elements type
+     * @param <R> result elements type
+     * @return iterator over joined elements
+     */
+    public static <S extends KeyEntry, T, R> Iterator<R> hashRightJoin(
+            Iterator<S> source, Multimap<String, T> target, KeyJoiner<T, S, R> joiner) {
+        return new HashRightJoinIterator<S, T, R>(source, target, joiner);
+    }
+
+    /**
      * Zero copy group by key implementation, eager
      *
      * @param source source iterator

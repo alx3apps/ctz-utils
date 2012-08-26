@@ -1,10 +1,7 @@
 package ru.concerteza.util.keys;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.collect.*;
 import freemarker.template.utility.StringUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -16,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
 
 /**
@@ -106,6 +104,14 @@ public class KeyOperationsTest {
     }
 
     @Test
+    public void testHashRight() {
+        // data copy here, do manual multimap pack in production
+        Multimap<String, Source> map = ArrayListMultimap.create(Multimaps.index(SOURCE, SourceKeyFun.INSTANCE));
+        Iterator<String> joined = KeyOperations.hashRightJoin(TARGET.iterator(), map, Joiner.INSTANCE);
+        assertRightJoined(joined);
+    }
+
+    @Test
     public void testAggregate() {
         Iterator<Source> source = ImmutableList.of(
                 new Source("foo", "42"),
@@ -161,6 +167,19 @@ public class KeyOperationsTest {
         assertEquals("Data fail", "zoo-5,", list.get(6));
     }
 
+    private void assertRightJoined(Iterator<String> joined) {
+        List<String> list = ImmutableList.copyOf(joined);
+        assertEquals("Size fail", 7, list.size());
+        assertEquals("Data fail", "bar-1,41", list.get(0));
+        assertEquals("Data fail", "bar-1,42", list.get(1));
+        assertEquals("Data fail", "baz-2,46", list.get(2));
+        assertEquals("Data fail", "foo-4,49", list.get(3));
+        // tail
+        assertTrue("Data fail", list.contains("a11-0,"));
+        assertTrue("Data fail", list.contains("baz42-3,"));
+        assertTrue("Data fail", list.contains("zoo-5,"));
+    }
+
     private static class Source implements KeyEntry {
         private final String key;
         private final String value;
@@ -213,7 +232,7 @@ public class KeyOperationsTest {
     private enum TargetKeyFun implements Function<Target, String> {
         INSTANCE;
         @Override
-        public String apply(@Nullable Target input) {
+        public String apply(Target input) {
             return input.key;
         }
     }
@@ -224,6 +243,14 @@ public class KeyOperationsTest {
         public String aggregate(Source source, @Nullable String previous) {
             String prefix = null != previous ? previous : source.key;
             return prefix + "-" + source.value;
+        }
+    }
+
+    private enum SourceKeyFun implements Function<Source, String> {
+        INSTANCE;
+        @Override
+        public String apply(Source input) {
+            return input.key;
         }
     }
 }

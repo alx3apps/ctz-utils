@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
  * @author alexey
  * Date: 7/13/12
  */
-public interface KeyJoiner<S extends KeyEntry, T, R> {
+public interface KeyJoiner<S, T, R> {
     /**
      * May implement any join logic
      *

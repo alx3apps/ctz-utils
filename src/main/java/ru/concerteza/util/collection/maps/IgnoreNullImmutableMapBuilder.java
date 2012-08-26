@@ -10,6 +10,7 @@ import java.util.Map;
  *
  * @author alexey
  * Date: 8/19/11
+ * @see IgnoreNullImmutableMapBuilderTest
  */
 public class IgnoreNullImmutableMapBuilder<K, V> extends ImmutableMap.Builder<K, V> {
 
