@@ -3,6 +3,8 @@ package ru.concerteza.util.value;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Generic holder class to keep references for objects, e.g. for out argument to poorly designed void methods
  * @author alexey,
@@ -15,6 +17,15 @@ public class Holder<T> {
      * Default constructor
      */
     public Holder() {
+    }
+
+    /**
+     * Generic friendly factory method
+     * @param <T> value parameter
+     * @return holder instance
+     */
+    public static <T> Holder<T> create() {
+        return new Holder<T>();
     }
 
     /**
@@ -36,9 +47,27 @@ public class Holder<T> {
     /**
      * Value setter
      * @param target value to hold
+     * @throws NullPointerException on null input
      */
     public void set(T target) {
+        checkNotNull(target, "Provided value is null");
         this.target = target;
+    }
+
+    /**
+     * Checks whether value is not null
+     * @return whether value is not null
+     */
+    public boolean isPresent() {
+        return target != null;
+    }
+
+    /**
+     * Checks whether value is null
+     * @return whether value is null
+     */
+    public boolean isAbsent() {
+        return target == null;
     }
 
     /**

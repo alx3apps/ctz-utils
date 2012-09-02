@@ -1,6 +1,7 @@
 package ru.concerteza.util.date;
 
 import com.google.common.base.Optional;
+import junit.framework.Assert;
 import org.joda.time.Duration;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static ru.concerteza.util.date.CtzDateUtils.max;
+import static ru.concerteza.util.date.CtzDateUtils.min;
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
 /**
@@ -63,5 +66,23 @@ public class CtzDateUtilsTest {
         assertEquals("Date fail", new LocalDateTime(2012, 1, 1, 7, 59, 59), periods.get(1).getTo());
         assertEquals("Date fail", new LocalDateTime(2012, 1, 1, 8, 0, 0), periods.get(2).getFrom());
         assertEquals("Date fail", new LocalDateTime(2012, 1, 1, 12, 0, 0), periods.get(2).getTo());
+    }
+
+    @Test
+    public void testMax() {
+        LocalDateTime foo = new LocalDateTime(2012, 1, 1, 0, 0, 1);
+        LocalDateTime bar = new LocalDateTime(2012, 1, 1, 0, 0, 42);
+        LocalDateTime baz = new LocalDateTime(2012, 1, 1, 0, 0, 2);
+        LocalDateTime max = max(foo, bar, baz);
+        assertEquals(bar, max);
+    }
+
+    @Test
+    public void testMin() {
+        LocalDateTime foo = new LocalDateTime(2012, 1, 1, 0, 0, 1);
+        LocalDateTime bar = new LocalDateTime(2012, 1, 1, 0, 0, 0);
+        LocalDateTime baz = new LocalDateTime(2012, 1, 1, 0, 0, 2);
+        LocalDateTime min = min(foo, bar, baz);
+        assertEquals(bar, min);
     }
 }

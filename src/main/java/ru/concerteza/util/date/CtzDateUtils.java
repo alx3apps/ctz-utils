@@ -1,19 +1,20 @@
 package ru.concerteza.util.date;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
 import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.ReadablePartial;
+import org.joda.time.base.AbstractPartial;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import ru.concerteza.util.collection.SingleUseIterable;
 
 import javax.annotation.Nullable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -201,5 +202,83 @@ public class CtzDateUtils {
             cur = next.plusSeconds(1);
         }
         return builder.build();
+    }
+
+    /**
+     * Finds maximum between dates
+     *
+     * @param dates dates list
+     * @param <T> date type
+     * @return max date
+     */
+    public static <T extends AbstractPartial> T max(T... dates) {
+        checkArgument(dates.length > 0, "No dates provided");
+        return max(Iterators.forArray(dates));
+    }
+
+    /**
+     * Finds maximum between dates
+     *
+     * @param dates dates list
+     * @param <T> date type
+     * @return max date
+     */
+    public static <T extends AbstractPartial> T max(Iterator<T> dates) {
+        return max(SingleUseIterable.of(dates));
+    }
+
+    /**
+     * Finds maximum between dates
+     *
+     * @param dates dates list
+     * @param <T> date type
+     * @return max date
+     */
+    public static <T extends AbstractPartial> T max(Iterable<T> dates) {
+        T max = null;
+        for(T t : dates) {
+            checkNotNull(t, "Provided date is null");
+            if(null == max || t.isAfter(max)) max = t;
+        }
+        return max;
+    }
+
+    /**
+     * Finds minimum between dates
+     *
+     * @param dates dates list
+     * @param <T> date type
+     * @return min date
+     */
+    public static <T extends AbstractPartial> T min(T... dates) {
+        checkArgument(dates.length > 0, "No dates provided");
+        return min(Iterators.forArray(dates));
+    }
+
+    /**
+     * Finds minimum between dates
+     *
+     * @param dates dates list
+     * @param <T> date type
+     * @return min date
+     */
+    public static <T extends AbstractPartial> T min(Iterator<T> dates) {
+        return min(SingleUseIterable.of(dates));
+    }
+
+    /**
+     * Finds minimum between dates
+     *
+     * @param dates dates list
+     * @param <T> date type
+     * @return min date
+     */
+    public static <T extends AbstractPartial> T min(Iterable<T> dates) {
+        T min = null;
+        for(T t : dates) {
+            checkNotNull(t, "Provided date is null");
+            if(null == min || t.isBefore(min)) min = t;
+        }
+        return min;
     }
 }

@@ -2,6 +2,8 @@ package ru.concerteza.util.io;
 
 import ru.concerteza.util.except.MessageException;
 
+import static org.apache.commons.lang.StringUtils.defaultString;
+
 /**
  * User: alexey
  * Date: 5/3/12
@@ -15,6 +17,6 @@ public class RuntimeIOException extends MessageException {
         super(message, cause);
     }
     public RuntimeIOException(Exception cause) {
-        super(cause, cause.getMessage());
+        super(cause, defaultString(cause.getMessage(), "No message available"));
     }
 }

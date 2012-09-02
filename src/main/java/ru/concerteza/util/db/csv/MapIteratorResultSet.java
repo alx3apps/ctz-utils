@@ -23,6 +23,7 @@ class MapIteratorResultSet extends AbstractResultSet {
     private final Iterator<Map<String, String>> data;
     private BiMap<Integer, String> columnNames;
     private Map<String, String> current = null;
+    private boolean metadataInitFired = false;
 
     /**
      * @param data iterator over CSV data
@@ -50,6 +51,10 @@ class MapIteratorResultSet extends AbstractResultSet {
     @Override
     public boolean next() throws SQLException {
         if(null == current) return init();
+        if(metadataInitFired) {
+            metadataInitFired = false;
+            return true;
+        }
         if(data.hasNext()) {
             current = data.next();
             return true;
@@ -82,6 +87,7 @@ class MapIteratorResultSet extends AbstractResultSet {
         if (null == current) {
             boolean initted = init();
             checkArgument(initted, "Cannot get metadata for empty data");
+            metadataInitFired = true;
         }
         return new Metadata();
     }

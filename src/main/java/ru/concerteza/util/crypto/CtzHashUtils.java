@@ -22,7 +22,7 @@ import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 
 /**
- * Hash utility methods over Bouncy Castle SHA1 abd MD5 implementations.
+ * Hash utility methods over Bouncy Castle SHA1 and MD5 implementations.
  *
  * @author alexey
  */
