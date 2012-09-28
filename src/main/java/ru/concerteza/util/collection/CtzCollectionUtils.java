@@ -109,6 +109,24 @@ public class CtzCollectionUtils {
     }
 
     /**
+     * Creates {@link TreeSet} with provided data and comparator
+     *
+     * @param iter data for tree set
+     * @param comp comparator
+     * @param <T> element type
+     * @return created tree set
+     */
+    public static <T> TreeSet<T> newTreeSet(Iterator<T> iter, Comparator<T> comp) {
+        checkNotNull(iter, "Provided iterator is null");
+        checkNotNull(comp, "Provided comparator is null");
+        TreeSet<T> res = new TreeSet<T>(comp);
+        for(T t : SingleUseIterable.of(iter)) {
+            res.add(t);
+        }
+        return res;
+    }
+
+    /**
      * Copies provided map into {@link LinkedHashMap} converting keys to lower case.
      * Keys must be locale insensitive.
      *
