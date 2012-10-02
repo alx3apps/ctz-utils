@@ -1,10 +1,9 @@
 package ru.concerteza.util.collection;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
-import ru.concerteza.util.value.Pair;
+import ru.concerteza.util.collection.finishable.FinishableFunction;
+import ru.concerteza.util.collection.finishable.FinishableIterator;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -142,5 +141,20 @@ public class CtzCollectionUtils {
             checkArgument(null == existed, "Duplicate key: '%s' after lowering", en.getKey());
         }
         return res;
+    }
+
+    /**
+     * The same as Guava's {@code Iterators.transform}, additionally calls {@link ru.concerteza.util.collection.finishable.FinishableFunction#finish()}
+     * on iterator exhaustion
+     *
+     * @param fromIterator source iterator
+     * @param function finishable function
+     * @param <F> from type
+     * @param <T> to type
+     * @return finishable iterator
+     */
+    public static <F, T> Iterator<T> transformFinishable(final Iterator<F> fromIterator,
+                                                         final FinishableFunction<? super F, ? extends T> function) {
+        return FinishableIterator.of(fromIterator, function);
     }
 }
