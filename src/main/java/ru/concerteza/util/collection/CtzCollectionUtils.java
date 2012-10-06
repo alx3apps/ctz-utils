@@ -153,8 +153,33 @@ public class CtzCollectionUtils {
      * @param <T> to type
      * @return finishable iterator
      */
-    public static <F, T> Iterator<T> transformFinishable(final Iterator<F> fromIterator,
-                                                         final FinishableFunction<? super F, ? extends T> function) {
+    public static <F, T> Iterator<T> transformFinishable(Iterator<F> fromIterator,
+                                                         FinishableFunction<? super F, ? extends T> function) {
         return FinishableIterator.of(fromIterator, function);
+    }
+
+    /**
+     * Consumes number iterable and counts sum on it's elements
+     *
+     * @param iter number iterable
+     * @return sum of elements
+     */
+    public static int sum(Iterable<? extends Number> iter) {
+        return sum(iter.iterator());
+    }
+
+    /**
+     * Consumes number iterator and counts sum on it's elements
+     *
+     * @param iter number iterator
+     * @return sum of elements
+     */
+    public static int sum(Iterator<? extends Number> iter) {
+        int sum = 0;
+        while (iter.hasNext()) {
+            Number nu = iter.next();
+            sum += nu.intValue();
+        }
+        return sum;
     }
 }

@@ -128,7 +128,7 @@ public class CsvMapIterable<T> implements Iterable<T> {
 
         private Map<String, String> parseMap(String line) {
             List<String> values = parseList(line);
-            checkArgument(headers.size() == values.size(), "Invalid CSV line, headers count: '%s', values count: '%s', line: '%s'", headers, values, line);
+            checkArgument(headers.size() == values.size(), "Invalid CSV line, headers: '%s', values: '%s', line: '%s'", headers, values, line);
             return listsToMap(headers, values);
         }
 

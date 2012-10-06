@@ -1,10 +1,12 @@
 package ru.concerteza.util.collection;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +30,13 @@ public class CtzCollectionUtilsTest {
         assertEquals("Value fail", 3, (int) map.get("foo"));
         assertEquals("Value fail", 4, (int) map.get("bar1"));
         assertEquals("Value fail", 5, (int) map.get("baz42"));
+    }
+
+    @Test
+    public void testSum() {
+        List<Number> data = ImmutableList.<Number>of(1, 2.42, 3.43);
+        int sum = CtzCollectionUtils.sum(data.iterator());
+        assertEquals("Sum fail", 6, sum);
     }
 
     private enum ValueFun implements Function<String, Integer> {

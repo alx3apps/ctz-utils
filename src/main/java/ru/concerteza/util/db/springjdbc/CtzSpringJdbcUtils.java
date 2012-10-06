@@ -27,6 +27,18 @@ public class CtzSpringJdbcUtils {
     @SuppressWarnings("unchecked")
     public static long insertBatch(NamedParameterJdbcTemplate jt,
                                    String sql, Iterator<? extends SqlParameterSource> paramsIter, int batchSize) {
+        return batchDml(jt, sql, paramsIter, batchSize, true);
+    }
+
+
+    public static long updateBatch(NamedParameterJdbcTemplate jt,
+                                   String sql, Iterator<? extends SqlParameterSource> paramsIter, int batchSize) {
+        return batchDml(jt, sql, paramsIter, batchSize, false);
+    }
+
+    private static long batchDml(NamedParameterJdbcTemplate jt, String sql,
+                                 Iterator<? extends SqlParameterSource> paramsIter, int batchSize, boolean check) {
+
         checkNotNull(jt, "Provided JDBC Template is null");
         checkNotNull(paramsIter, "Provided parametricIter is null");
         checkArgument(isNotBlank(sql), "Provided SQL query is blank");
@@ -39,7 +51,7 @@ public class CtzSpringJdbcUtils {
         long counter = 0;
         int index = 0;
         // main cycle
-        while (paramsIter.hasNext()) {
+        while(paramsIter.hasNext()) {
             params[index] = paramsIter.next();
             index += 1;
             if(0 == index % batchSize) {
@@ -65,8 +77,8 @@ public class CtzSpringJdbcUtils {
             }
         }
         // check actually updated rows count, if db returns such info
-        if(hasInfoFromDb) checkState(counter == updated, "Updated rows count reported by db differs from" +
-                "count of rows sent for batch insert, expected: %s, db reports: %s", counter, updated);
+        if(hasInfoFromDb && check) checkState(counter == updated, "Updated rows count reported by db differs from" +
+                "count of rows sent for batch insert, expected: '%s', db reports: '%s'", counter, updated);
         return counter;
     }
 
@@ -83,7 +95,7 @@ public class CtzSpringJdbcUtils {
     // todo: removeme
     public Map<String, Field> createColumnMap(Class<?> clazz) {
         ImmutableMap.Builder<String, Field> builder = ImmutableMap.builder();
-        for(Field fi : collectFields(clazz, new ColumnMapPredicate())){
+        for(Field fi : collectFields(clazz, new ColumnMapPredicate())) {
             String key = fi.getAnnotation(Column.class).name();
             if(null == key) key = fi.getName();
             builder.put(key, fi);
