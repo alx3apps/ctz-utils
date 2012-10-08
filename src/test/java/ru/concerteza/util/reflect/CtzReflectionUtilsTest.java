@@ -137,6 +137,13 @@ public class CtzReflectionUtilsTest {
         }
     }
 
+    @Test
+    public void testFindGetter() {
+        Method getter = findGetter(Getterable.class, "foo");
+        assertNotNull("Create fail", getter);
+        assertEquals("Return fail", "42", invokeMethod(new Getterable(), getter));
+    }
+
     class InnerOne{}
     private class PrivateInnerOne{}
     static class NotInnerOne{}
@@ -203,6 +210,14 @@ public class CtzReflectionUtilsTest {
         private Bar(String foo, long bar) {
             this.foo = foo;
             this.bar = bar;
+        }
+    }
+
+    private static class Getterable {
+        private final String foo = "42";
+
+        public String getFoo() {
+            return foo;
         }
     }
 }

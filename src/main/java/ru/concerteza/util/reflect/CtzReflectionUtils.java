@@ -6,13 +6,19 @@ import com.google.common.collect.*;
 import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.option.Option;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.WordUtils.capitalize;
+import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Various reflections utilities
@@ -284,5 +290,27 @@ public class CtzReflectionUtils {
         if(cl1.isPrimitive()) return BOXING_MAP.get(cl1).isAssignableFrom(cl2);
         if(cl2.isPrimitive()) return cl1.isAssignableFrom(BOXING_MAP.get(cl2));
         return false;
+    }
+
+    /**
+     * Searchs for getter for provided propertu name using Java Bean introcpector
+     *
+     * @param clazz class to search getter on
+     * @param propertyName property name
+     * @return getter method
+     * @throws IllegalArgumentException on not found
+     */
+    public static Method findGetter(Class<?> clazz, String propertyName) {
+        try {
+            checkNotNull(clazz, "Provided class is null");
+            checkArgument(isNotBlank(propertyName), "Provided property name is blank");
+            BeanInfo bi = Introspector.getBeanInfo(clazz);
+            for(PropertyDescriptor pd : bi.getPropertyDescriptors()) {
+                if(pd.getName().equals(propertyName) && null != pd.getReadMethod()) return pd.getReadMethod();
+            }
+            throw new IllegalArgumentException(format("Cannot find getter for name: '{}' in class: '{}'", propertyName, clazz));
+        } catch(IntrospectionException e) {
+            throw new UnhandledException(e);
+        }
     }
 }
