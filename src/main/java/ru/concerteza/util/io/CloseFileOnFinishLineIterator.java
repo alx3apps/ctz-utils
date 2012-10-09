@@ -6,6 +6,7 @@ import ru.concerteza.util.string.CtzConstants;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Iterator;
 
 import static org.apache.commons.io.FileUtils.openInputStream;
@@ -27,6 +28,10 @@ public class CloseFileOnFinishLineIterator implements Iterator<String> {
         } catch(IOException e) {
             throw new RuntimeIOException(e);
         }
+    }
+
+    public CloseFileOnFinishLineIterator(Reader reader) {
+        this.li = new LineIterator(reader);
     }
 
     @Override
