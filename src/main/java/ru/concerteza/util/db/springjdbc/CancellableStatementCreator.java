@@ -23,6 +23,7 @@ import static org.springframework.jdbc.core.namedparam.NamedParameterUtils.*;
  * @author alexkasko
  * Date: 11/6/12
  */
+// todo testme
 public class CancellableStatementCreator implements PreparedStatementCreator {
     private final AtomicReference<Statement> stmtRef;
     private final String sql;
