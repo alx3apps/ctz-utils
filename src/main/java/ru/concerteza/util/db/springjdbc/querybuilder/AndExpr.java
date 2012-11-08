@@ -4,7 +4,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * User: alexkasko
+ * Conjunction expression
+ *
+ * @author alexkasko
  * Date: 11/7/12
  */
 class AndExpr extends AbstractExpr {
@@ -13,11 +15,20 @@ class AndExpr extends AbstractExpr {
     private final Expression left;
     private final Expression right;
 
+    /**
+     * Constructor
+     *
+     * @param left left expression in conjunction
+     * @param right right expression in conjunction
+     */
     AndExpr(Expression left, Expression right) {
         this.left = left;
         this.right = right;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return left + " and " + right;

@@ -4,18 +4,28 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * User: alexkasko
- * Date: 11/7/12
+ * Literal expression implementation
+ *
+ * @author alexkasko
+ *         Date: 11/7/12
  */
 class LiteralExpr extends AbstractExpr {
     private static final long serialVersionUID = 6793424216407288186L;
 
     private final String literal;
 
+    /**
+     * Constructor
+     *
+     * @param literal expression literal
+     */
     LiteralExpr(String literal) {
         this.literal = literal;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return literal;

@@ -4,18 +4,28 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * User: alexkasko
- * Date: 11/7/12
+ * Negation expression implementation
+ *
+ * @author alexkasko
+ *         Date: 11/7/12
  */
 class NotExpr extends AbstractExpr {
     private static final long serialVersionUID = 6586137146884967119L;
 
     private final Expression expr;
 
+    /**
+     * Constructor
+     *
+     * @param expr expression
+     */
     NotExpr(Expression expr) {
         this.expr = expr;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "not (" + expr + ")";

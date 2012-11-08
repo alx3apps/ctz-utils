@@ -1,14 +1,29 @@
 package ru.concerteza.util.db.springjdbc.querybuilder;
 
+import java.io.Serializable;
+
 /**
- * User: alexkasko
+ * Base class for expressions
+ *
+ * @author alexkasko
  * Date: 11/7/12
  */
-abstract class AbstractExpr implements Expression {
+abstract class AbstractExpr implements Expression, Serializable {
     private static final long serialVersionUID = -8223267461679410411L;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Expression and(Expression expr) {
         return new AndExpr(this, expr);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Expression and(String expr) {
+        return new AndExpr(this, new LiteralExpr(expr));
     }
 }

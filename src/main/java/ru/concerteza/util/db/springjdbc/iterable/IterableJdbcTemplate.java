@@ -130,6 +130,7 @@ public class IterableJdbcTemplate extends JdbcTemplate implements IterableJdbcOp
     @Override
     public <T> CloseableIterator<T> queryForIter(String sql, RowMapper<T> rowMapper) throws DataAccessException {
         Assert.hasText(sql, "Provided sql query is blank");
+        Assert.notNull(rowMapper, "RowMapper must not be null");
         DataSource ds = getDataSource();
         Connection con = DataSourceUtils.getConnection(ds);
         Statement stmt = null;
