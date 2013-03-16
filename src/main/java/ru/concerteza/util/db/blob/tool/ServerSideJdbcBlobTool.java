@@ -22,6 +22,7 @@ import java.sql.Types;
  * Date: 4/27/12
  * @see PostgreBlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class ServerSideJdbcBlobTool extends AbstractJdbcBlobTool {
     public ServerSideJdbcBlobTool(DataSource dataSource, Compressor compressor) {
         super(dataSource, compressor);

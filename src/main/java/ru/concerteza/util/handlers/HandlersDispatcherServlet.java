@@ -17,6 +17,7 @@ import static ru.concerteza.util.string.CtzConstants.UTF8;
  * User: alexey
  * Date: 3/18/12
  */
+@Deprecated// use com.alexkasko.rest:com.alexkasko.rest
 public class HandlersDispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 7041995029366447857L;
     private String dispatcherBeanName;

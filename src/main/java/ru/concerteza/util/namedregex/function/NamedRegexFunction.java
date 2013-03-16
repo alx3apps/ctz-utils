@@ -15,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 2/9/12
  * @see NamedPattern
  */
+@Deprecated // use com.github.tony19:named-regexp
 public class NamedRegexFunction implements Function<String, NamedMatcher> {
     private final NamedPattern pattern;
 

@@ -11,6 +11,7 @@ import java.io.Closeable;
  * @see WritableBlob
  * @see DetachedBlob
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public abstract class AbstractBlob implements Closeable {
     protected final long id;
 

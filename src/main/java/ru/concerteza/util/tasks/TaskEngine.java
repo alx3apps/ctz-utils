@@ -29,6 +29,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @see TaskStageProcessor
  * @see TaskSuspendedException
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public class TaskEngine implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

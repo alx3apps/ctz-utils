@@ -19,6 +19,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  * User: alexey
  * Date: 4/4/12
  */
+@Deprecated// use com.alexkasko.rest:com.alexkasko.rest
 public class HandlersDispatcher {
     private final Multimap<HttpMethod, Entry<?>> mapping;
     private final HandlersErrorReporter errorReporter;

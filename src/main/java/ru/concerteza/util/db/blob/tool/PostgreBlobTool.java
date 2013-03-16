@@ -23,6 +23,7 @@ import java.sql.SQLException;
  * @see ru.concerteza.util.db.blob.WritableBlob
  * @see ru.concerteza.util.db.blob.DetachedBlob
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class PostgreBlobTool extends AbstractBlobTool {
 
     public PostgreBlobTool(DataSource dataSource, Compressor compressor) {

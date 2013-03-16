@@ -14,6 +14,7 @@ import static ru.concerteza.util.io.SqlListParser.parseToMap;
  * @author alexey
  * Date: 6/25/12
  */
+@Deprecated // not useful, use app code
 public abstract class SqlMapHolder {
     private Map<String, String> queries;
 

@@ -21,6 +21,7 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
  * Date: 4/13/12
  * @see BlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public abstract class AbstractBlobTool implements BlobTool {
     protected final DataSource dataSource;
     protected final Compressor compressor;

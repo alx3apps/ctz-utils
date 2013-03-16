@@ -10,6 +10,7 @@ import java.math.RoundingMode;
  * @author alexey
  * Date: 10/31/11
  */
+@Deprecated // not useful
 public class CtzMathUtils {
     public static final int DEFAULT_INT = -1;
     public static final BigDecimal DEFAULT_BIG_DECIMAL = BigDecimal.valueOf(-1);

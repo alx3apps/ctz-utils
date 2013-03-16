@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
  * User: alexey
  * Date: 8/8/12
  */
+@Deprecated// use com.alexkasko.rest:com.alexkasko.rest
 public interface HandlersErrorReporter {
     void reportException(HttpServletRequest req, HttpServletResponse res, Exception e);
 

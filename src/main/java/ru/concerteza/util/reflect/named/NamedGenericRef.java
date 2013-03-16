@@ -14,6 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Qualifier
 @Documented
 @Retention(RUNTIME)
+@Deprecated // discontinued
 public @interface NamedGenericRef {
     /** The name. */
     String name();

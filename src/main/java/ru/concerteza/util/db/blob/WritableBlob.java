@@ -24,6 +24,7 @@ import static org.apache.commons.io.IOUtils.copyLarge;
  * @see ru.concerteza.util.db.blob.tool.ServerSideJdbcBlobTool
  * @see ru.concerteza.util.db.blob.tool.TmpFileJdbcBlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class WritableBlob extends AbstractBlob {
     private final OutputStream outputStream;
 

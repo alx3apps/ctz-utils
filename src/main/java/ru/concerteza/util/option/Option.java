@@ -14,6 +14,7 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
  * @see Some
  * @see None
  */
+@Deprecated // use guava's Optional
 public abstract class Option<T> {
     private static final None NONE = new None();
 

@@ -11,6 +11,7 @@ package ru.concerteza.util.tasks;
  * @see TaskStageProcessorSupertype
  * @see TaskEngine
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public interface TaskStageListener {
     void fire(long taskId);
 }

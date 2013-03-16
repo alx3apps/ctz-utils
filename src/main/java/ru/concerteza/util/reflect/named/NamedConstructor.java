@@ -42,6 +42,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  *         Date: 7/6/12
  * @see ru.concerteza.util.db.springjdbc.named.NamedConstructorMapper
  */
+@Deprecated // discontinued
 public class NamedConstructor<T> {
     /**
      * Specifies, whether to treat names of provided constructor arguments as case sensitive on constructor invocation

@@ -13,6 +13,7 @@ import ru.concerteza.util.db.blob.WritableBlob;
  * @see WritableBlob
  * @see DetachedBlob
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public interface BlobTool {
     /**
      * @return BLOB stream to write to, it must be closed by the caller

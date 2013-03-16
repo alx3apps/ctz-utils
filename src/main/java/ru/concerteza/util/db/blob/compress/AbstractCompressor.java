@@ -9,6 +9,7 @@ import java.io.OutputStream;
  * @author alexey
  * Date: 4/28/12
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public abstract class AbstractCompressor implements Compressor {
     /**
      * {@inheritDoc}

@@ -15,6 +15,7 @@ import static org.apache.commons.io.FileUtils.openInputStream;
  * User: alexey
  * Date: 7/12/12
  */
+@Deprecated // use FinishableIterator
 public class CloseFileOnFinishLineIterator implements Iterator<String> {
     private final LineIterator li;
 

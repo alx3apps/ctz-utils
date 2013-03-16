@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkState;
  * @see Task
  * @see TaskProcessorProvider
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public class TaskStageChain implements Serializable {
     private static final long serialVersionUID = 7486673100573364684L;
     private final Map<String, Stage> stageMap;

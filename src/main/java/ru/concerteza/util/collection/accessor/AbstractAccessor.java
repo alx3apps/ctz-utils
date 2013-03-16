@@ -17,6 +17,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 6/11/12
  * @see Accessor
  */
+@Deprecated // use com.alexkasko.springjdbc.parallel.accessor
 public abstract class AbstractAccessor<T> implements Accessor<T> {
     protected final List<T> target;
 

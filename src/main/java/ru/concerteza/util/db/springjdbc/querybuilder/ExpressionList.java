@@ -7,6 +7,7 @@ package ru.concerteza.util.db.springjdbc.querybuilder;
  * @author alexkasko
  * Date: 11/8/12
  */
+@Deprecated //use com.alexkasko.springjdbc:query-string-builder
 public interface ExpressionList {
     /**
      * Add expression to list

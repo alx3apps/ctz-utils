@@ -16,6 +16,7 @@ import java.util.Map;
  *         Date: 11/7/12
  * @see IterableNamedParameterJdbcOperations
  */
+@Deprecated // use com.alexkasko.springjdbc:springjdbc-iterable
 public interface IterableJdbcOperations {
     /**
      * Query using a prepared statement, mapping each row to a Java object

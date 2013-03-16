@@ -12,6 +12,7 @@ import java.util.List;
  * @see Task
  * @see TaskProcessorProvider
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public interface TaskStageProcessor {
 
     /**

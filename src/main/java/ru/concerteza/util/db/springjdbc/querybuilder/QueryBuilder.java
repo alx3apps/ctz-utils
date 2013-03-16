@@ -19,6 +19,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
  * @author alexkasko
  * Date: 11/7/12
  */
+@Deprecated //use com.alexkasko.springjdbc:query-string-builder
 public class QueryBuilder {
     private static final Pattern CLAUSE_PATTERN = Pattern.compile("[^\\$]\\$\\{(\\w+)\\}");
 

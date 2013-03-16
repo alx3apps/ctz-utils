@@ -91,23 +91,4 @@ public class CtzSpringJdbcUtils {
         }
         return res;
     }
-
-    // todo: removeme
-    public Map<String, Field> createColumnMap(Class<?> clazz) {
-        ImmutableMap.Builder<String, Field> builder = ImmutableMap.builder();
-        for(Field fi : collectFields(clazz, new ColumnMapPredicate())) {
-            String key = fi.getAnnotation(Column.class).name();
-            if(null == key) key = fi.getName();
-            builder.put(key, fi);
-        }
-        return builder.build();
-    }
-
-    // todo: removeme
-    private class ColumnMapPredicate implements Predicate<Field> {
-        @Override
-        public boolean apply(Field fi) {
-            return fi.isAnnotationPresent(Column.class);
-        }
-    }
 }

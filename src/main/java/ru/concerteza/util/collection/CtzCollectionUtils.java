@@ -133,6 +133,7 @@ public class CtzCollectionUtils {
      * @param <V> map value type
      * @return map with lower case keys
      */
+    @Deprecated // not used
     public static <V> LinkedHashMap<String, V> toLowerKeysMap(Map<String, V> map) {
         checkNotNull(map, "Provided map is null");
         LinkedHashMap<String, V> res = new LinkedHashMap<String, V>(map.size());
@@ -181,5 +182,9 @@ public class CtzCollectionUtils {
             sum += nu.intValue();
         }
         return sum;
+    }
+
+    public static boolean isNotEmpty(Collection<?> collection) {
+        return (collection != null && !collection.isEmpty());
     }
 }

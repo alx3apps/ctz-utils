@@ -27,6 +27,7 @@ import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
  * User: alexey
  * Date: 7/7/12
  */
+@Deprecated // use com.alexkasko.springjdbc.typedqueries.common.PlainSqlQueriesParser
 public class SqlListParser {
     private static final NamedPattern REQUEST_NAME = NamedPattern.compile("^\\s*/\\*\\s*(?<name>.*?)\\s*\\*/\\s*$");
     private static final NamedPattern COMMENT = NamedPattern.compile("^\\s*--.*$");

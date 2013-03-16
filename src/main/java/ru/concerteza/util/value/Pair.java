@@ -10,6 +10,8 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * @author alexey,
  * Date: 10/21/11
  */
+
+@Deprecated // use business objects
 public class Pair<T1, T2> {
     private final T1 first;
     private final T2 second;

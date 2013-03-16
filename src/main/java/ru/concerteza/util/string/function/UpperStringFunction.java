@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 
 import javax.annotation.Nullable;
 
+import java.util.Locale;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -22,6 +24,6 @@ public class UpperStringFunction implements Function<String, String> {
     @Override
     public String apply(@Nullable String input) {
         checkNotNull(input);
-        return input.toUpperCase();
+        return input.toUpperCase(Locale.ENGLISH);
     }
 }

@@ -44,6 +44,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  * @see ParallelQueriesIteratorTest
  */
 
+@Deprecated //use com.alexkasko.springjdbc:parallel-queries
 public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
     private final Object endOfDataObject = new Object();
     private final FirstValueHolder<RuntimeException> exceptionHolder = new FirstValueHolder<RuntimeException>();

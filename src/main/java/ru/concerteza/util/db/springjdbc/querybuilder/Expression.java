@@ -8,6 +8,8 @@ package ru.concerteza.util.db.springjdbc.querybuilder;
  * @author alexkasko
  * Date: 11/7/12
  */
+
+@Deprecated //use com.alexkasko.springjdbc:query-string-builder
 public interface Expression {
     /**
      * Adds another expression to this expression as a conjunction

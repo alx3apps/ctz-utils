@@ -8,6 +8,7 @@ import static org.apache.commons.lang.StringUtils.defaultString;
  * User: alexey
  * Date: 5/3/12
  */
+@Deprecated // use business exceptions
 public class RuntimeIOException extends MessageException {
     public RuntimeIOException(String message) {
         super(message);

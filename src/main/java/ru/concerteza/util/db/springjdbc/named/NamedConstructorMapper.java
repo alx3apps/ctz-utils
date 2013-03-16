@@ -28,6 +28,7 @@ import java.sql.SQLException;
  * @see NamedConstructorSingleMapper
  * @see NamedConstructorSubclassesMapper
  */
+@Deprecated //use com.alexkasko.springjdbc:springjdbc-constructor-mapper
 public abstract class NamedConstructorMapper<T> implements RowMapper<T> {
 
     /**

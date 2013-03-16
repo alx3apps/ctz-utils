@@ -12,6 +12,7 @@ import java.util.zip.GZIPOutputStream;
  * @author alexey
  * Date: 4/14/12
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public class GzipCompressor extends AbstractCompressor {
     /**
      * {@inheritDoc}

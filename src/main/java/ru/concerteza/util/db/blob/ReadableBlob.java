@@ -19,6 +19,7 @@ import static org.apache.commons.io.IOUtils.copyLarge;
  * @see DetachedBlob
  * @see WritableBlob
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class ReadableBlob extends AbstractBlob {
     private final InputStream inputStream;
 

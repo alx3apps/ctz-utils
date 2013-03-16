@@ -11,6 +11,7 @@ import java.util.regex.MatchResult;
  * @see NamedPattern
  * @see MatchResult
  */
+@Deprecated // use com.github.tony19:named-regexp
 public interface NamedMatchResult extends MatchResult {
 
     /**

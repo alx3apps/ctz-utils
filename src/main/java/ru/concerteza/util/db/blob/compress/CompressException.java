@@ -9,6 +9,7 @@ import ru.concerteza.util.except.MessageException;
  * Date: 4/28/12
  * @see Compressor
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public class CompressException extends MessageException {
     /**
      * @param message error message

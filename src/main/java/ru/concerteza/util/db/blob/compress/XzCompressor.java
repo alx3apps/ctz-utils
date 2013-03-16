@@ -18,6 +18,7 @@ import java.io.OutputStream;
  * @see NoCompressor
  * @see ru.concerteza.util.db.blob.tool.BlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public class XzCompressor extends AbstractCompressor {
     private final int level;
 

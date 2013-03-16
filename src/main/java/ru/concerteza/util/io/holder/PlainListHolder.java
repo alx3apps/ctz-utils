@@ -22,6 +22,7 @@ import static org.apache.commons.io.IOUtils.lineIterator;
  * Date: 6/25/12
  * @see PlainListHolderTest
  */
+@Deprecated // not useful, use app code
 public abstract class PlainListHolder {
     protected List<String> list;
 

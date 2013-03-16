@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
  * Date: 8/18/12
  * @see ParallelQueriesIterator
  */
+@Deprecated //use com.alexkasko.springjdbc:parallel-queries
 public interface RowMapperFactory<T> {
     /**
      * Must produce row mapper. Will be called by {@link ParallelQueriesIterator} before every SQL query

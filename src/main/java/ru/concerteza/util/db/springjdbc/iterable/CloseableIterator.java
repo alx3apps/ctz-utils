@@ -8,6 +8,7 @@ import java.util.Iterator;
  * @author alexkasko
  * Date: 11/7/12
  */
+@Deprecated // use com.alexkasko.springjdbc:springjdbc-iterable
 public interface CloseableIterator<T> extends Iterator<T> {
 
     /**

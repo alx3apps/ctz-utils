@@ -21,6 +21,7 @@ import static ru.concerteza.util.io.CtzIOUtils.createTmpFile;
 // proper (complex) ways:
 // http://ostermiller.org/convert_java_outputstream_inputstream.html
 // http://code.google.com/p/io-tools/wiki/Tutorial_EasyStream
+@Deprecated // specific to compressed blobs, use com.alexkasko.springjdbc:blob-tool
 public class TempFileOutputInputStream extends OutputStream {
     private final Function<TempFile, Void> fun;
     private final Compressor compressor;

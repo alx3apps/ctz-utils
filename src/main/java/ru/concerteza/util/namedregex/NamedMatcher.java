@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  * @see NamedPattern
  * @see Matcher
  */
+@Deprecated // use com.github.tony19:named-regexp
 public class NamedMatcher implements NamedMatchResult {
 
     private Matcher matcher;

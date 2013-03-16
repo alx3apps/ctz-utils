@@ -17,6 +17,7 @@ import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
  * Date: 6/25/12
  * @see JsonMapHolderTest
  */
+@Deprecated // not useful, use app code
 public abstract class JsonMapHolder {
     private Map<String, String> queries;
 

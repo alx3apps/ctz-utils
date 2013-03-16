@@ -15,6 +15,7 @@ import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
  * User: alexey
  * Date: 7/10/12
  */
+@Deprecated // use FinishableIterator
 public class AutocloseResourceLineIterator extends AbstractIterator<String> implements Iterator<String> {
     private final LineIterator li;
 

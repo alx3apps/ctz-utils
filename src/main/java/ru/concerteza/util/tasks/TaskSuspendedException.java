@@ -8,6 +8,7 @@ package ru.concerteza.util.tasks;
  * @see TaskEngine
  * @see Task
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public class TaskSuspendedException extends RuntimeException {
     private static final long serialVersionUID = 3388511296426912332L;
 

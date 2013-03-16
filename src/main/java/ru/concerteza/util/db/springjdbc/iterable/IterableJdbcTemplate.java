@@ -20,6 +20,7 @@ import java.util.Map;
  * @author alexkasko
  *         Date: 11/7/12
  */
+@Deprecated // use com.alexkasko.springjdbc:springjdbc-iterable
 public class IterableJdbcTemplate extends JdbcTemplate implements IterableJdbcOperations {
     private static final Log logger = LogFactory.getLog(IterableJdbcTemplate.class);
 

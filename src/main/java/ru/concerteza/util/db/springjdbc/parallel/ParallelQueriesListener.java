@@ -13,6 +13,7 @@ import javax.sql.DataSource;
  * Date: 6/16/12
  * @see ParallelQueriesIterator
  */
+@Deprecated //use com.alexkasko.springjdbc:parallel-queries
 public interface ParallelQueriesListener {
     /**
      * @param ds data source

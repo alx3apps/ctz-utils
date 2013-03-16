@@ -13,6 +13,7 @@ package ru.concerteza.util.tasks;
  * @see TaskStageChain
  * @see TaskManager
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public interface Task {
     /**
      * Should be implemented as static method on upper level of hierarchy

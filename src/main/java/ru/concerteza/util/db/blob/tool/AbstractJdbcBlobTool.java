@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkState;
  * Date: 4/13/12
  * @see BlobTool
  */
-
+@Deprecated // use com.alexkasko.springjdbc.blob
 public abstract class AbstractJdbcBlobTool extends AbstractBlobTool {
     protected final NamedParameterJdbcTemplate jt;
     protected final String generateIdSQL;

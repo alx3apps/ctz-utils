@@ -9,6 +9,7 @@ import java.util.Collection;
  * Date: 6/11/12
  * @see RoundRobinAccessor
  */
+@Deprecated // use com.alexkasko.springjdbc.parallel.accessor
 public interface Accessor<T> extends Collection<T> {
     /**
      * @return collection element, implementation must choose element to return

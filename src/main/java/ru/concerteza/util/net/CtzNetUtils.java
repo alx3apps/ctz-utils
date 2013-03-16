@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import ru.concerteza.util.string.CtzStringUtils;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,7 @@ public class CtzNetUtils {
      * @param ipStr IPv4 address as string
      * @return IPv4 address as long
      */
+    @Deprecated // use parseIpV4
     public static Long convertIpToLong(String ipStr) {
         checkArgument(isNotBlank(ipStr), "Provided Ip string mst be not blank");
         checkArgument(IP_PATTERN.matcher(ipStr).matches(), "Ip address must be in 000.000.000.000 format, but was: %s", ipStr);
@@ -42,6 +44,7 @@ public class CtzNetUtils {
      * @param ip IPv4 address as long
      * @return IPv4 address as string
      */
+    @Deprecated // use convertIpV4
     public static String convertIpToString(Long ip) {
         StringBuilder sb = new StringBuilder();
         sb.append((int) (ip / 16777216)).append(".")
@@ -49,5 +52,24 @@ public class CtzNetUtils {
                 .append((int) (ip % 65536 / 256)).append(".")
                 .append((int) (ip % 256));
         return sb.toString();
+    }
+
+    public static String convertIpV4(int ip) {
+        return new StringBuilder()
+                .append((ip >>> 24) & 0xFF).append(".")
+                .append((ip >>> 16) & 0xFF).append(".")
+                .append((ip >>> 8) & 0xFF).append(".")
+                .append((ip >>> 0) & 0xFF)
+                .toString();
+    }
+
+    public static int parseIpV4(String str) {
+        Iterator<String> it = SPLITTER.split(str).iterator();
+        int val = 0;
+        for(int i = 0; i < 4; i++) {
+            val <<= 8;
+            val |= Integer.parseInt(it.next());
+        }
+        return val;
     }
 }

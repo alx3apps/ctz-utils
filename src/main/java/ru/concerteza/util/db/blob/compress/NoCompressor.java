@@ -13,6 +13,7 @@ import java.io.OutputStream;
  * @see XzCompressor
  * @see ru.concerteza.util.db.blob.tool.BlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public class NoCompressor implements Compressor {
     /**
      * {@inheritDoc}

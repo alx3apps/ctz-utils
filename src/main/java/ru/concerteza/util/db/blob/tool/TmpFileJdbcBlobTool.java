@@ -36,6 +36,7 @@ import java.util.Map;
  * Date: 4/27/12
  * @see PostgreBlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class TmpFileJdbcBlobTool extends AbstractJdbcBlobTool {
     private final boolean useLongForBlobsLength;
 

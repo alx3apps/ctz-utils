@@ -14,6 +14,7 @@ import static ru.concerteza.util.io.CtzIOUtils.iterateFiles;
  * User: alexey
  * Date: 7/12/12
  */
+@Deprecated // use FinishableIterator  and Iterators.concat
 public class SequentialFileLineIterator implements Iterator<String> {
     private final Iterator<String> lines;
 

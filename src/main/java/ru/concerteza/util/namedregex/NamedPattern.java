@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
  * @see NamedPattern
  * @see Pattern
  */
+@Deprecated // use com.github.tony19:named-regexp
 public class NamedPattern {
     private static final Pattern NAMED_GROUP_PATTERN = Pattern.compile("\\(\\?<(\\w+)>");
 

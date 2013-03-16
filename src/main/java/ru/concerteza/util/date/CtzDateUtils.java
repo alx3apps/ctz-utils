@@ -47,6 +47,19 @@ public class CtzDateUtils {
     }
 
     /**
+     * Converts milliseconds to joda-time {@code LocalDateTime}
+     *
+     * @param time milliseconds
+     * @return LocalDateTime instance
+     */
+    public static LocalDateTime toLocalDateTime(long time) {
+        Date date = new Date(time);
+        Calendar cal = new GregorianCalendar(0, 0, 0);
+        cal.setTime(date);
+        return toLocalDateTime(cal);
+    }
+
+    /**
      * Converts {@link java.util.Calendar} to joda-time {@code LocalDateTime}
      *
      * @param cal calendar to convert

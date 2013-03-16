@@ -17,16 +17,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LimitedSizeIterator<T> implements Iterator<T> {
     private final Iterator<T> target;
-    private final int limit;
+    private final long limit;
     private AtomicInteger counter = new AtomicInteger(0);
 
     /**
-     * Constructor, consider using {@link LimitedSizeIterator#of(java.util.Iterator, int)} instead.
+     * Constructor, consider using {@link LimitedSizeIterator#of(java.util.Iterator, long)} instead.
      *
      * @param target target iterator
      * @param limit size limit
      */
-    public LimitedSizeIterator(Iterator<T> target, int limit) {
+    public LimitedSizeIterator(Iterator<T> target, long limit) {
         checkNotNull(target);
         checkArgument(limit > 0, "Limit must be >= zero, was: %s", limit);
         this.target = target;
@@ -41,7 +41,7 @@ public class LimitedSizeIterator<T> implements Iterator<T> {
      * @param <T> target iterator generic parameter
      * @return {@link LimitedSizeIterator} instance
      */
-    public static <T> LimitedSizeIterator<T> of(Iterator<T> target, int limit) {
+    public static <T> LimitedSizeIterator<T> of(Iterator<T> target, long limit) {
         return new LimitedSizeIterator<T>(target, limit);
     }
 

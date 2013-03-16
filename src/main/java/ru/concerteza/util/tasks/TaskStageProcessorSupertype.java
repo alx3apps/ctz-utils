@@ -11,6 +11,7 @@ import java.util.List;
  * @author alexey
  * Date: 6/30/12
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public abstract class TaskStageProcessorSupertype implements TaskStageProcessor {
     /**
      * {@inheritDoc}

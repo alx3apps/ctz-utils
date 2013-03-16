@@ -8,6 +8,7 @@ import java.io.*;
  * User: alexey
  * Date: 4/13/12
  */
+@Deprecated // not useful
 public class TempFileInputStream extends InputStream {
     private final File file;
     private final FileInputStream is;

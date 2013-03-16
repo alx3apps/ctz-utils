@@ -13,6 +13,7 @@ import java.io.*;
  * @see ReadableBlob
  * @see WritableBlob
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class DetachedBlob extends AbstractBlob implements Serializable {
     private static final long serialVersionUID = 5752953727569147166L;
     private final byte[] compressedData;

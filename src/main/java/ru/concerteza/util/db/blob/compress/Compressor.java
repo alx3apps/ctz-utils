@@ -10,6 +10,7 @@ import java.io.OutputStream;
  * Date: 4/14/12
  * @see ru.concerteza.util.db.blob.tool.BlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public interface Compressor {
 
     /**

@@ -3,14 +3,13 @@ package ru.concerteza.util.string;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 /**
  * Formatting utilities, borrowed from <a href="http://www.slf4j.org/">slf4j</a> project.
  *
  * @author alexey
- * Date: 4/19/11
+ *         Date: 4/19/11
  * @see CtzFormatUtilsTest
  */
 public class CtzFormatUtils {
@@ -20,8 +19,8 @@ public class CtzFormatUtils {
      * {@code {}} placeholders will be replaced by positional arguments
      * (if they provided, left intact otherwise)
      *
-     * @param messagePattern pattern with placehholders
-     * @param args positional arguments to replace placeholders
+     * @param messagePattern pattern with placeholders
+     * @param args           positional arguments to replace placeholders
      * @return formatted message
      */
     public static String format(final String messagePattern, Object... args) {
@@ -30,18 +29,17 @@ public class CtzFormatUtils {
 
     // stripped from org.slf4j.helpers.MessageFormatter
     private static String formatArray(final String messagePattern, final Object[] argArray) {
-        checkArgument(isNotEmpty(messagePattern), "messagePattern must be not empty, but was: '%s'", messagePattern);
-
-        if (null == argArray) return messagePattern;
+        if(isEmpty(messagePattern)) return "null";
+        if(null == argArray) return messagePattern;
 
         int i = 0;
         int j;
         StringBuilder sb = new StringBuilder(messagePattern.length() + 50);
-        for (Object anArgArray : argArray) {
+        for(Object anArgArray : argArray) {
             j = messagePattern.indexOf(DELIM_STR, i);
-            if (j == -1) {
+            if(j == -1) {
                 // no more variables
-                if (i == 0) { // this is a simple string
+                if(i == 0) { // this is a simple string
                     return messagePattern;
                 } else { // add the tail string which contains no variables and return
                     // the result.
@@ -61,30 +59,30 @@ public class CtzFormatUtils {
 
     // special treatment of array values was suggested by 'lizongbo'
     private static void deeplyAppendParameter(StringBuilder sbuf, Object o, Map<Object[], Object> seenMap) {
-        if (o == null) {
+        if(o == null) {
             sbuf.append("null");
             return;
         }
-        if (!o.getClass().isArray()) {
+        if(!o.getClass().isArray()) {
             sbuf.append(o.toString());
         } else {
             // check for primitive array types because they
             // unfortunately cannot be cast to Object[]
-            if (o instanceof boolean[]) {
+            if(o instanceof boolean[]) {
                 booleanArrayAppend(sbuf, (boolean[]) o);
-            } else if (o instanceof byte[]) {
+            } else if(o instanceof byte[]) {
                 byteArrayAppend(sbuf, (byte[]) o);
-            } else if (o instanceof char[]) {
+            } else if(o instanceof char[]) {
                 charArrayAppend(sbuf, (char[]) o);
-            } else if (o instanceof short[]) {
+            } else if(o instanceof short[]) {
                 shortArrayAppend(sbuf, (short[]) o);
-            } else if (o instanceof int[]) {
+            } else if(o instanceof int[]) {
                 intArrayAppend(sbuf, (int[]) o);
-            } else if (o instanceof long[]) {
+            } else if(o instanceof long[]) {
                 longArrayAppend(sbuf, (long[]) o);
-            } else if (o instanceof float[]) {
+            } else if(o instanceof float[]) {
                 floatArrayAppend(sbuf, (float[]) o);
-            } else if (o instanceof double[]) {
+            } else if(o instanceof double[]) {
                 doubleArrayAppend(sbuf, (double[]) o);
             } else {
                 objectArrayAppend(sbuf, (Object[]) o, seenMap);
@@ -94,12 +92,12 @@ public class CtzFormatUtils {
 
     private static void objectArrayAppend(StringBuilder sbuf, Object[] a, Map<Object[], Object> seenMap) {
         sbuf.append('[');
-        if (!seenMap.containsKey(a)) {
+        if(!seenMap.containsKey(a)) {
             seenMap.put(a, null);
             final int len = a.length;
-            for (int i = 0; i < len; i++) {
+            for(int i = 0; i < len; i++) {
                 deeplyAppendParameter(sbuf, a[i], seenMap);
-                if (i != len - 1)
+                if(i != len - 1)
                     sbuf.append(", ");
             }
             // allow repeats in siblings
@@ -113,9 +111,9 @@ public class CtzFormatUtils {
     private static void booleanArrayAppend(StringBuilder sbuf, boolean[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -124,9 +122,9 @@ public class CtzFormatUtils {
     private static void byteArrayAppend(StringBuilder sbuf, byte[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -135,9 +133,9 @@ public class CtzFormatUtils {
     private static void charArrayAppend(StringBuilder sbuf, char[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -146,9 +144,9 @@ public class CtzFormatUtils {
     private static void shortArrayAppend(StringBuilder sbuf, short[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -157,9 +155,9 @@ public class CtzFormatUtils {
     private static void intArrayAppend(StringBuilder sbuf, int[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -168,9 +166,9 @@ public class CtzFormatUtils {
     private static void longArrayAppend(StringBuilder sbuf, long[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -179,9 +177,9 @@ public class CtzFormatUtils {
     private static void floatArrayAppend(StringBuilder sbuf, float[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');
@@ -190,9 +188,9 @@ public class CtzFormatUtils {
     private static void doubleArrayAppend(StringBuilder sbuf, double[] a) {
         sbuf.append('[');
         final int len = a.length;
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++) {
             sbuf.append(a[i]);
-            if (i != len - 1)
+            if(i != len - 1)
                 sbuf.append(", ");
         }
         sbuf.append(']');

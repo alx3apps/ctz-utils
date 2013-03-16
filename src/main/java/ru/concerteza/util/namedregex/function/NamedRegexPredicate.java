@@ -15,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @see NamedRegexFunction
  * @see ru.concerteza.util.namedregex.NamedPattern
  */
+@Deprecated // use com.github.tony19:named-regexp
 public class NamedRegexPredicate implements Predicate<NamedMatcher> {
     /**
      * @param input {@link NamedMatcher}

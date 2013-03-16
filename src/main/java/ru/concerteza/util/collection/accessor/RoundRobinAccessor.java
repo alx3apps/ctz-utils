@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Date: 6/11/12
  * @see Accessor
  */
+@Deprecated // use com.alexkasko.springjdbc.parallel.accessor
 public class RoundRobinAccessor<T> extends AbstractAccessor<T> {
     private AtomicInteger index = new AtomicInteger(0);
 

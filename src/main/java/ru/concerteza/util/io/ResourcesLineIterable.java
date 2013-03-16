@@ -12,6 +12,7 @@ import java.util.List;
  * User: alexey
  * Date: 7/10/12
  */
+@Deprecated // use FinishableIterator
 public class ResourcesLineIterable implements Iterable<String> {
     private final List<String> paths;
 

@@ -233,11 +233,11 @@ public class CtzReflectionUtils {
                 // http://stackoverflow.com/questions/4407726/dynamically-instantiating-an-inner-class-nested-inside-an-abstract-class/4407775#4407775
                 // todo maybe add support for children (proxies) enclosing classes using isAssignableFrom
                 Constructor con = clazz.getDeclaredConstructor(enclosingInstance.getClass());
-                con.setAccessible(true);
+                if(!con.isAccessible()) con.setAccessible(true);
                 res = (T) con.newInstance(enclosingInstance);
             } else {
                 Constructor con = clazz.getDeclaredConstructor();
-                con.setAccessible(true);
+                if(!con.isAccessible()) con.setAccessible(true);
                 res = (T) con.newInstance();
             }
             return res;

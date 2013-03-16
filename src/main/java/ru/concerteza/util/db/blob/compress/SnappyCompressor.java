@@ -17,6 +17,7 @@ import java.io.OutputStream;
  * @see XzCompressor
  * @see ru.concerteza.util.db.blob.tool.BlobTool
  */
+@Deprecated // use com.alexkasko.springjdbc.compress
 public class SnappyCompressor extends AbstractCompressor {
     /**
      * {@inheritDoc}

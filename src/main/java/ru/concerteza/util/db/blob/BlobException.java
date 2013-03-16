@@ -13,6 +13,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @see WritableBlob
  * @see DetachedBlob
  */
+@Deprecated // use com.alexkasko.springjdbc.blob
 public class BlobException extends MessageException {
 
     /**

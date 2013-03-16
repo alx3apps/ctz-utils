@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 // won't close RS, for using in resultExtractors
+@Deprecated // use com.alexkasko.springjdbc:springjdbc-iterable
 public class ResultSetIterator<T> extends AbstractIterator<T> {
     private final ResultSet rs;
     private final RowMapper<T> mapper;

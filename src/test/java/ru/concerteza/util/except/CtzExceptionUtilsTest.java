@@ -1,13 +1,16 @@
 package ru.concerteza.util.except;
 
+import com.google.common.base.Optional;
 import org.apache.commons.lang.UnhandledException;
 import org.junit.Test;
 import ru.concerteza.util.option.Option;
 
 import java.io.IOException;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static ru.concerteza.util.except.CtzExceptionUtils.check;
 import static ru.concerteza.util.except.CtzExceptionUtils.extractMessage;
 
 /**
@@ -22,11 +25,11 @@ public class CtzExceptionUtilsTest {
     @Test
     public void testMessage() {
         try {
-            BusinessLogicException ex = new BusinessLogicException(new IOException("fail"), "IO error on files: '{}' and '{}'", "foo", "bar");
+            BusinessLogicException ex = new BusinessLogicException("IO error on some files");
             throw new UnhandledException(new RuntimeException(ex));
         } catch (Exception e) {
-            Option<MessageException> op = extractMessage(e);
-            assertTrue(op.isSome());
+            Optional<BusinessLogicException> op = extractMessage(e, BusinessLogicException.class);
+            assertTrue(op.isPresent());
             assertNotNull(op.get());
             assertTrue(BusinessLogicException.class.isInstance(op.get()));
         }
@@ -37,14 +40,27 @@ public class CtzExceptionUtilsTest {
         try {
             throw new UnhandledException(new RuntimeException(new IOException("fail")));
         } catch (Exception e) {
-            Option<MessageException> op = extractMessage(e);
-            assertTrue(op.isNone());
+            Optional<BusinessLogicException> op = extractMessage(e, BusinessLogicException.class);
+            assertFalse(op.isPresent());
         }
     }
 
-    private class BusinessLogicException extends MessageException {
-        private BusinessLogicException(Exception cause, String formatString, Object... args) {
-            super(cause, formatString, args);
+    @Test(expected = BusinessLogicException.class)
+    public void testCheck2() {
+        check(false, BusinessLogicException.class, "some message");
+    }
+
+    @Test(expected = BusinessLogicException.class)
+    public void testCheck3() {
+        check(false, BusinessLogicException.class, "some message: '{}'", "hello");
+    }
+
+    private static class BusinessLogicException extends RuntimeException {
+        private BusinessLogicException() {
+        }
+
+        private BusinessLogicException(String s) {
+            super(s);
         }
     }
 }

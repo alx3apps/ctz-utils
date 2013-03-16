@@ -9,6 +9,7 @@ package ru.concerteza.util.tasks;
  * @see TaskStageProcessor
  * @see TaskEngine
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public interface TaskProcessorProvider {
     /**
      * Must provide {@link TaskStageProcessor} for given string id

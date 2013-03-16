@@ -11,6 +11,7 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * Date: 10/18/11
  * @see CtzExceptionUtils
  */
+@Deprecated // use any business exceptions
 public abstract class MessageException extends RuntimeException {
     private static final long serialVersionUID = 4668320002581645785L;
 

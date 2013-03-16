@@ -12,6 +12,7 @@ import java.util.Collection;
  * @see TaskEngine
  * @see Task
  */
+@Deprecated // use com.alexkasko.tasks:task-engine
 public interface TaskManager<T extends Task> {
     /**
      * This method is used to load new and resumed tasks to run.
