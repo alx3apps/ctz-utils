@@ -1,17 +1,19 @@
 package ru.concerteza.util.net;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import ru.concerteza.util.string.CtzStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.annotation.concurrent.Immutable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
 
 /**
  * Network utilities
@@ -21,6 +23,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  * @see CtzNetUtilsTest
  */
 public class CtzNetUtils {
+    private static final Logger logger = LoggerFactory.getLogger(CtzNetUtils.class);
     private static final Pattern IP_PATTERN = Pattern.compile("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.[\\d]{1,3}$");
     private static final Splitter SPLITTER = Splitter.on('.');
 
@@ -44,7 +47,7 @@ public class CtzNetUtils {
      * @param ip IPv4 address as long
      * @return IPv4 address as string
      */
-    @Deprecated // use convertIpV4
+    @Deprecated // use printIpV4
     public static String convertIpToString(Long ip) {
         StringBuilder sb = new StringBuilder();
         sb.append((int) (ip / 16777216)).append(".")
@@ -54,7 +57,7 @@ public class CtzNetUtils {
         return sb.toString();
     }
 
-    public static String convertIpV4(int ip) {
+    public static String printIpV4(long ip) {
         return new StringBuilder()
                 .append((ip >>> 24) & 0xFF).append(".")
                 .append((ip >>> 16) & 0xFF).append(".")
@@ -71,5 +74,27 @@ public class CtzNetUtils {
             val |= Integer.parseInt(it.next());
         }
         return val;
+    }
+
+    public static int readFromSlowStream(InputStream stream, byte[] buf, int pos, int length, long wait, int cycles, String name) throws IOException {
+        int count = 0;
+        for (int i = 0; i < cycles; i++) {
+            int res = stream.read(buf, pos + count, length - count);
+            if (-1 == res) {
+                return 0 == count ? -1 : count;
+            }
+            count += res;
+            if (count >= length) return count;
+            if (i > 0) {
+                logger.warn("Slow read of file: [{}], try num: [{}], bytes read: [{}]", new Object[]{name, i, count});
+                try {
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    throw new IOException(e);
+                }
+            }
+        }
+        throw new IOException("Stream read error, tries: [" + cycles + "], " +
+                "count: [" + count + "], data: [" + new String(buf, 0, count, ASCII_CHARSET) + "]");
     }
 }
