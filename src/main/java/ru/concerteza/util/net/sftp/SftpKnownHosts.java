@@ -1,4 +1,4 @@
-package ru.concerteza.util.net;
+package ru.concerteza.util.net.sftp;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;

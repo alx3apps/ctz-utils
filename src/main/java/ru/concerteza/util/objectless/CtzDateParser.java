@@ -16,7 +16,7 @@ import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
  * @author alexkasko
  * Date: 4/18/13
  */
-public class DateParser {
+public class CtzDateParser {
     private static final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyMMddHHmmss");
     private static final ThreadLocal<byte[]> dateBytes;
     private static final ThreadLocal<Long> dateMillis;

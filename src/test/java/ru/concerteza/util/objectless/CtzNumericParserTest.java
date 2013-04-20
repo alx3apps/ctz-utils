@@ -4,16 +4,16 @@ import org.junit.Test;
 
 import static java.lang.System.arraycopy;
 import static org.junit.Assert.assertEquals;
-import static ru.concerteza.util.objectless.NumericParser.parseInt;
-import static ru.concerteza.util.objectless.NumericParser.parseIpV4;
-import static ru.concerteza.util.objectless.NumericParser.parseLong;
+import static ru.concerteza.util.objectless.CtzNumericParser.parseInt;
+import static ru.concerteza.util.objectless.CtzNumericParser.parseIpV4;
+import static ru.concerteza.util.objectless.CtzNumericParser.parseLong;
 import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
 
 /**
  * User: alexkasko
  * Date: 4/18/13
  */
-public class NumericParserTest {
+public class CtzNumericParserTest {
     @Test
     public void testLong() {
         assertEquals(Long.parseLong("8611563489"), parseLong("8611563489".getBytes(ASCII_CHARSET)));

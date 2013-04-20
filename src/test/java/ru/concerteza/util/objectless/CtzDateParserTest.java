@@ -8,14 +8,14 @@ import java.text.ParseException;
 
 import static java.lang.System.arraycopy;
 import static org.junit.Assert.assertEquals;
-import static ru.concerteza.util.objectless.DateParser.parseDate;
+import static ru.concerteza.util.objectless.CtzDateParser.parseDate;
 import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
 
 /**
  * User: alexkasko
  * Date: 4/18/13
  */
-public class DateParserTest {
+public class CtzDateParserTest {
     @Test
     public void test() throws ParseException {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyMMddHHmmss");

@@ -13,7 +13,7 @@ import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
  * @author alexkasko
  * Date: 4/18/13
  */
-public class NumericParser {
+public class CtzNumericParser {
     /**
      * Parse long from byte[] string
      *

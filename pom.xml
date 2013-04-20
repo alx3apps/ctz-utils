@@ -235,6 +235,12 @@
             <version>3.2.7.Final</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alexkasko.springjdbc.typedqueries</groupId>
+            <artifactId>typed-queries-common</artifactId>
+            <version>1.2.1</version>
+            <scope>provided</scope>
+        </dependency>
         <!--test-->
         <dependency>
             <groupId>junit</groupId>
