@@ -296,6 +296,12 @@
             <version>2.2.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alexkasko.unsafe</groupId>
+            <artifactId>unsafe-tools</artifactId>
+            <version>1.2.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
