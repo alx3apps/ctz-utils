@@ -3,6 +3,7 @@ package ru.concerteza.util.db.postgrescopy;
 import com.alexkasko.unsafe.bytearray.ByteArrayTool;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 
@@ -27,8 +30,8 @@ import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
  * User: alexkasko
  * Date: 5/5/13
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(classes = PostgresCopyTest.TestConfig.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = PostgresCopyTest.TestConfig.class)
 public class PostgresCopyTest {
     private static final ByteArrayTool bat = ByteArrayTool.get();
     private static final RowMapper<String> STRING_ROW_MAPPER = new SingleColumnRowMapper<String>(String.class);
@@ -36,25 +39,24 @@ public class PostgresCopyTest {
     @Inject
     private NamedParameterJdbcTemplate jt;
 
-    @Test
+//    @Test
     public void dummy() {
         //  I'm dummy
     }
 
-//    @Test
+    @Test
     public void testCopy() {
         jt.getJdbcOperations().update("drop table if exists copy_test");
         jt.getJdbcOperations().update("create table copy_test(id bigint, val text)");
         JdbcTemplate sjt = (JdbcTemplate) jt.getJdbcOperations();
-        PostgresCopyPersister pcp = new PostgresCopyPersister(sjt.getDataSource());
         byte[] row1 = new byte[16];
         bat.putLong(row1, 0, 42);
         bat.copy("somedata".getBytes(UTF8_CHARSET), 0, row1, 8, 8);
         byte[] row2 = new byte[16];
         bat.putLong(row2, 0, 43);
         bat.copy("moredata".getBytes(UTF8_CHARSET), 0, row2, 8, 8);
-        PostgresCopyStream st = new PostgresCopyStream(ImmutableList.of(row1, row2).iterator(), new TestProvider());
-        pcp.persist("copy copy_test(id, val) from stdin binary", st);
+        PostgresCopyPersister pcp = new PostgresCopyPersister(sjt.getDataSource(), new TestProvider(), ImmutableList.of(row1, row2).iterator());
+        pcp.persist("copy copy_test(id, val) from stdin binary");
         assertEquals("Rowcount fail", 2, jt.getJdbcOperations().queryForInt("select count(*) from copy_test"));
         assertEquals("Data fail", 42, jt.getJdbcOperations().queryForInt("select min(id) from copy_test"));
         assertEquals("Data fail", "somedata", jt.getJdbcOperations().queryForObject("select val from copy_test where id = 42", STRING_ROW_MAPPER));
@@ -111,8 +113,5 @@ public class PostgresCopyTest {
         public NamedParameterJdbcTemplate jt() {
             return new NamedParameterJdbcTemplate(dataSource());
         }
-
-
     }
-
 }

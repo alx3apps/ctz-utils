@@ -14,6 +14,7 @@ import static java.lang.System.arraycopy;
  * @author alexkasko
  * Date: 5/5/13
  */
+@Deprecated // not used any more
 public class PostgresCopyStream extends InputStream {
     private enum State {HEADER, BODY, EOF}
 
