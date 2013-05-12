@@ -241,6 +241,12 @@
             <version>1.2.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alexkasko.springjdbc</groupId>
+            <artifactId>springjdbc-iterable</artifactId>
+            <version>1.0.2</version>
+            <scope>provided</scope>
+        </dependency>
         <!--test-->
         <dependency>
             <groupId>junit</groupId>
