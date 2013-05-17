@@ -10,15 +10,15 @@ import com.google.common.base.Function;
  * Date: 4/2/13
  * @see Finishable
  */
-public class FinishableSuccess implements Function<Void, Boolean> {
+public class FinishableFlag implements Function<Void, Boolean> {
     /**
      * Success function
      */
-    public static final Function<Void, Boolean> SUCCESS = new FinishableSuccess(true);
+    public static final Function<Void, Boolean> SUCCESS = new FinishableFlag(true);
     /**
      * Fail function
      */
-    public static final Function<Void, Boolean> FAIL = new FinishableSuccess(false);
+    public static final Function<Void, Boolean> FAIL = new FinishableFlag(false);
 
     private final boolean success;
 
@@ -27,7 +27,7 @@ public class FinishableSuccess implements Function<Void, Boolean> {
      *
      * @param success whether operation succeeded
      */
-    public FinishableSuccess(boolean success) {
+    public FinishableFlag(boolean success) {
         this.success = success;
     }
 

@@ -24,7 +24,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static ru.concerteza.util.io.finishable.FinishableSuccess.FAIL;
+import static ru.concerteza.util.io.finishable.FinishableFlag.FAIL;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
 /**

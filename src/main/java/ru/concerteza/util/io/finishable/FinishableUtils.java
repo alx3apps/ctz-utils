@@ -1,5 +1,6 @@
 package ru.concerteza.util.io.finishable;
 
+import com.google.common.base.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,12 @@ public class FinishableUtils {
      * Calls nullable finishable with "yes" or "no" results
      *
      * @param finishable nullable finishable
-     * @param success business operation result
+     * @param result business operation result
      */
-    public static void finishQuietly(Finishable<Void, Boolean> finishable, boolean success) {
+    public static <F, T> void finishQuietly(Finishable<F, T> finishable, Function<F, T> result) {
         if(null == finishable) return;
         try {
-            finishable.finish(new FinishableSuccess(success));
+            finishable.finish(result);
         } catch (Exception e) {
             logger.warn("Finish error: [" + finishable + "]", e);
         }
