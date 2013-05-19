@@ -41,6 +41,17 @@ public class SingleUseIterable<T> implements Iterable<T> {
     }
 
     /**
+     * Generic-friendly factory method, alias for {@link #of(java.util.Iterator)}
+     *
+     * @param iter iterator to wrap
+     * @param <T> iterator type
+     * @return SingleUseIterable instance
+     */
+    public static <T> Iterable<T> singleUseIterable(Iterator<T> iter) {
+        return of(iter);
+    }
+
+    /**
      * @return provided iterator
      * @throws IllegalStateException on more than one usage attempt
      */

@@ -42,7 +42,6 @@ public class SftpFile implements Closeable {
     @Override
     public String toString() {
         return new ToStringBuilder(this, SHORT_PREFIX_STYLE).
-                append("stream", stream).
                 append("name", name).
                 toString();
     }
