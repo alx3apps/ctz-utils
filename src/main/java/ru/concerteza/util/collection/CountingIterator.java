@@ -36,6 +36,17 @@ public class CountingIterator<T> implements Iterator<T> {
     }
 
     /**
+     * Static-import friendly alias for {@link #of(java.util.Iterator)}
+     *
+     * @param iterator target iterator
+     * @param <T> element type
+     * @return instance
+     */
+    public static <T> CountingIterator<T> countingIterator(Iterator<T> iterator) {
+        return new CountingIterator<T>(iterator);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -62,9 +73,24 @@ public class CountingIterator<T> implements Iterator<T> {
     }
 
     /**
+     * Count accessor
+     *
      * @return current iterated elements count
      */
     public long getCount() {
         return count.get();
+    }
+
+    /**
+     * Integer count accessor
+     *
+     * @return current iterated elements count, {@code -1} on overflow
+     */
+    public int getCountInt() {
+        long res = count.get();
+        if (res > Integer.MAX_VALUE) {
+            return -1;
+        }
+        return (int) res;
     }
 }

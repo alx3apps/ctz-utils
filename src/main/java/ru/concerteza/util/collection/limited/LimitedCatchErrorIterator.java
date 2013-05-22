@@ -45,6 +45,18 @@ public class LimitedCatchErrorIterator<T> implements Iterator<T> {
     }
 
     /**
+     * Static-import friendly alias for {@link #of(java.util.Iterator, Class)}
+     *
+     * @param target target iterator
+     * @param limitErrorClass error class to catch and stop iteration
+     * @param <T> target iterator generic parameter
+     * @return {@link LimitedCatchErrorIterator} instance
+     */
+    public static <T> LimitedCatchErrorIterator<T> limitedCatchErrorIterator(Iterator<T> target, Class<? extends Error> limitErrorClass) {
+        return new LimitedCatchErrorIterator<T>(target, limitErrorClass);
+    }
+
+    /**
      * @return target iterator {@code hasNext()} or {@code false} on expected Error
      */
     @Override

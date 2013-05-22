@@ -41,6 +41,17 @@ public class KnownPositionCollection<T> extends AbstractCollection<T> {
     }
 
     /**
+     * Static-import friendly alias for {@link #of(java.util.Collection)}
+     *
+     * @param target target collection, must not be changed during this instance use
+     * @param <T> target collection generic parameter
+     * @return KnownPositionCollection
+     */
+    public static <T> KnownPositionCollection<T> knownPositionCollection(Collection<T> target) {
+        return new KnownPositionCollection<T>(target);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

@@ -46,6 +46,18 @@ public class LimitedSizeIterator<T> implements Iterator<T> {
     }
 
     /**
+     * Static-import friendly alias for {@link #of(java.util.Iterator, long)}
+     *
+     * @param target target iterator
+     * @param limit size limit
+     * @param <T> target iterator generic parameter
+     * @return {@link LimitedSizeIterator} instance
+     */
+    public static <T> LimitedSizeIterator<T> limitedSizeIterator(Iterator<T> target, long limit) {
+        return new LimitedSizeIterator<T>(target, limit);
+    }
+
+    /**
      * @return target iterator {@code hasNext()} or {@code false} on threshold exceed
      */
     @Override

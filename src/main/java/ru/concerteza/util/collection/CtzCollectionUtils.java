@@ -184,6 +184,12 @@ public class CtzCollectionUtils {
         return sum;
     }
 
+    /**
+     * Collections null-or-empty check
+     *
+     * @param collection collection
+     * @return true if is not empty
+     */
     public static boolean isNotEmpty(Collection<?> collection) {
         return (collection != null && !collection.isEmpty());
     }
