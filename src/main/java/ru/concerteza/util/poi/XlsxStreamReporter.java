@@ -1,5 +1,6 @@
 package ru.concerteza.util.poi;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.UnhandledException;
 import org.apache.poi.ss.usermodel.*;
@@ -142,7 +143,7 @@ public class XlsxStreamReporter<T> {
         try {
             wb.write(out);
         } catch(IOException e) {
-            throw new RuntimeIOException(e);
+            throw new XlsxStreamReporterException(e);
         }
     }
 
@@ -157,7 +158,18 @@ public class XlsxStreamReporter<T> {
     }
 
     private Cell createCell(Object rowObject, Method getter, Row row, int column, CellType type, CellStyle mainStyle, CellStyle dateFormat, CellStyle dateTimeFormat) {
-        Object value = invokeMethod(rowObject, getter);
+        Object optValue = invokeMethod(rowObject, getter);
+        final Object value;
+        if(optValue instanceof Optional) {
+            Optional<?> opt = (Optional<?>) optValue;
+            if(!opt.isPresent()) {
+                Cell cell = row.createCell(column, CELL_TYPE_BLANK);
+                cell.setCellStyle(mainStyle);
+                return cell;
+            } else {
+                value = opt.get();
+            }
+        } else value = optValue;
         final Cell cell;
         if(CellType.NUMERIC.equals(type)) {
             cell = row.createCell(column, CELL_TYPE_NUMERIC);
@@ -255,6 +267,30 @@ public class XlsxStreamReporter<T> {
             cols.add(new Column(description, type, getter));
             return this;
         }
+
+        /**
+         * Register nullable column with {@code Optional} support
+         *
+         * @param name row object bean property name
+         * @param clazz value class
+         * @param description column header
+         * @return builder itself
+         */
+        public Builder addColumn(String name, Class<?> clazz, String description) {
+            checkArgument(isNotBlank(name), "Provided name is blank");
+            checkArgument(null != clazz, "Provided class is null");
+            checkArgument(isNotBlank(description), "Provided description is blank");
+            Method getter = findGetter(rowClass, name);
+            final CellType type;
+            if(isAssignableBoxed(Number.class, clazz)) type = CellType.NUMERIC;
+            else if(isAssignableBoxed(Boolean.class, clazz)) type = CellType.BOOLEAN;
+            else if(LocalDate.class.isAssignableFrom(clazz)) type = CellType.DATE;
+            else if(LocalDateTime.class.isAssignableFrom(clazz)) type = CellType.DATETIME;
+            else type = CellType.STRING;
+            cols.add(new Column(description, type, getter));
+            return this;
+        }
+
 
         /**
          * @param dateFormat format for {@code LocalDate} properties, default: {@code "yyyy-MM-dd"}
