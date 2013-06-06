@@ -1,6 +1,7 @@
 package ru.concerteza.util.net.sftp;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import com.jcraft.jsch.ChannelSftp;
@@ -48,7 +49,7 @@ public class SftpFileIterator implements Iterator<SftpFile>, Finishable<Void, Bo
     private final Session session;
     private final ChannelSftp sftp;
 
-    private SftpFile processed;
+    private Optional<SftpFile> processed = Optional.absent();
     private boolean closed = false;
     private boolean read = false;
 
@@ -110,10 +111,12 @@ public class SftpFileIterator implements Iterator<SftpFile>, Finishable<Void, Bo
         try {
             logger.debug("Opening snapped stream for file: [{}]", filename);
             InputStream sftpStream = sftp.get(filename);
-            processed = new SftpFile(filename, sftpStream);
-            return processed;
+            SftpFile sf = new SftpFile(filename, sftpStream);
+            this.processed = Optional.of(sf);
+            return sf;
         } catch (Exception e) {
-            processed = new SftpFile(filename, new ByteArrayInputStream(EMPTY));
+            // todo: check if needed
+            processed = Optional.of(new SftpFile(filename, new ByteArrayInputStream(EMPTY)));
             closeQuietly(is);
             throw new CtzSftpException(e);
         }
@@ -142,10 +145,12 @@ public class SftpFileIterator implements Iterator<SftpFile>, Finishable<Void, Bo
         logger.debug("Preparing to close SFTP connection to host: [{}]", host);
         boolean success = fun.apply(null);
         if (null != sftp) {
-            closeQuietly(processed);
             try {
-                if (success) markProcessed(processed);
-                else markError(processed);
+                if(processed.isPresent()) {
+                    closeQuietly(processed.get());
+                    if (success) markProcessed(processed.get());
+                    else markError(processed.get());
+                }
             } catch (SftpException e) {
                 logger.warn(e.getMessage(), e);
             }
