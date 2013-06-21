@@ -13,6 +13,7 @@ import java.util.Iterator;
  * @author alexkasko
  * Date: 5/11/13
  */
+@Deprecated // use CloseableIteratorList
 public class CloseableIteratorCollection<T> implements CloseableIterator<T> {
     private final Collection<CloseableIterator<T>> list;
     private final Iterator<T> iter;
