@@ -4,7 +4,6 @@ import com.google.common.collect.AbstractIterator;
 import org.iq80.snappy.SnappyInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.concerteza.util.net.sftp.SftpFile;
 
 import java.io.BufferedInputStream;
 import java.io.Closeable;
@@ -15,13 +14,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
 /**
- * Iterator wrapper for files read through SFTP
+ * Iterator wrapper for snappy-compressed files read through SFTP
  *
  * @author alexkasko
  * Date: 5/5/13
  */
-public abstract class SftpDataIterator extends AbstractIterator<byte[]> implements Closeable {
-    private static final Logger logger = LoggerFactory.getLogger(SftpDataIterator.class);
+public abstract class SftpSnappyIterator extends AbstractIterator<byte[]> implements Closeable {
+    private static final Logger logger = LoggerFactory.getLogger(SftpSnappyIterator.class);
 
     private enum State {CREATED, OPEN, CLOSED}
 
@@ -31,7 +30,7 @@ public abstract class SftpDataIterator extends AbstractIterator<byte[]> implemen
     private InputStream stream;
     private State state = State.CREATED;
 
-    protected SftpDataIterator(int bufferSize) {
+    protected SftpSnappyIterator(int bufferSize) {
         this.buf = new byte[bufferSize];
     }
 
@@ -41,7 +40,7 @@ public abstract class SftpDataIterator extends AbstractIterator<byte[]> implemen
      * @param file remote SFTP file
      * @return iterator itself
      */
-    public SftpDataIterator open(SftpFile file) {
+    public SftpSnappyIterator open(SftpFile file) {
         checkNotNull(file, "Provided SFTP file is null");
         try {
             this.file = file;
@@ -54,12 +53,12 @@ public abstract class SftpDataIterator extends AbstractIterator<byte[]> implemen
     }
 
     /**
-     * Closes SFTP file
+     * Closes SFTP file stream
      */
     @Override
     public void close() {
         if(State.CLOSED == state) return;
-        closeQuietly(file);
+        closeQuietly(stream);
         state = State.CLOSED;
     }
 

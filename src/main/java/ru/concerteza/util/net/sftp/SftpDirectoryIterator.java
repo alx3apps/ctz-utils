@@ -9,31 +9,26 @@ import com.google.common.collect.Ordering;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.concerteza.util.io.finishable.Finishable;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.io.Closeable;
 import java.util.Iterator;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static ru.concerteza.util.io.finishable.FinishableFlag.FAIL;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
 /**
- * User: alexkasko
+ * Iterator over remote SFTP directory. Not thread-safe.
+ *
+ * @author alexkasko
  * Date: 4/19/13
  */
-public class SftpDirectoryIterator implements Iterator<SftpFile>, Finishable<Void, Boolean> {
+public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(SftpDirectoryIterator.class);
-    private static final byte[] EMPTY = {'e', 'm', 'p', 't', 'y'};
 
     private final String host;
     private final int port;
@@ -46,7 +41,6 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Finishable<Voi
     private final ImmutableList<String> fileNames;
     private final Session session;
     private final ChannelSftp sftp;
-    private final List<SftpFile> processed = new ArrayList<SftpFile>();
 
     private boolean closed = false;
     private int index = 0;
@@ -79,13 +73,12 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Finishable<Voi
             session.connect();
             sftp = (ChannelSftp) session.openChannel("sftp");
             sftp.connect();
-            sftp.cd(readDir);
-            List<ChannelSftp.LsEntry> entries = sftp.ls(".");
+            List<ChannelSftp.LsEntry> entries = sftp.ls(readDir);
             List<String> names = Lists.transform(entries, NameFun.INSTANCE);
             fileNames = Ordering.natural().immutableSortedCopy(Iterables.filter(names, DotPredicate.INSTANCE));
             logger.debug("Files list obtained: [{}]", fileNames);
         } catch (Exception e) {
-            finish(FAIL);
+            close();
             throw new CtzSftpException(e);
         }
     }
@@ -98,19 +91,8 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Finishable<Voi
 
     @Override
     public SftpFile next() {
-        InputStream is = null;
         String filename = fileNames.get(index++);
-        try {
-            logger.debug("Opening snapped stream for file: [{}]", filename);
-            InputStream sftpStream = sftp.get(filename);
-            SftpFile rf = new SftpFile(filename, sftpStream);
-            processed.add(rf);
-            return rf;
-        } catch (Exception e) {
-            processed.add(new SftpFile(filename, new ByteArrayInputStream(EMPTY)));
-            closeQuietly(is);
-            throw new CtzSftpException(e);
-        }
+        return new SftpFile(sftp, filename, readDir, successDir, errorDir);
     }
 
     @Override
@@ -118,33 +100,10 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Finishable<Voi
         throw new UnsupportedOperationException("remove");
     }
 
-    private void markProcessed(SftpFile rf) throws SftpException {
-        logger.debug("Moving file to 'processed': [{}]", rf);
-        String processed = successDir + "/" + rf.getName();
-        sftp.rename(rf.getName(), processed);
-    }
-
-    private void markError(SftpFile rf) throws SftpException {
-        logger.warn("Moving file to 'error': [{}]", rf);
-        String error = errorDir + "/" + rf.getName();
-        sftp.rename(rf.getName(), error);
-    }
-
     @Override
-    public void finish(Function<Void, Boolean> fun) {
+    public void close() {
         if (closed) return;
-        logger.debug("Preparing to close SFTP connection to host: [{}]", host);
-        boolean success = fun.apply(null);
         if (null != sftp) {
-            for (SftpFile rf : processed) {
-                closeQuietly(rf);
-                try {
-                    if (success) markProcessed(rf);
-                    else markError(rf);
-                } catch (SftpException e) {
-                    logger.warn(e.getMessage(), e);
-                }
-            }
             try {
                 sftp.disconnect();
             } catch (Exception e) {

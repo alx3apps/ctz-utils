@@ -15,21 +15,36 @@ import java.util.Locale;
 import static ru.concerteza.util.crypto.CtzHashUtils.md5Digest;
 
 /**
- * User: alexkasko
+ * {@code HostKeyRepository} implementation that checks predefined host fingerprints
+ *
+ * @author alexkasko
  * Date: 2/11/13
  */
 public class SftpKnownHosts implements HostKeyRepository {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final ImmutableSet<String> set;
 
-    SftpKnownHosts(String fingerprint) {
+    /**
+     * single fingerprint constructor
+     *
+     * @param fingerprint remote host fingerprint
+     */
+    public SftpKnownHosts(String fingerprint) {
         this.set = ImmutableSet.of(fingerprint.toLowerCase());
     }
 
-    SftpKnownHosts(List<String> fingerprintList) {
+    /**
+     * Multiple fingerprints constructor
+     *
+     * @param fingerprintList list of remote hosts fingerprints
+     */
+    public SftpKnownHosts(List<String> fingerprintList) {
         this.set = ImmutableSet.copyOf(Lists.transform(fingerprintList, LowerStringFunction.INSTANCE));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int check(String host, byte[] remoteKey) {
         // maybe add sha1 fingerprint test no fail
@@ -43,16 +58,25 @@ public class SftpKnownHosts implements HostKeyRepository {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void add(HostKey hostkey, UserInfo ui) {
         throw new UnsupportedOperationException("add");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(String host, String type) {
         throw new UnsupportedOperationException("remove");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove(String host, String type, byte[] key) {
         throw new UnsupportedOperationException("remove");
@@ -63,11 +87,17 @@ public class SftpKnownHosts implements HostKeyRepository {
         throw new UnsupportedOperationException("getKnownHostsRepositoryID");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HostKey[] getHostKey() {
         throw new UnsupportedOperationException("getHostKey");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HostKey[] getHostKey(String host, String type) {
         throw new UnsupportedOperationException("getHostKey");
