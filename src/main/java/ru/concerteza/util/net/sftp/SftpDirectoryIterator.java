@@ -2,6 +2,7 @@ package ru.concerteza.util.net.sftp;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -47,6 +48,11 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
 
     public SftpDirectoryIterator(String host, int port, String fingerprint, String user, String password,
                                  String readDir, String successDir, String errorDir) {
+        this(host, port, fingerprint, user, password, readDir, successDir, errorDir, Predicates.<String>alwaysTrue());
+    }
+
+    public SftpDirectoryIterator(String host, int port, String fingerprint, String user, String password,
+                                 String readDir, String successDir, String errorDir, Predicate<String> fileFiler) {
         checkArgument(isNotBlank(host), "Provided host is blank");
         checkArgument(port > 0, "Provided port is invalid: [%s]", port);
         checkArgument(isNotBlank(fingerprint), "Provided fingerprint is blank");
@@ -75,7 +81,9 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
             sftp.connect();
             List<ChannelSftp.LsEntry> entries = sftp.ls(readDir);
             List<String> names = Lists.transform(entries, NameFun.INSTANCE);
-            fileNames = Ordering.natural().immutableSortedCopy(Iterables.filter(names, DotPredicate.INSTANCE));
+            Iterable<String> nodots = Iterables.filter(names, DotPredicate.INSTANCE);
+            Iterable<String> filtered = Iterables.filter(nodots, fileFiler);
+            fileNames = Ordering.natural().immutableSortedCopy(filtered);
             logger.debug("Files list obtained: [{}]", fileNames);
         } catch (Exception e) {
             close();
@@ -119,6 +127,10 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
         }
         logger.debug("SFTP connection to host: [{}] is closed", host);
         this.closed = true;
+    }
+
+    public ImmutableList<String> getFileNames() {
+        return null != fileNames ? fileNames : ImmutableList.<String>of();
     }
 
     private enum NameFun implements Function<ChannelSftp.LsEntry, String> {
