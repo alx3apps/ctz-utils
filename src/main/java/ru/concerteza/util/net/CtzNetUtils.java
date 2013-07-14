@@ -73,10 +73,10 @@ public class CtzNetUtils {
     }
 
     /**
-     * Converts IP v.4 from string to long
+     * Converts IP v.4 from string to int
      *
      * @param str IP v.4 as string
-     * @return IP v.4 as long
+     * @return IP v.4 as int
      */
     public static int parseIpV4(String str) {
         Iterator<String> it = SPLITTER.split(str).iterator();
@@ -86,6 +86,16 @@ public class CtzNetUtils {
             val |= Integer.parseInt(it.next());
         }
         return val;
+    }
+
+    /**
+     * Converts IP v.4 from string to unsigned int
+     *
+     * @param str IP v.4 as string
+     * @return IP v.4 as int
+     */
+    public static long parseIpV4Unsigned(String str) {
+        return parseIpV4(str) & 0xffffffffL;
     }
 
     /**

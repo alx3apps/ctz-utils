@@ -247,6 +247,12 @@
             <version>1.0.3</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.alexkasko.rest</groupId>
+            <artifactId>rest-handlers</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
         <!--test-->
         <dependency>
             <groupId>junit</groupId>

@@ -15,7 +15,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 2/9/12
  */
 public class UpperStringFunction implements Function<String, String> {
-    public static UpperStringFunction INSTANCE = new UpperStringFunction();
+    @Deprecated
+    public static final Function<String, String> INSTANCE = new UpperStringFunction();
+    public static final Function<String, String> UPPER_STRING_FUNCTION = new UpperStringFunction();
 
     /**
      * @param input string

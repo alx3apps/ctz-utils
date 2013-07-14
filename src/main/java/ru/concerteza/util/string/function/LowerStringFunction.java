@@ -15,7 +15,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 2/9/12
  */
 public class LowerStringFunction implements Function<String, String> {
-    public static LowerStringFunction INSTANCE = new LowerStringFunction();
+    @Deprecated
+    public static final Function<String, String> INSTANCE = new LowerStringFunction();
+    public static final Function<String, String> LOWER_STRING_FUNCTION = new LowerStringFunction();
 
     /**
      * @param input string
