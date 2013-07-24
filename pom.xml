@@ -253,6 +253,12 @@
             <version>1.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin</artifactId>
+            <version>6.8.7</version>
+            <scope>provided</scope>
+        </dependency>
         <!--test-->
         <dependency>
             <groupId>junit</groupId>

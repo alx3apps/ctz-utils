@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.Math.min;
 
 /**
  * Collection utilities
@@ -192,5 +193,19 @@ public class CtzCollectionUtils {
      */
     public static boolean isNotEmpty(Collection<?> collection) {
         return (collection != null && !collection.isEmpty());
+    }
+
+    /**
+     * {@link List#subList(int, int)} wrapper, that check list size and mey return less elements
+     * from the list tail, as specified.
+     *
+     * @param source source list
+     * @param from from index
+     * @param to to index
+     * @param <T> list element type
+     * @return sublist
+     */
+    public static <T> List<T> subList(List<T> source, int from, int to) {
+        return source.subList(min(from, source.size()), min(to, source.size()));
     }
 }
