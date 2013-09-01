@@ -1,23 +1,19 @@
 package ru.concerteza.util.db.postgrescopy;
 
-import com.google.common.io.CountingInputStream;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyIn;
 import org.postgresql.copy.CopyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.concerteza.util.collection.CountingIterator;
 import ru.concerteza.util.collection.SingleUseIterable;
 
 import javax.sql.DataSource;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static ru.concerteza.util.io.CtzIOUtils.closeQuietly;
 

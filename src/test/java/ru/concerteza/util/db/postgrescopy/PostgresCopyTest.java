@@ -30,8 +30,8 @@ import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
  * User: alexkasko
  * Date: 5/5/13
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = PostgresCopyTest.TestConfig.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = PostgresCopyTest.TestConfig.class)
 public class PostgresCopyTest {
     private static final ByteArrayTool bat = ByteArrayTool.get();
     private static final RowMapper<String> STRING_ROW_MAPPER = new SingleColumnRowMapper<String>(String.class);
@@ -39,12 +39,12 @@ public class PostgresCopyTest {
     @Inject
     private NamedParameterJdbcTemplate jt;
 
-//    @Test
+    @Test
     public void dummy() {
         //  I'm dummy
     }
 
-    @Test
+//    @Test
     public void testCopy() {
         jt.getJdbcOperations().update("drop table if exists copy_test");
         jt.getJdbcOperations().update("create table copy_test(id bigint, val text)");

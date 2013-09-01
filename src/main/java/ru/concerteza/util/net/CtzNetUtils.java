@@ -19,6 +19,7 @@ import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
  * Network utilities
  *
  * @author wmel
+ * @author alexkasko
  * Date: 29.03.11
  * @see CtzNetUtilsTest
  */
@@ -96,6 +97,33 @@ public class CtzNetUtils {
      */
     public static long parseIpV4Unsigned(String str) {
         return parseIpV4(str) & 0xffffffffL;
+    }
+
+    /**
+     * Prints 48 bit mac address to string like {@code 60:67:20:96:f9:80}
+     *
+     * @param mac mac address
+     * @return mac string representation
+     */
+    public static String printMac48(long mac) {
+        StringBuilder sb = new StringBuilder();
+        String st = Long.toHexString(mac);
+        for(int i = 0; i < st.length(); i += 2) {
+            sb.append(st.charAt(i));
+            if(i + 1 < st.length()) sb.append(st.charAt(i + 1));
+            if (i + 2 < st.length()) sb.append(":");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Parses 48 bit mac address from string like {@code 60:67:20:96:f9:80}
+     *
+     * @param macStr mac address string
+     * @return mac long representation
+     */
+    public static long parseMac48(String macStr) {
+        return Long.parseLong(macStr.replace(":",""));
     }
 
     /**
