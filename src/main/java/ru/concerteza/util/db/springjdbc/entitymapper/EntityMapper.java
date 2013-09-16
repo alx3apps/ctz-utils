@@ -5,12 +5,12 @@ import org.apache.commons.lang.UnhandledException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
+import java.sql.*;
 import java.util.*;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Arrays.asList;
-import static ru.concerteza.util.collection.CtzCollectionUtils.defaultList;
 
 /**
  *
@@ -36,6 +36,22 @@ import static ru.concerteza.util.collection.CtzCollectionUtils.defaultList;
 
 public abstract class EntityMapper<T> implements RowMapper<T> {
     protected final ColumnMapRowMapper mapper = new ColumnMapRowMapper();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return map(mapper.mapRow(rs, 0));
+    }
+
+    /**
+     * Map <code>dataMap</code> to object.
+     *
+     * @param dataMap
+	 * @return the result object
+     */
+    public abstract T map(Map<String, ?> dataMap);
 
     /**
      * Single entity class factory method

@@ -1,8 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper;
 
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 import static ru.concerteza.util.reflect.CtzReflectionUtils.invokeMethod;
@@ -29,8 +27,7 @@ class SingleEntityMapper<T> extends EntityMapper<T> {
      * {@inheritDoc}
      */
     @Override
-    public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Map<String, ?> dataMap = mapper.mapRow(rs, 0);
+    public T map(Map<String, ?> dataMap) {
         for(EntityFilter fi : ec.getFilters()) dataMap = fi.apply(dataMap);
         T res = mapToObject(dataMap, ec.getClazz(), ec.getColumnMap());
         for(Method me : ec.getPostLoadMethods()) invokeMethod(res, me);
