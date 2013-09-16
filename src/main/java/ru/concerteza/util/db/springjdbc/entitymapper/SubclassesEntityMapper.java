@@ -1,8 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper;
 
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -32,8 +30,7 @@ class SubclassesEntityMapper<T> extends EntityMapper<T> {
      * {@inheritDoc}
 	 */
     @Override
-    public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Map<String, ?> dataMap = mapper.mapRow(rs, 0);
+    public T map(Map<String, ?> dataMap) {
         Class<? extends T> clazz = chooser.choose(dataMap);
         EntityClass<? extends T> ec = ecMap.get(clazz.getName());
         checkArgument(null != ec, "Cannot find entry for chosen subclass: '%s', subclasses: '%s'", clazz, ecMap.keySet());
