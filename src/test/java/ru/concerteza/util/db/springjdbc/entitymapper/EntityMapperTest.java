@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -7,15 +8,12 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import ru.concerteza.util.db.springjdbc.entitymapper.filters.ColumnsToLowerFilter;
 import ru.concerteza.util.db.springjdbc.entitymapper.filters.JsonFilter;
 import ru.concerteza.util.db.springjdbc.entitymapper.filters.LocalDateTimeFilter;
 
 import javax.persistence.*;
-import javax.sql.DataSource;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,55 +33,101 @@ public class EntityMapperTest {
         jt = new JdbcTemplate(ds);
     }
 
-    @Test
-    public void testSimple() {
-        jt.update("create table foo(foo_id bigint, val varchar(255))");
-        jt.update("insert into foo(foo_id, val) values(1, 'foo')");
-        RowMapper<Foo> mapper = EntityMapper.forClass(Foo.class);
-        Foo foo = jt.queryForObject("select foo_id, val from foo where foo_id = 1", mapper);
+    private EntityMapper<Foo> simpleMapper() {
+        return EntityMapper.forClass(Foo.class);
+    }
+
+    private void checkSimple(Foo foo) {
         assertNotNull("Load fail", foo);
         assertEquals("Field fail", 1L, foo.id);
         assertEquals("Field fail", "foo", foo.val);
-        jt.update("drop table foo");
     }
 
     @Test
-    public void testFilters() {
-        jt.update("create table foo(id bigint, val varchar(255), da timestamp)");
-        jt.update("insert into foo(id, val, da) values(1, '{\"foo\": 42, \"bar\": \"aaa\"}', '2012-01-01 01:23:45')");
-        RowMapper<TableBean> mapper = EntityMapper.forClass(TableBean.class,
+    public void testSimpleMap() {
+        Map<String,?> fooMap = ImmutableMap.of("foo_id", 1L, "val", "foo");
+        Foo foo = simpleMapper().map(fooMap);
+        checkSimple(foo);
+    }
+
+    @Test
+    public void testSimpleRs() {
+        jt.update("create table foo(foo_id bigint, val varchar(255))");
+        jt.update("insert into foo(foo_id, val) values(1, 'foo')");
+        Foo foo = jt.queryForObject("select foo_id, val from foo where foo_id = 1", simpleMapper());
+        checkSimple(foo);
+        jt.update("drop table foo");
+    }
+
+    private EntityMapper<TableBean> filtersMapper() {
+        return EntityMapper.forClass(TableBean.class,
                 new ColumnsToLowerFilter(),
                 new LocalDateTimeFilter("da"),
                 new JsonFilter(new Gson(), "val", FooJsonBean.class));
-        TableBean loaded = jt.queryForObject("select * from foo where id = 1", mapper);
-        assertNotNull("Load fail", loaded);
-        assertEquals("Simple map fail", 1L, loaded.id);
-        assertEquals("LDT filter fail", new LocalDateTime(2012, 1, 1, 1, 23, 45), loaded.ldt);
-        assertNotNull("Gson fail", loaded.fooJsonBean);
-        assertEquals("Gson int field fail", 42, loaded.fooJsonBean.foo);
-        assertEquals("Gson string field fail", "aaa", loaded.fooJsonBean.bar);
-        jt.update("drop table foo");
+    }
+
+    private void checkFilters(TableBean tableBean) {
+        assertNotNull("Load fail", tableBean);
+        assertEquals("Simple map fail", 1L, tableBean.id);
+        assertEquals("LDT filter fail", new LocalDateTime(2012, 1, 1, 1, 23, 45), tableBean.ldt);
+        assertNotNull("Gson fail", tableBean.fooJsonBean);
+        assertEquals("Gson int field fail", 42, tableBean.fooJsonBean.foo);
+        assertEquals("Gson string field fail", "aaa", tableBean.fooJsonBean.bar);
     }
 
     @Test
-    // todo test subclasses filters
-    public void testSubclasses() {
-        jt.update("create table bar(id bigint, disc varchar(255), first_child_field varchar(255), second_child_field varchar(255))");
-        jt.update("insert into bar(id, disc, first_child_field, second_child_field) values(1, 'first', 'foo', null)");
-        jt.update("insert into bar(id, disc, first_child_field, second_child_field) values(2, 'second', null, 'bar')");
-        RowMapper<Parent> mapper = EntityMapper.builder(new ChildChooser()).build();
-        Parent firstLoaded = jt.queryForObject("select * from bar where id = 1", mapper);
+    public void testFiltersMap() {
+        Date date = new LocalDateTime(2012, 1, 1, 1, 23, 45).toDate();
+        Map<String,?> tableBeanMap = ImmutableMap.of("id", 1L, "val", "{\"foo\": 42, \"bar\": \"aaa\"}", "da", date);
+        TableBean tableBean = filtersMapper().map(tableBeanMap);
+        checkFilters(tableBean);
+    }
+
+    @Test
+    public void testFiltersRs() {
+        jt.update("create table foo(id bigint, val varchar(255), da timestamp)");
+        jt.update("insert into foo(id, val, da) values(1, '{\"foo\": 42, \"bar\": \"aaa\"}', '2012-01-01 01:23:45')");
+        TableBean tableBean = jt.queryForObject("select * from foo where id = 1", filtersMapper());
+        checkFilters(tableBean);
+        jt.update("drop table foo");
+    }
+
+    private EntityMapper<Parent> subclassesMapper() {
+        return EntityMapper.builder(new ChildChooser()).build();
+    }
+
+    private void checkSubclasses(Parent firstLoaded, Parent secondLoaded) {
         assertNotNull("Load fail", firstLoaded);
         assertEquals("Inheritance fail", FirstChild.class, firstLoaded.getClass());
         FirstChild first = (FirstChild) firstLoaded;
         assertEquals("Parent field fail", 1L, first.id);
         assertEquals("Child field fail", "foo", first.firstChildField);
-        Parent secondLoaded = jt.queryForObject("select * from bar where id = 2", mapper);
         assertNotNull("Load fail", secondLoaded);
         assertEquals("Inheritance fail", SecondChild.class, secondLoaded.getClass());
         SecondChild second = (SecondChild) secondLoaded;
         assertEquals("Parent field fail", 2L, second.id);
         assertEquals("Child field fail", "bar", second.secondChildField);
+    }
+
+    @Test
+    // todo test subclasses filters
+    public void testSubclassesMap() {
+        Map<String,?> firstLoadedMap = ImmutableMap.of("id", 1L, "disc", "first", "first_child_field", "foo");
+        Map<String,?> secondLoadedMap = ImmutableMap.of("id", 2L, "disc", "second", "second_child_field", "bar");
+        Parent firstLoaded = subclassesMapper().map(firstLoadedMap);
+        Parent secondLoaded = subclassesMapper().map(secondLoadedMap);
+        checkSubclasses(firstLoaded, secondLoaded);
+    }
+
+    @Test
+    // todo test subclasses filters
+    public void testSubclassesRs() {
+        jt.update("create table bar(id bigint, disc varchar(255), first_child_field varchar(255), second_child_field varchar(255))");
+        jt.update("insert into bar(id, disc, first_child_field, second_child_field) values(1, 'first', 'foo', null)");
+        jt.update("insert into bar(id, disc, first_child_field, second_child_field) values(2, 'second', null, 'bar')");
+        Parent firstLoaded = jt.queryForObject("select * from bar where id = 1", subclassesMapper());
+        Parent secondLoaded = jt.queryForObject("select * from bar where id = 2", subclassesMapper());
+        checkSubclasses(firstLoaded, secondLoaded);
         jt.update("drop table bar");
     }
 
