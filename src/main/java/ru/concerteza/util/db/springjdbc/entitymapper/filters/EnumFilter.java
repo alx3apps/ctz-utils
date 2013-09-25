@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import java.util.Collection;
 
 /**
@@ -11,7 +12,9 @@ import java.util.Collection;
  * @since  2.5.1
  * @see ColumnListFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#toEnum} instead.
  */
+@Deprecated
 public class EnumFilter<E extends Enum<E>> extends ColumnListFilter<E> {
 
     private Class<E> en;

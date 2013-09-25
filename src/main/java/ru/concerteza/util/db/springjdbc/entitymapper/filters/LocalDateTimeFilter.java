@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import org.joda.time.LocalDateTime;
 import ru.concerteza.util.date.CtzDateUtils;
 
@@ -14,7 +15,9 @@ import java.util.Date;
  * @see ColumnListFilter                         CtzSpri
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
  * @see ru.concerteza.util.date.CtzDateUtils#toLocalDateTime(java.util.Date)
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#toLocalDateTime} instead.
  */
+@Deprecated
 public class LocalDateTimeFilter extends ColumnListFilter<LocalDateTime> {
     /**
      * @param columns columns to apply this filter to

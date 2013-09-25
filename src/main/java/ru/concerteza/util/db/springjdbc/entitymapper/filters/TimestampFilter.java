@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -13,7 +14,9 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @since  2.3
  * @see ColumnListFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#toTimestamp} instead.
  */
+@Deprecated
 public class TimestampFilter extends ColumnListFilter<Timestamp> {
 
     /**

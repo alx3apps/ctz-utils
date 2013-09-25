@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import java.util.Collection;
 import ru.concerteza.util.except.IllegalArgumentTypeException;
 import ru.concerteza.util.number.CtzNumberUtils;
@@ -17,7 +18,9 @@ import ru.concerteza.util.number.CtzNumberUtils;
  * @see ColumnListFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
  * @see ru.concerteza.util.db.ResultSetOverCSV
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#toInteger} instead.
  */
+@Deprecated
 public class IntegerFilter extends ColumnListFilter<Integer> {
 
     /**

@@ -8,9 +8,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters;
 import ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper;
-import ru.concerteza.util.db.springjdbc.entitymapper.filters.ColumnListFilter;
-import ru.concerteza.util.db.springjdbc.entitymapper.filters.ColumnsToLowerFilter;
 import ru.concerteza.util.tasks.impl.Stage;
 import ru.concerteza.util.tasks.impl.Status;
 import ru.concerteza.util.tasks.impl.TaskImpl;
@@ -32,8 +31,8 @@ import static com.google.common.base.Preconditions.checkState;
 @Service
 public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
     private RowMapper<TaskImpl> mapper = EntityMapper.forClass(TaskImpl.class,
-            new ColumnsToLowerFilter(),
-            new EnumsFilter());
+            EntityFilters.columnsToLower(),
+            EntityFilters.toEnum("stage", Stage.class, "status", Status.class));
     @Inject
     private DataSource ds;
     private NamedParameterJdbcTemplate jt;
@@ -126,18 +125,5 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
     @Override
     public void resume(long taskId) {
         throw new NotImplementedException();
-    }
-
-    private class EnumsFilter extends ColumnListFilter<Enum> {
-        private EnumsFilter() {
-            super("stage", "status");
-        }
-
-        @Override
-        protected Enum filterColumn(String colname, Object value) {
-            if("stage".equals(colname)) return Stage.valueOf((String) value);
-            if("status".equals(colname)) return Status.valueOf((String) value);
-            throw new IllegalStateException("Unexpected column: " + colname);
-        }
     }
 }
