@@ -2,7 +2,6 @@ package ru.concerteza.util.poi;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang.UnhandledException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -10,15 +9,10 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import ru.concerteza.util.collection.SingleUseIterable;
-import ru.concerteza.util.io.RuntimeIOException;
 
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
@@ -32,7 +26,6 @@ import static org.apache.poi.ss.usermodel.Cell.*;
 import static ru.concerteza.util.reflect.CtzReflectionUtils.findGetter;
 import static ru.concerteza.util.reflect.CtzReflectionUtils.invokeMethod;
 import static ru.concerteza.util.reflect.CtzReflectionUtils.isAssignableBoxed;
-import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
  * Wrapper over Apache POI SXSSF library for streaming generation of simple (and large) XLSX files.
