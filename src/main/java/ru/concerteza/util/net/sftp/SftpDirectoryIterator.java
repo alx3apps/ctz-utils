@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.HostKeyRepository;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -33,7 +34,7 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
 
     private final String host;
     private final int port;
-    private final String fingerprint;
+    private final HostKeyRepository hostKeys;
     private final String user;
     private final String readDir;
     private final String successDir;
@@ -46,16 +47,40 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
     private boolean closed = false;
     private int index = 0;
 
-    public SftpDirectoryIterator(String host, int port, String fingerprint, String user, String password,
+    /**
+     * Constructor with lenient host checking
+     *
+     * @param host host name
+     * @param port port
+     * @param user username
+     * @param password password
+     * @param readDir read directory
+     * @param successDir success directory
+     * @param errorDir error directory
+     */
+    public SftpDirectoryIterator(String host, int port, String user, String password,
                                  String readDir, String successDir, String errorDir) {
-        this(host, port, fingerprint, user, password, readDir, successDir, errorDir, Predicates.<String>alwaysTrue());
+        this(host, port, new SftpLenientKnownHosts(), user, password, readDir, successDir, errorDir, Predicates.<String>alwaysTrue());
     }
 
-    public SftpDirectoryIterator(String host, int port, String fingerprint, String user, String password,
+    /**
+     * Constructor
+     *
+     * @param host host name
+     * @param port port
+     * @param hostKeys host checker
+     * @param user username
+     * @param password password
+     * @param readDir read directory
+     * @param successDir success directory
+     * @param errorDir error directory
+     * @param fileFiler filter for remote files
+     */
+    public SftpDirectoryIterator(String host, int port, HostKeyRepository hostKeys, String user, String password,
                                  String readDir, String successDir, String errorDir, Predicate<String> fileFiler) {
         checkArgument(isNotBlank(host), "Provided host is blank");
         checkArgument(port > 0, "Provided port is invalid: [%s]", port);
-        checkArgument(isNotBlank(fingerprint), "Provided fingerprint is blank");
+        checkArgument(null != hostKeys, "Provided hostKeys is mill");
         checkArgument(isNotBlank(user), "Provided user is blank");
         checkArgument(isNotBlank(password), "Provided password is blank");
         checkArgument(isNotBlank(readDir), "Provided readDir is blank");
@@ -63,7 +88,7 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
         checkArgument(isNotBlank(errorDir), "Provided errorDir is blank");
         this.host = host;
         this.port = port;
-        this.fingerprint = fingerprint;
+        this.hostKeys = hostKeys;
         this.user = user;
         this.readDir = readDir;
         this.successDir = successDir;
@@ -72,8 +97,7 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
         try {
             logger.debug("Accessing SFTP, host: [{}], readDir: [{}]", host, readDir);
             JSch jsch = new JSch();
-            SftpKnownHosts hosts = new SftpKnownHosts(fingerprint);
-            jsch.setHostKeyRepository(hosts);
+            jsch.setHostKeyRepository(hostKeys);
             session = jsch.getSession(user, host, port);
             session.setPassword(password.getBytes(UTF8_CHARSET));
             session.connect();
@@ -91,23 +115,35 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasNext() {
         if (closed) return false;
         return index < fileNames.size();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SftpFile next() {
         String filename = fileNames.get(index++);
         return new SftpFile(sftp, filename, readDir, successDir, errorDir);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void remove() {
         throw new UnsupportedOperationException("remove");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         if (closed) return;
@@ -129,6 +165,11 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
         this.closed = true;
     }
 
+    /**
+     * Return list of remote file names
+     *
+     * @return list of remote file names
+     */
     public ImmutableList<String> getFileNames() {
         return null != fileNames ? fileNames : ImmutableList.<String>of();
     }
@@ -149,6 +190,9 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this).
@@ -158,7 +202,7 @@ public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
                 append("sftp", sftp).
                 append("host", host).
                 append("port", port).
-                append("fingerprint", fingerprint).
+                append("hostKeys", hostKeys).
                 append("user", user).
                 append("readDir", readDir).
                 toString();
