@@ -11,7 +11,9 @@ import java.util.Map;
  * @author  alexey
  * Date: 6/22/12
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#identity()} instead.
  */
+@Deprecated
 public class IdentityFilter implements EntityFilter {
     public static final IdentityFilter INSTANCE = new IdentityFilter();
 

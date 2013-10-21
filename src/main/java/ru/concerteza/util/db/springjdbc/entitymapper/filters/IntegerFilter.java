@@ -1,7 +1,9 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import java.util.Collection;
-import static ru.concerteza.util.string.CtzFormatUtils.format;
+import ru.concerteza.util.except.IllegalArgumentTypeException;
+import ru.concerteza.util.number.CtzNumberUtils;
 
 /**
  * {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter} implementation to convert integer columns that may be
@@ -16,7 +18,9 @@ import static ru.concerteza.util.string.CtzFormatUtils.format;
  * @see ColumnListFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
  * @see ru.concerteza.util.db.ResultSetOverCSV
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#toInteger} instead.
  */
+@Deprecated
 public class IntegerFilter extends ColumnListFilter<Integer> {
 
     /**
@@ -42,8 +46,12 @@ public class IntegerFilter extends ColumnListFilter<Integer> {
      */
     @Override
     protected Integer filterColumn(String colname, Object value) {
-        if (value instanceof Integer) return (Integer)value;
-        if (value instanceof String) return Integer.parseInt((String)value);
-        throw new IllegalArgumentException(format("Illegal argument, column: '{}', class: '{}'", colname, value.getClass().getSimpleName()));
+        if (value instanceof Number) {
+            return CtzNumberUtils.intValueOf((Number)value);
+        } else if (value instanceof String) {
+            return Integer.parseInt((String)value);
+        } else {
+            throw new IllegalArgumentTypeException(value.getClass());
+        }
     }
 }

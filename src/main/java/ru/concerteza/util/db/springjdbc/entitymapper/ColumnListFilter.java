@@ -1,10 +1,8 @@
-package ru.concerteza.util.db.springjdbc.entitymapper.filters;
+package ru.concerteza.util.db.springjdbc.entitymapper;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.UnhandledException;
-import ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,9 +18,7 @@ import static java.util.Arrays.asList;
  * Date: 5/15/12
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
- * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter} instead.
  */
-@Deprecated
 public abstract class ColumnListFilter<T> implements EntityFilter {
     private final List<String> columns;
 

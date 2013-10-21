@@ -8,9 +8,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ru.concerteza.util.db.springjdbc.entitymapper.filters.ColumnsToLowerFilter;
-import ru.concerteza.util.db.springjdbc.entitymapper.filters.JsonFilter;
-import ru.concerteza.util.db.springjdbc.entitymapper.filters.LocalDateTimeFilter;
 
 import javax.persistence.*;
 import java.util.*;
@@ -61,9 +58,9 @@ public class EntityMapperTest {
 
     private EntityMapper<TableBean> filtersMapper() {
         return EntityMapper.forClass(TableBean.class,
-                new ColumnsToLowerFilter(),
-                new LocalDateTimeFilter("da"),
-                new JsonFilter(new Gson(), "val", FooJsonBean.class));
+                EntityFilters.columnsToLower(),
+                EntityFilters.toLocalDateTime("da"),
+                EntityFilters.fromJson(new Gson(), "val", FooJsonBean.class));
     }
 
     private void checkFilters(TableBean tableBean) {
