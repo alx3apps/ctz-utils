@@ -1,5 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 
@@ -14,7 +15,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Date: 5/15/12
  * @see ColumnListFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#fromJson} instead.
  */
+@Deprecated
 public class JsonFilter extends ColumnListFilter<Object> {
     private final Gson gson;
     private final Map<String, Class<?>> columnMap;

@@ -14,7 +14,9 @@ import java.util.Map;
  * Date: 5/16/12
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter
  * @see ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#columnsToLower()} instead.
  */
+@Deprecated
 public class ColumnsToLowerFilter implements EntityFilter {
 
     /**

@@ -2,14 +2,18 @@ package ru.concerteza.util.db.csv;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.joda.time.LocalDateTime;
 import ru.concerteza.util.db.jdbcstub.AbstractResultSet;
 import ru.concerteza.util.db.jdbcstub.AbstractResultSetMetadata;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.*;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.commons.lang.StringUtils;
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
 
@@ -162,6 +166,20 @@ class MapIteratorResultSet extends AbstractResultSet {
      * {@inheritDoc}
      */
     @Override
+    public byte[] getBytes(String columnLabel) throws SQLException {
+        try {
+            String s = getString(columnLabel);
+            s = StringUtils.deleteWhitespace(s);
+            return Hex.decodeHex(s.toCharArray());
+        } catch (DecoderException ex) {
+            throw new SQLException("Unable to decode hex string in column " + columnLabel, ex);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
         return new BigDecimal(getString(columnLabel));
     }
@@ -187,7 +205,8 @@ class MapIteratorResultSet extends AbstractResultSet {
      */
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        return Timestamp.valueOf(getString(columnLabel));
+        String str = getString(columnLabel);
+        return StringUtils.isBlank(str) ? null : Timestamp.valueOf(str);
     }
 
     /**
@@ -300,6 +319,38 @@ class MapIteratorResultSet extends AbstractResultSet {
     @Override
     public Object getObject(int columnIndex) throws SQLException {
         return getObject(columnNames.get(columnIndex));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
+        return getTimestamp(columnNames.get(columnIndex), cal);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
+
+        Timestamp ts = getTimestamp(columnLabel);
+        if (null == ts) return null;
+
+        LocalDateTime ldt = new LocalDateTime(ts.getTime());
+        cal = (cal == null) ? new GregorianCalendar() : (Calendar)cal.clone();
+        cal.set(Calendar.YEAR, ldt.getYear());
+        cal.set(Calendar.MONTH, ldt.getMonthOfYear() - 1);
+        cal.set(Calendar.DAY_OF_MONTH, ldt.getDayOfMonth());
+        cal.set(Calendar.HOUR_OF_DAY, ldt.getHourOfDay());
+        cal.set(Calendar.MINUTE, ldt.getMinuteOfHour());
+        cal.set(Calendar.SECOND, ldt.getSecondOfMinute());
+        cal.set(Calendar.MILLISECOND, 0);
+
+        Timestamp result = new Timestamp(cal.getTime().getTime());
+        result.setNanos(ts.getNanos());
+        return result;
     }
 
     private class Metadata extends AbstractResultSetMetadata {

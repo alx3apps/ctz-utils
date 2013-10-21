@@ -1,10 +1,15 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
+import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 import java.util.Collection;
 
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 // todo: document me
+/**
+ * @deprecated Use {@link ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters#toDouble} instead.
+ */
+@Deprecated
 public class DoubleFilter extends ColumnListFilter<Double> {
 
     /**
