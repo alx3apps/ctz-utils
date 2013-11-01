@@ -13,6 +13,7 @@ import ru.concerteza.util.io.RuntimeIOException;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import static freemarker.ext.beans.BeansWrapper.EXPOSE_PROPERTIES_ONLY;
@@ -63,9 +64,9 @@ public class FreemarkerEngine extends Configuration {
      * @param path spring's <a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/resources.html">resource</a> path
      * @param params template's model root object
      * @return rendered template
-     * @throws RuntimeIOException on IO error
+     * @throws FreemarkerException on IO error
      */
-    public String process(String path, Object params) throws RuntimeIOException {
+    public String process(String path, Object params) {
         StringWriter writer = new StringWriter();
         process(path, params, writer);
         return writer.toString();
@@ -77,14 +78,14 @@ public class FreemarkerEngine extends Configuration {
      * @param params template's model root object
      * @param output {@link OutputStream} to render template into
      * @param outputEncoding rendering results encoding
-     * @throws RuntimeIOException on IO error
+     * @throws FreemarkerException on IO error
      */
-    public void process(String path, Object params, OutputStream output, String outputEncoding) throws RuntimeIOException {
+    public void process(String path, Object params, OutputStream output, String outputEncoding) {
         try {
             Writer writer = new OutputStreamWriter(output, outputEncoding);
             process(path, params, writer);
         } catch(UnsupportedEncodingException e) {
-            throw new UnhandledException(e);
+            throw new FreemarkerException(e);
         }
     }
 
@@ -93,9 +94,9 @@ public class FreemarkerEngine extends Configuration {
      * @param path spring's <a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/resources.html">resource</a> path
      * @param params template's model root object
      * @param writer {@link Writer} to render template into
-     * @throws RuntimeIOException on IO error
+     * @throws FreemarkerException on IO error
      */
-    public void process(String path, Object params, Writer writer) throws RuntimeIOException {
+    public void process(String path, Object params, Writer writer) {
         Resource resource = resourceLoader.getResource(path);
         process(resource, params, writer);
     }
@@ -105,16 +106,16 @@ public class FreemarkerEngine extends Configuration {
      * @param resource spring's <a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/resources.html">resource</a>
      * @param params template's model root object
      * @param writer {@link Writer} to render template into
-     * @throws RuntimeIOException on IO error
+     * @throws FreemarkerException on IO error
      */
-    public void process(Resource resource, Object params, Writer writer) throws RuntimeIOException {
+    public void process(Resource resource, Object params, Writer writer) {
         try {
             Template ftl = findTemplate(resource);
             ftl.process(params, writer);
         } catch (TemplateException e) {
-            throw new UnhandledException(e);
+            throw new FreemarkerException(e);
         } catch (IOException e) {
-            throw new RuntimeIOException(e);
+            throw new FreemarkerException(e);
         }
     }
 
@@ -123,9 +124,9 @@ public class FreemarkerEngine extends Configuration {
      * @param input template's body {@link InputStream}
      * @param params templates model root object
      * @param output {@link OutputStream} to render template into
-     * @throws RuntimeIOException on IO error
+     * @throws FreemarkerException on IO error
      */
-    public void process(InputStream input, Object params, OutputStream output) throws RuntimeIOException {
+    public void process(InputStream input, Object params, OutputStream output) {
         process(input, params, output, UTF8);
     }
 
@@ -135,15 +136,15 @@ public class FreemarkerEngine extends Configuration {
      * @param params template's model root object
      * @param output {@link OutputStream} to render template into
      * @param outputEncoding rendering results encoding
-     * @throws RuntimeIOException on IO error
+     * @throws FreemarkerException on IO error
      */
-    public void process(InputStream input, Object params, OutputStream output, String outputEncoding) throws RuntimeIOException {
+    public void process(InputStream input, Object params, OutputStream output, String outputEncoding) {
         try {
             Reader reader = new InputStreamReader(input, templateEncoding);
             Writer writer = new OutputStreamWriter(output, outputEncoding);
             process(reader, params, writer);
         } catch (UnsupportedEncodingException e) {
-            throw new UnhandledException(e);
+            throw new FreemarkerException(e);
         }
     }
 
@@ -152,17 +153,32 @@ public class FreemarkerEngine extends Configuration {
      * @param reader template's body {@link Reader}
      * @param params template's model root object
      * @param writer {@link Writer} to render template into
-     * @throws RuntimeIOException on IO error
      */
-    public void process(Reader reader, Object params, Writer writer) throws RuntimeIOException {
+    public void process(Reader reader, Object params, Writer writer) {
         try{
             Template ftl = new Template("reader_provided_template", reader, this, templateEncoding);
             ftl.process(params, writer);
         } catch (TemplateException e) {
-            throw new UnhandledException(e);
+            throw new FreemarkerException(e);
         } catch (IOException e) {
-            throw new RuntimeIOException(e);
+            throw new FreemarkerException(e);
         }
+    }
+
+    /**
+     * Overriding parent method to support templates inclusion
+     *
+     * @param name template path
+     * @param locale not supported
+     * @param encoding not supported
+     * @param parse not supported
+     * @return template instance
+     * @throws IOException
+     */
+    @Override
+    public Template getTemplate(String name, Locale locale, String encoding, boolean parse) throws IOException {
+        Resource resource = resourceLoader.getResource(name);
+        return findTemplate(resource);
     }
 
     private Template findTemplate(Resource resource) throws IOException {
