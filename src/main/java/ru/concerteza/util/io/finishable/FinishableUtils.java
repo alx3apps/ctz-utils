@@ -28,4 +28,32 @@ public class FinishableUtils {
             logger.warn("Finish error: [" + finishable + "]", e);
         }
     }
+
+    /**
+     * Finishes list with the same result
+     *
+     * @param result result function
+     * @param finishables list
+     * @param <F> generic param
+     * @param <T> generic param
+     */
+    public static <F, T> void finish(Function<F, T> result, Finishable<F, T>... finishables) {
+        for(Finishable<F, T> fi : finishables) {
+            fi.finish(result);
+        }
+    }
+
+    /**
+     * Finishes quietly list with the same result
+     *
+     * @param result result function
+     * @param finishables list
+     * @param <F> generic param
+     * @param <T> generic param
+     */
+    public static <F, T> void finishQuietly(Function<F, T> result, Finishable<F, T>... finishables) {
+        for(Finishable<F, T> fi : finishables) {
+            finishQuietly(fi, result);
+        }
+    }
 }

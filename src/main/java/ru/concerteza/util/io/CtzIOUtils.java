@@ -74,6 +74,12 @@ public class CtzIOUtils {
         return stmt;
     }
 
+    public static void closeAllQuietly(Closeable... closables) {
+        for(Closeable cl : closables) {
+            IOUtils.closeQuietly(cl);
+        }
+    }
+
     public static File codeSourceDir(Class<?> clazz) {
         try {
             URI uri = clazz.getProtectionDomain().getCodeSource().getLocation().toURI();

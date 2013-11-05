@@ -72,6 +72,15 @@ public class SftpFileWriter implements Finishable<Void, Boolean> {
     }
 
     /**
+     * Unbuffered output stream accessor
+     *
+     * @return Unbuffered output stream
+     */
+    public OutputStream outputStream() {
+        return out;
+    }
+
+    /**
      * Moves file to 'written' dir on success, deletes file on error.
      *
      * @param fun returns success flag
