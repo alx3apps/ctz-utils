@@ -1,15 +1,9 @@
 package ru.concerteza.util.jni;
 
-import org.apache.commons.lang.UnhandledException;
-import ru.concerteza.util.io.RuntimeIOException;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Locale;
 
 import static java.lang.System.getProperty;
-import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.io.CtzIOUtils.codeSourceDir;
 
 /**
@@ -19,7 +13,7 @@ import static ru.concerteza.util.io.CtzIOUtils.codeSourceDir;
  * Date: 5/17/11
  */
 public class CtzJniUtils {
-    private static final Platform CURRENT_PLATFORM;
+    public static final Platform CURRENT_PLATFORM;
 
     // todo: use GNU triplets
     private enum Platform {
@@ -81,25 +75,25 @@ public class CtzJniUtils {
      *
      * @param name library name
      * @param dirPath directory to load library from
-     * @throws ru.concerteza.util.io.RuntimeIOException
+     * @throws CtzJniException
      */
     public static void loadJniLib(String name, File dirPath) {
         final String filename;
         switch (CURRENT_PLATFORM) {
             case UNKNOWN:
-                throw new RuntimeIOException(format(
-                        "Cannot determine platform, os.name: {}, os.arch: {}", getProperty("os.name"), getProperty("os.arch")));
+                throw new CtzJniException("Cannot determine platform, os.name: [" + getProperty("os.name") + "]," +
+                                " os.arch: [" + getProperty("os.arch") + "]");
             default:
-                filename = format("{}-{}.{}", name, CURRENT_PLATFORM.getClassifier(), CURRENT_PLATFORM.getType());
+                filename = name + "-" + CURRENT_PLATFORM.getClassifier() + "." + CURRENT_PLATFORM.getType();
         }
         File target = new File(dirPath, filename);
-        if (!(target.exists() && target.isFile())) throw new RuntimeIOException(format("File not found: '{}'", target.getPath()));
+        if (!(target.exists() && target.isFile())) throw new CtzJniException("File not found: [" + target.getPath() + "]");
         try {
             System.load(target.getPath());
         } catch (Exception e) {
-            throw new RuntimeIOException(e);
+            throw new CtzJniException(e);
         } catch (Error e) {
-            throw new RuntimeIOException(new UnhandledException(e));
+            throw new CtzJniException(e);
         }
     }
 
