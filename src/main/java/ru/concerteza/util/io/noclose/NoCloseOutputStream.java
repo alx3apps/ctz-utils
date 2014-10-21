@@ -20,7 +20,7 @@ public class NoCloseOutputStream extends OutputStream {
     /**
      * @param target target stream
      */
-    private NoCloseOutputStream(OutputStream target) {
+    public NoCloseOutputStream(OutputStream target) {
         checkNotNull(target, "Provided output stream is null");
         this.target = target;
     }
