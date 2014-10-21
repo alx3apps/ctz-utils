@@ -7,20 +7,19 @@ import java.io.OutputStream;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Output stream transparent wrapper, {@link java.io.OutputStream#close()}
- * and {@link java.io.OutputStream#flush()} overriden as NOOP.
- * May be used to prevent rough libs from closing or flushing your streams
+ * Output stream transparent wrapper, with {@link java.io.OutputStream#flush()} overriden as NOOP.
+ * May be used to prevent rough libs from flushing your streams
  *
  * @author alexey
  * Date: 11/19/11
  */
-public class NoCloseOutputStream extends OutputStream {
-    protected final OutputStream target;
+public class NoFlushOutputStream extends OutputStream {
+    private final OutputStream target;
 
     /**
      * @param target target stream
      */
-    public NoCloseOutputStream(OutputStream target) {
+    public NoFlushOutputStream(OutputStream target) {
         checkNotNull(target, "Provided output stream is null");
         this.target = target;
     }
@@ -31,8 +30,8 @@ public class NoCloseOutputStream extends OutputStream {
      * @param target target stream
      * @return NoCloseOutputStream instance
      */
-    public static NoCloseOutputStream of(OutputStream target) {
-        return new NoCloseOutputStream(target);
+    public static NoFlushOutputStream of(OutputStream target) {
+        return new NoFlushOutputStream(target);
     }
 
     /**
@@ -64,6 +63,6 @@ public class NoCloseOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
-        // this line is intentionally left blank
+        target.close();
     }
 }
