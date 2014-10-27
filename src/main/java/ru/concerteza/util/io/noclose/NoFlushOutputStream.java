@@ -4,8 +4,6 @@ package ru.concerteza.util.io.noclose;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Output stream transparent wrapper, with {@link java.io.OutputStream#flush()} overriden as NOOP.
  * May be used to prevent rough libs from flushing your streams
@@ -20,7 +18,7 @@ public class NoFlushOutputStream extends OutputStream {
      * @param target target stream
      */
     public NoFlushOutputStream(OutputStream target) {
-        checkNotNull(target, "Provided output stream is null");
+        if(null == target) throw new IllegalArgumentException("Provided output stream is null");
         this.target = target;
     }
 
