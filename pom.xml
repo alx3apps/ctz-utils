@@ -259,6 +259,13 @@
             <version>6.8.7</version>
             <scope>provided</scope>
         </dependency>
+        <!-- named-regex -->
+        <dependency>
+            <groupId>com.github.tony19</groupId>
+            <artifactId>named-regexp</artifactId>
+            <version>0.1.9</version>
+            <scope>provided</scope>
+        </dependency>
         <!--test-->
         <dependency>
             <groupId>junit</groupId>
