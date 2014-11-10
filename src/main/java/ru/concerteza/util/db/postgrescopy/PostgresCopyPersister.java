@@ -26,9 +26,9 @@ import static ru.concerteza.util.io.CtzIOUtils.closeQuietly;
 public class PostgresCopyPersister {
     private static final Logger logger = LoggerFactory.getLogger(PostgresCopyPersister.class);
 
-    private static final byte[] HEADER_BYTES = new byte[]{0x50, 0x47, 0x43, 0x4f, 0x50, 0x59, 0x0a, (byte)0xff, 0x0d, 0x0a,
+    static final byte[] HEADER_BYTES = new byte[]{0x50, 0x47, 0x43, 0x4f, 0x50, 0x59, 0x0a, (byte)0xff, 0x0d, 0x0a,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    private static final byte[] EOF_BYTES = new byte[] {(byte) 0xff, (byte) 0xff};
+    static final byte[] EOF_BYTES = new byte[] {(byte) 0xff, (byte) 0xff};
 
     private final DataSource ds;
     private final PostgresCopyProvider provider;
@@ -52,7 +52,6 @@ public class PostgresCopyPersister {
      * Calls postgres binary copy API in separate transaction
      *
      * @param sql copy sql statement
-     * @param stream postgres copy stream
      */
     public void persist(String sql) {
         checkArgument(isNotBlank(sql), "Provided sql is blank");

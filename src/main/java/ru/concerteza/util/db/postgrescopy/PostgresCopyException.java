@@ -9,6 +9,10 @@ package ru.concerteza.util.db.postgrescopy;
 public class PostgresCopyException extends RuntimeException {
     private static final long serialVersionUID = 4930089087427080205L;
 
+    public PostgresCopyException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     /**
      * Constructor
      *

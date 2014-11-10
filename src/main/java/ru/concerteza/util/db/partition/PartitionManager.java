@@ -151,7 +151,7 @@ public class PartitionManager {
         private final PartitionProvider provider;
         private String fromFormat = "yyyyMMddHH";
         private String toFormat = "yyyyMMddHH";
-        private String splitPattern = "^(?<name>.+)_(?<from>\\d+)_(?<to>\\d+)_(?<uid>\\d+)$";
+        private String splitPattern = "^(?<name>.+)_(?<from>\\d+)_(?<to>\\d+)_(?<uid>.+)$";
         private ImmutableMap.Builder<String, Integer> mapBuilder = ImmutableMap.builder();
 
         public Builder(PartitionProvider provider) {
