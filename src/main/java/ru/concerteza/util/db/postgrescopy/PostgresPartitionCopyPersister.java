@@ -45,7 +45,7 @@ public class PostgresPartitionCopyPersister {
         this.pm = pm;
     }
 
-    long persist(PostgresPartitionCopyProvider provider, String sqlTemplate, String table, String uid, Iterator<byte[]> data) {
+    public long persist(PostgresPartitionCopyProvider provider, String sqlTemplate, String table, String uid, Iterator<byte[]> data) {
         checkArgument(isNotBlank(sqlTemplate), "Provided sqlTemplate is blank");
         checkNotNull(data, "Provided data iter is null");
         checkNotNull(provider, "Provided copy provider is null");
