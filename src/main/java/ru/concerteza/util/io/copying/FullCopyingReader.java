@@ -16,6 +16,9 @@ import java.io.Writer;
  * @see FullCopyingReaderTest
  */
 public class FullCopyingReader extends CopyingReader {
+    
+    private boolean closed = false;
+    
     public FullCopyingReader(Reader target, Writer copy) {
         super(target, copy);
     }
@@ -25,6 +28,8 @@ public class FullCopyingReader extends CopyingReader {
      */
     @Override
     public void close() throws IOException {
+        if (closed) return;
+        closed = true;
         IOUtils.copyLarge(source, copy);
         super.close();
     }
