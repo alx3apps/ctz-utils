@@ -26,6 +26,7 @@ import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
  * @author alexkasko
  * Date: 4/19/13
  */
+@Deprecated // use SftpDirIterator
 public class SftpFile implements Finishable<Void, Boolean> {
     private static final Logger logger = LoggerFactory.getLogger(SftpFile.class);
 

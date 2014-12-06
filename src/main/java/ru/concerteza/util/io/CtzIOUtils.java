@@ -184,21 +184,26 @@ public class CtzIOUtils {
             super.add(new DeleteDirCallable(file));
             return this;
         }
+    }
 
-        private class DeleteDirCallable implements Callable<File> {
-            private final File dir;
+    private static class DeleteDirCallable implements Callable<File> {
+        private final File dir;
 
-            private DeleteDirCallable(File dir) {
-                this.dir = dir;
-            }
+        private DeleteDirCallable(File dir) {
+            this.dir = dir;
+        }
 
-            @Override
-            public File call() throws Exception {
+        @Override
+        public File call() throws Exception {
+            try {
                 FileUtils.deleteDirectory(dir);
-                return dir;
+            } catch (Exception e){
+                // ignore
             }
+            return dir;
         }
     }
+
 
     private static class FilesIterable implements Iterable<File> {
         private final File dir;

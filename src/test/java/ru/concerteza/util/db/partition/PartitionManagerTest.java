@@ -9,8 +9,11 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import static com.alexkasko.springjdbc.typedqueries.common.TypedQueriesUtils.STRING_ROW_MAPPER;
+import static java.util.Locale.ENGLISH;
 import static junit.framework.Assert.assertEquals;
 
 /**
@@ -39,6 +42,11 @@ public class PartitionManagerTest {
         assertEquals(2, li3.size());
         ImmutableList<Partition> li4 = pm.finder("test_table").withFromDate(new LocalDateTime(2012, 1, 1, 17, 0)).find();
         assertEquals(1, li4.size());
+        List<String> parts = ImmutableList.copyOf(pp.loadPartitions("test_table"));
+        assertEquals(3, parts.size());
+        assertEquals(parts.get(0), "test_table_2012010112_2012010113_bar");
+        assertEquals(parts.get(1), "test_table_2012010112_2012010113_foo");
+        assertEquals(parts.get(2), "test_table_2012010116_2012010117_foo");
     }
 
     private static class H2PartitionProvider implements PartitionProvider {
@@ -51,9 +59,10 @@ public class PartitionManagerTest {
 
         @Override
         public Collection<String> loadPartitions(String prefix) {
-            String sql = "select table_name from information_schema.tables\n" +
-                    "    where table_name like :table";
-            return jt.query(sql, ImmutableMap.of("table", prefix + "%"), STRING_ROW_MAPPER);
+            String sql = "select lower(table_name) from information_schema.tables" +
+                    " where table_name like :table" +
+                    " order by table_name";
+            return jt.query(sql, ImmutableMap.of("table", prefix.toUpperCase(ENGLISH) + "%"), STRING_ROW_MAPPER);
         }
 
         @Override

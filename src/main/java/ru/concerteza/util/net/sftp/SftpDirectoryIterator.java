@@ -29,6 +29,7 @@ import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
  * @author alexkasko
  * Date: 4/19/13
  */
+@Deprecated // use SftpDirIterator
 public class SftpDirectoryIterator implements Iterator<SftpFile>, Closeable {
     private static final Logger logger = LoggerFactory.getLogger(SftpDirectoryIterator.class);
 
