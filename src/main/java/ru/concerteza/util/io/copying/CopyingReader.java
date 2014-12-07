@@ -1,5 +1,7 @@
 package ru.concerteza.util.io.copying;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 
 /**
@@ -38,6 +40,6 @@ public class CopyingReader extends Reader {
      */
     @Override
     public void close() throws IOException {
-        source.close();
+        IOUtils.closeQuietly(source);
     }
 }

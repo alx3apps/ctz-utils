@@ -31,7 +31,7 @@ public class DirIteratorTest {
 
     }
 
-    @Test
+//    @Test
     public void testSftp() throws IOException {
         DirIterator it = null;
         InputStream is = null;
@@ -53,7 +53,7 @@ public class DirIteratorTest {
         }
     }
 
-    @Test
+//    @Test
     public void testFtp() throws IOException {
         DirIterator it = null;
         InputStream is = null;

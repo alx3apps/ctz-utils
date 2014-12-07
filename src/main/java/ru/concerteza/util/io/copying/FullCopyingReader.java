@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * {@link CopyingReader} implementation, copies unread source chars until EOF on
@@ -16,6 +17,9 @@ import java.io.Writer;
  * @see FullCopyingReaderTest
  */
 public class FullCopyingReader extends CopyingReader {
+
+    private final AtomicBoolean closed = new AtomicBoolean(false);
+
     public FullCopyingReader(Reader target, Writer copy) {
         super(target, copy);
     }
@@ -25,7 +29,12 @@ public class FullCopyingReader extends CopyingReader {
      */
     @Override
     public void close() throws IOException {
-        IOUtils.copyLarge(source, copy);
-        super.close();
+        if (closed.get()) return;
+        try {
+            IOUtils.copyLarge(source, copy);
+        } finally {
+            IOUtils.closeQuietly(source);
+            closed.set(true);
+        }
     }
 }

@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * {@link CopyingInputStream} implementation, copies unread source bytes until EOF on
@@ -16,6 +17,8 @@ import java.io.OutputStream;
  * @see FullCopyingInputStreamTest
  */
 public class FullCopyingInputStream extends CopyingInputStream {
+
+    private final AtomicBoolean closed = new AtomicBoolean(false);
 
     /**
      * @param source source input stream
@@ -30,7 +33,12 @@ public class FullCopyingInputStream extends CopyingInputStream {
      */
     @Override
     public void close() throws IOException {
-        IOUtils.copyLarge(source, copy);
-        super.close();
+        if (closed.get()) return;
+        try {
+            IOUtils.copyLarge(source, copy);
+        } finally {
+            IOUtils.closeQuietly(source);
+            closed.set(true);
+        }
     }
 }

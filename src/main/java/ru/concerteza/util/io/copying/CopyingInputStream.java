@@ -1,5 +1,7 @@
 package ru.concerteza.util.io.copying;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,6 +56,6 @@ public class CopyingInputStream extends InputStream {
      */
     @Override
     public void close() throws IOException {
-        source.close();
+        IOUtils.closeQuietly(source);
     }
 }
