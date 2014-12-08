@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class FullCopyingReader extends CopyingReader {
 
-    private final AtomicBoolean closed = new AtomicBoolean(false);
+    private final AtomicBoolean closeInvoked = new AtomicBoolean(false);
 
     public FullCopyingReader(Reader target, Writer copy) {
         super(target, copy);
@@ -29,12 +29,11 @@ public class FullCopyingReader extends CopyingReader {
      */
     @Override
     public void close() throws IOException {
-        if (closed.get()) return;
+        if (closeInvoked.getAndSet(true)) return;
         try {
             IOUtils.copyLarge(source, copy);
         } finally {
             IOUtils.closeQuietly(source);
-            closed.set(true);
         }
     }
 }
