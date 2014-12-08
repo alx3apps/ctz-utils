@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class FullCopyingInputStream extends CopyingInputStream {
 
-    private final AtomicBoolean closed = new AtomicBoolean(false);
+    private final AtomicBoolean closeInvoked = new AtomicBoolean(false);
 
     /**
      * @param source source input stream
@@ -33,12 +33,11 @@ public class FullCopyingInputStream extends CopyingInputStream {
      */
     @Override
     public void close() throws IOException {
-        if (closed.get()) return;
+        if (closeInvoked.getAndSet(true)) return;
         try {
             IOUtils.copyLarge(source, copy);
         } finally {
             IOUtils.closeQuietly(source);
-            closed.set(true);
         }
     }
 }
