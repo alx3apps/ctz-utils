@@ -2,7 +2,7 @@ package ru.concerteza.util.net.sftp;
 
 import com.google.common.base.Function;
 import com.jcraft.jsch.*;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.concerteza.util.io.finishable.Finishable;
@@ -11,7 +11,7 @@ import java.io.OutputStream;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.apache.commons.io.IOUtils.closeQuietly;
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
 /**

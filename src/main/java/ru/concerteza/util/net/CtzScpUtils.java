@@ -1,18 +1,12 @@
 package ru.concerteza.util.net;
 
 import com.jcraft.jsch.*;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.concerteza.util.namedregex.NamedMatcher;
-import ru.concerteza.util.namedregex.NamedPattern;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.builder.*;
+import org.slf4j.Logger;
+import org.slf4j.*;
+import ru.concerteza.util.namedregex.*;
 
 import static java.lang.String.format;
 import static ru.concerteza.util.crypto.CtzHashUtils.md5Digest;
@@ -285,32 +279,32 @@ public class CtzScpUtils {
         // don't need these methods
         @Override
         public void add(HostKey hostkey, UserInfo ui) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void remove(String host, String type) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void remove(String host, String type, byte[] key) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public String getKnownHostsRepositoryID() {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public HostKey[] getHostKey() {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public HostKey[] getHostKey(String host, String type) {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
     }
 }

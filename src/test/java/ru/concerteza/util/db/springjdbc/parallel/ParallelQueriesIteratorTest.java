@@ -3,8 +3,7 @@ package ru.concerteza.util.db.springjdbc.parallel;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.UnhandledException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -128,7 +127,7 @@ public class ParallelQueriesIteratorTest {
                 if(0 == co % 10)Thread.sleep(1);
                 return rs.getString("bar");
             } catch(InterruptedException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             }
         }
     }

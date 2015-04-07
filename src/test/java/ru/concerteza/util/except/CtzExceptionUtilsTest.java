@@ -1,7 +1,6 @@
 package ru.concerteza.util.except;
 
 import com.google.common.base.Optional;
-import org.apache.commons.lang.UnhandledException;
 import org.junit.Test;
 import ru.concerteza.util.option.Option;
 
@@ -26,7 +25,7 @@ public class CtzExceptionUtilsTest {
     public void testMessage() {
         try {
             BusinessLogicException ex = new BusinessLogicException("IO error on some files");
-            throw new UnhandledException(new RuntimeException(ex));
+            throw new RuntimeException(new RuntimeException(ex));
         } catch (Exception e) {
             Optional<BusinessLogicException> op = extractMessage(e, BusinessLogicException.class);
             assertTrue(op.isPresent());
@@ -38,7 +37,7 @@ public class CtzExceptionUtilsTest {
     @Test
     public void testNoMessage() {
         try {
-            throw new UnhandledException(new RuntimeException(new IOException("fail")));
+            throw new RuntimeException(new RuntimeException(new IOException("fail")));
         } catch (Exception e) {
             Optional<BusinessLogicException> op = extractMessage(e, BusinessLogicException.class);
             assertFalse(op.isPresent());

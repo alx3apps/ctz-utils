@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.concurrency.CallableList;
 
 import javax.xml.stream.XMLEventReader;
@@ -86,7 +85,7 @@ public class CtzIOUtils {
             File jarOrDir = new File(uri);
             return jarOrDir.isDirectory() ? jarOrDir : jarOrDir.getParentFile();
         } catch (Exception e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

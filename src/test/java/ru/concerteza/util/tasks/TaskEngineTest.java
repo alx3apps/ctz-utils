@@ -2,7 +2,7 @@ package ru.concerteza.util.tasks;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Test;
 import ru.concerteza.util.concurrency.SameThreadExecutor;
 
@@ -151,7 +151,7 @@ public class TaskEngineTest {
 
         @Override
         public Collection<Long> loadSuspendedIds() {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override

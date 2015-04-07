@@ -2,7 +2,7 @@ package ru.concerteza.util.db.springjdbc;
 
 import com.alexkasko.springjdbc.iterable.CloseableIterator;
 import com.google.common.collect.Iterators;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Collection;
 import java.util.Iterator;

@@ -14,7 +14,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static ru.concerteza.util.io.CtzIOUtils.closeQuietly;
 
 /**

@@ -3,7 +3,7 @@ package ru.concerteza.util.string;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Formatting utilities, borrowed from <a href="http://www.slf4j.org/">slf4j</a> project.

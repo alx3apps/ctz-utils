@@ -3,7 +3,6 @@ package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.db.springjdbc.entitymapper.EntityFilter;
 
 import java.util.Collection;
@@ -66,7 +65,7 @@ public abstract class ColumnListFilter<T> implements EntityFilter {
         try {
             return filterColumn(colname, value);
         } catch (Exception e) {
-            throw new UnhandledException("Error decorating column: " + colname, e);
+            throw new RuntimeException("Error decorating column: " + colname, e);
         }
     }
 

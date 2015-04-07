@@ -3,8 +3,8 @@ package ru.concerteza.util.keys;
 import com.google.common.base.Function;
 import com.google.common.collect.*;
 import freemarker.template.utility.StringUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.junit.Test;
 
 import javax.annotation.Nullable;

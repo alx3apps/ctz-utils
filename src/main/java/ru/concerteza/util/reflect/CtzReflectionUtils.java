@@ -3,7 +3,6 @@ package ru.concerteza.util.reflect;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
-import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.option.Option;
 
 import java.beans.BeanInfo;
@@ -16,8 +15,7 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.WordUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**
@@ -127,7 +125,7 @@ public class CtzReflectionUtils {
             if (!fi.isAccessible()) fi.setAccessible(true);
             fi.set(obj, value);
         } catch (IllegalAccessException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -156,7 +154,7 @@ public class CtzReflectionUtils {
 //            field.setAccessible(true);
 //            field.set(obj, value);
 //        } catch (IllegalAccessException e) {
-//            throw new UnhandledException(e);
+//            throw new RuntimeException(e);
 //        }
 //    }
 
@@ -176,9 +174,9 @@ public class CtzReflectionUtils {
             if(!method.isAccessible()) method.setAccessible(true);
             return (T) method.invoke(obj, args);
         } catch(InvocationTargetException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch(IllegalAccessException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -196,11 +194,11 @@ public class CtzReflectionUtils {
             if(!constr.isAccessible()) constr.setAccessible(true);
             return constr.newInstance(args);
         } catch(InstantiationException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch(IllegalAccessException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch(InvocationTargetException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -242,13 +240,13 @@ public class CtzReflectionUtils {
             }
             return res;
         } catch (InstantiationException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch (NoSuchMethodException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -310,7 +308,7 @@ public class CtzReflectionUtils {
             }
             throw new IllegalArgumentException(format("Cannot find getter for name: '{}' in class: '{}'", propertyName, clazz));
         } catch(IntrospectionException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 }

@@ -13,7 +13,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
 

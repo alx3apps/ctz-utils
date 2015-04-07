@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static ru.concerteza.util.reflect.CtzReflectionUtils.collectFields;
 
 /**

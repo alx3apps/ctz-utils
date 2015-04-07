@@ -2,7 +2,7 @@ package ru.concerteza.util.option;
 
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Implementation of <a href="http://www.codecommit.com/blog/scala/the-option-pattern">Option pattern</a>,

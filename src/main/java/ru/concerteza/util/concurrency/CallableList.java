@@ -3,7 +3,6 @@ package ru.concerteza.util.concurrency;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang.UnhandledException;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -54,7 +53,7 @@ public class CallableList<T> implements Callable<List<T>> {
             try {
                 return input.call();
             } catch (Exception e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             }
         }
     }

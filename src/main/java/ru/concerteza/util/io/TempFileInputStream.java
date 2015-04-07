@@ -1,7 +1,5 @@
 package ru.concerteza.util.io;
 
-import org.apache.commons.lang.UnhandledException;
-
 import java.io.*;
 
 /**
@@ -18,7 +16,7 @@ public class TempFileInputStream extends InputStream {
             this.file = file;
             is = new FileInputStream(file);
         } catch (IOException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

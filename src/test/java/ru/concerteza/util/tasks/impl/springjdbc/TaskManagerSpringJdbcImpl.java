@@ -1,25 +1,16 @@
 package ru.concerteza.util.tasks.impl.springjdbc;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang.NotImplementedException;
+import com.google.common.collect.*;
+import java.util.*;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.sql.DataSource;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.concerteza.util.db.springjdbc.entitymapper.EntityFilters;
-import ru.concerteza.util.db.springjdbc.entitymapper.EntityMapper;
-import ru.concerteza.util.tasks.impl.Stage;
-import ru.concerteza.util.tasks.impl.Status;
-import ru.concerteza.util.tasks.impl.TaskImpl;
-import ru.concerteza.util.tasks.impl.TaskManagerIface;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import java.util.Collection;
-import java.util.List;
+import ru.concerteza.util.db.springjdbc.entitymapper.*;
+import ru.concerteza.util.tasks.impl.*;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -124,6 +115,6 @@ public class TaskManagerSpringJdbcImpl implements TaskManagerIface {
 
     @Override
     public void resume(long taskId) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

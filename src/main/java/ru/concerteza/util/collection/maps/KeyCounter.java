@@ -1,6 +1,6 @@
 package ru.concerteza.util.collection.maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.HashMap;
 import java.util.Map;

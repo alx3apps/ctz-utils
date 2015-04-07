@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
 /**

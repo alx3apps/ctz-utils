@@ -2,7 +2,6 @@ package ru.concerteza.util.db.springjdbc.parallel;
 
 import com.google.common.base.Function;
 import com.google.common.collect.*;
-import org.apache.commons.lang.UnhandledException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Executes single SQL query to multiple data sources in parallel using provided executor.
@@ -172,7 +171,7 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
         try {
             dataQueue.put(data);
         } catch(InterruptedException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -180,7 +179,7 @@ public class ParallelQueriesIterator<T> extends AbstractIterator<T> {
         try {
             return dataQueue.take();
         } catch(InterruptedException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

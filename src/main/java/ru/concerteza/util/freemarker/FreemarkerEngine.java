@@ -5,7 +5,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import ru.concerteza.util.io.CtzResourceUtils;

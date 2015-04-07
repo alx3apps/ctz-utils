@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
 
 /**

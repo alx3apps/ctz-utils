@@ -1,8 +1,8 @@
 package ru.concerteza.util.option;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
