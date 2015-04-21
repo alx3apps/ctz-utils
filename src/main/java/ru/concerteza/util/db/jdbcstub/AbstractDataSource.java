@@ -1,9 +1,9 @@
 package ru.concerteza.util.db.jdbcstub;
 
+import java.sql.*;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * Abstract stub class for {@link DataSource}, implements all methods as stubs throwing {@link UnsupportedOperationException}
@@ -57,6 +57,14 @@ public abstract class AbstractDataSource implements DataSource {
      */
     @Override
     public int getLoginTimeout() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new UnsupportedOperationException();
     }
 

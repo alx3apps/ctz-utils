@@ -43,7 +43,7 @@ public class CtzStringUtils {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         prettifyXml(in, out);
         byte[] outBytes = out.toByteArray();
-        return new String(outBytes, UTF8_CHARSET);
+        return new String(outBytes, UTF8_CHARSET).replace("><", ">\n<");
     }
 
     /**

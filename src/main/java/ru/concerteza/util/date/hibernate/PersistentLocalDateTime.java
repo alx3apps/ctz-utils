@@ -1,17 +1,13 @@
 package ru.concerteza.util.date.hibernate;
 
-import org.hibernate.Hibernate;
-import org.joda.time.LocalDateTime;
-
 import java.io.Serializable;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.Date;
-
 import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.EnhancedUserType;
+import org.joda.time.LocalDateTime;
 
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
@@ -75,27 +71,29 @@ public class PersistentLocalDateTime implements EnhancedUserType, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public Object nullSafeGet(ResultSet resultSet, String[] strings, Object object) throws HibernateException, SQLException {
-        return nullSafeGet(resultSet, strings[0]);
+    public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
+            throws SQLException {
+        return nullSafeGet(rs, names[0], session);
     }
 
-    public Object nullSafeGet(ResultSet resultSet, String string) throws SQLException {
-        Object timestamp = Hibernate.TIMESTAMP.nullSafeGet(resultSet, string);
+    public Object nullSafeGet(ResultSet resultSet, String string, SessionImplementor session) throws SQLException {
+        Object timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(resultSet, string, session);
         if (timestamp == null) {
             return null;
         }
-        return toLocalDateTime((Date) timestamp);
+        return toLocalDateTime((Date)timestamp);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index) throws HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
+            throws SQLException {
         if (value == null) {
-            Hibernate.TIMESTAMP.nullSafeSet(preparedStatement, null, index);
+            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, null, index, session);
         } else {
-            Hibernate.TIMESTAMP.nullSafeSet(preparedStatement, ((LocalDateTime) value).toDate(), index);
+            StandardBasicTypes.TIMESTAMP.nullSafeSet(st, ((LocalDateTime) value).toDate(), index, session);
         }
     }
 

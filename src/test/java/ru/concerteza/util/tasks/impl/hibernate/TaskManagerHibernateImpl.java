@@ -1,20 +1,13 @@
 package ru.concerteza.util.tasks.impl.hibernate;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import org.hibernate.SessionFactory;
-import org.hibernate.classic.Session;
+import com.google.common.collect.*;
+import java.util.*;
+import javax.inject.Inject;
+import org.hibernate.*;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.concerteza.util.tasks.impl.Stage;
-import ru.concerteza.util.tasks.impl.Status;
-import ru.concerteza.util.tasks.impl.TaskImpl;
-import ru.concerteza.util.tasks.impl.TaskManagerIface;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
+import ru.concerteza.util.tasks.impl.*;
 
 /**
  * User: alexey
