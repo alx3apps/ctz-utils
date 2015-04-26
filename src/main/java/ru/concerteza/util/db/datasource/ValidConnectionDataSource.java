@@ -1,6 +1,5 @@
 package ru.concerteza.util.db.datasource;
 
-import org.apache.commons.lang.UnhandledException;
 import org.apache.tomcat.jdbc.pool.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -119,11 +118,11 @@ public class ValidConnectionDataSource extends DataSource {
                 if(!borrow.isAccessible()) borrow.setAccessible(true);
                 return (PooledConnection) borrow.invoke(this, -1, null, null);
             } catch(NoSuchMethodException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             } catch(InvocationTargetException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             } catch(IllegalAccessException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             }
         }
     }

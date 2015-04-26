@@ -2,7 +2,6 @@ package ru.concerteza.util.io;
 
 import com.google.common.base.Function;
 import org.apache.commons.io.output.CountingOutputStream;
-import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.db.blob.compress.Compressor;
 import ru.concerteza.util.db.blob.compress.NoCompressor;
 
@@ -47,7 +46,7 @@ public class TempFileOutputInputStream extends OutputStream {
             OutputStream wrappedOut = compressor.wrapCompress(compressedOut);
             this.out = new CountingOutputStream(wrappedOut);
         } catch (IOException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

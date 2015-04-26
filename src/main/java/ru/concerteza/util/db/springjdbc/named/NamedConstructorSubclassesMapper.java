@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static ru.concerteza.util.reflect.named.NamedConstructor.CaseType;
 import static ru.concerteza.util.reflect.named.NamedConstructor.CaseType.INSENSITIVE;
 import static ru.concerteza.util.reflect.named.NamedConstructor.MatchMode.ADDITIONAL_ALLOWED;

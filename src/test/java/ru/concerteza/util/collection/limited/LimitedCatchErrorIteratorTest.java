@@ -1,13 +1,9 @@
 package ru.concerteza.util.collection.limited;
 
-import com.google.common.collect.AbstractIterator;
-import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang.RandomStringUtils;
+import com.google.common.collect.*;
+import java.util.*;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
-import ru.concerteza.util.collection.limited.LimitedCatchErrorIterator;
-
-import java.util.Iterator;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 

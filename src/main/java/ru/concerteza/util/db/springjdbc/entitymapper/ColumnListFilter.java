@@ -2,8 +2,6 @@ package ru.concerteza.util.db.springjdbc.entitymapper;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.UnhandledException;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +60,7 @@ public abstract class ColumnListFilter<T> implements EntityFilter {
         try {
             return filterColumn(colname, value);
         } catch (Exception e) {
-            throw new UnhandledException("Error decorating column: " + colname, e);
+            throw new RuntimeException("Error decorating column: " + colname, e);
         }
     }
 

@@ -2,13 +2,13 @@ package ru.concerteza.util.db.csv;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import java.sql.*;
+import java.util.logging.Logger;
 import org.springframework.core.io.Resource;
 import ru.concerteza.util.db.jdbcstub.AbstractDataSource;
 import ru.concerteza.util.io.CtzResourceUtils;
 
 import javax.annotation.Nullable;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 
 import static ru.concerteza.util.string.CtzConstants.UTF8;

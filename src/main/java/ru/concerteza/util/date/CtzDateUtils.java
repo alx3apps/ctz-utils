@@ -1,24 +1,15 @@
 package ru.concerteza.util.date;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterators;
-import org.joda.time.Duration;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.ReadablePartial;
+import com.google.common.collect.*;
+import java.util.*;
+import javax.annotation.Nullable;
+import org.joda.time.*;
 import org.joda.time.base.AbstractPartial;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.*;
 import ru.concerteza.util.collection.SingleUseIterable;
 
-import javax.annotation.Nullable;
-import java.util.*;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static com.google.common.base.Preconditions.*;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 
 /**

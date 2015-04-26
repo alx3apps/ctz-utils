@@ -1,7 +1,5 @@
 package ru.concerteza.util.concurrency;
 
-import org.apache.commons.lang.UnhandledException;
-
 import java.util.concurrent.Callable;
 
 /**
@@ -34,7 +32,7 @@ public class CtzConcurrencyUtils {
             try {
                 callable.call();
             } catch (Exception e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             }
         }
     }

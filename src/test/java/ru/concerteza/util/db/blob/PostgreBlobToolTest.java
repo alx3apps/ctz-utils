@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 
-import static org.apache.commons.lang.RandomStringUtils.random;
+import static org.apache.commons.lang3.RandomStringUtils.random;
 import static org.junit.Assert.assertEquals;
 
 /**

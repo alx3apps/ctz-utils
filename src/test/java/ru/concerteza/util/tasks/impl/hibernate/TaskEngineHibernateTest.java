@@ -1,38 +1,23 @@
 package ru.concerteza.util.tasks.impl.hibernate;
 
 import com.google.common.collect.Lists;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.core.type.filter.RegexPatternTypeFilter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.hibernate3.HibernateTransactionManager;
-import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ru.concerteza.util.concurrency.SameThreadExecutor;
-import ru.concerteza.util.tasks.TaskEngine;
-import ru.concerteza.util.tasks.TaskProcessorProvider;
-import ru.concerteza.util.tasks.impl.TaskImpl;
-import ru.concerteza.util.tasks.impl.TaskManagerIface;
-
+import java.util.*;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Properties;
-import java.util.regex.Pattern;
+import org.apache.commons.dbcp.BasicDataSource;
+import org.junit.Test;
+import org.springframework.context.annotation.*;
+import org.springframework.core.type.filter.RegexPatternTypeFilter;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.orm.hibernate4.*;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import ru.concerteza.util.tasks.*;
+import ru.concerteza.util.tasks.impl.*;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * User: alexey
@@ -110,10 +95,10 @@ public class TaskEngineHibernateTest {
         }
 
         @Bean
-        public AnnotationSessionFactoryBean sessionFactory() {
-            AnnotationSessionFactoryBean fac = new AnnotationSessionFactoryBean();
+        public LocalSessionFactoryBean sessionFactory() {
+            LocalSessionFactoryBean fac = new LocalSessionFactoryBean();
             fac.setDataSource(dataSource());
-            fac.setAnnotatedClasses(new Class[]{TaskImpl.class});
+            fac.setAnnotatedClasses(TaskImpl.class);
             Properties hiber = new Properties();
             String dialect = "org.hibernate.dialect.H2Dialect";
             hiber.setProperty("hibernate.dialect", dialect);

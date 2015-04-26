@@ -1,7 +1,7 @@
 package ru.concerteza.util.collection;
 
 import com.google.common.util.concurrent.ForwardingBlockingQueue;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;

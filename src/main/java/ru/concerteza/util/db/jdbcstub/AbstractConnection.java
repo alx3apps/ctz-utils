@@ -1,8 +1,8 @@
 package ru.concerteza.util.db.jdbcstub;
 
 import java.sql.*;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.Executor;
 
 /**
  * Abstract stub class for {@link Connection}, implements all methods as stubs throwing {@link UnsupportedOperationException}
@@ -381,6 +381,46 @@ public abstract class AbstractConnection implements Connection {
      */
     @Override
     public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSchema(String schema) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSchema() throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void abort(Executor executor) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getNetworkTimeout() throws SQLException {
         throw new UnsupportedOperationException();
     }
 

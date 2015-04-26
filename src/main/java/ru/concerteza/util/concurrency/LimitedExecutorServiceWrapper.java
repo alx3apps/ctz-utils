@@ -2,8 +2,6 @@ package ru.concerteza.util.concurrency;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import org.apache.commons.lang.UnhandledException;
-
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -170,7 +168,7 @@ public class LimitedExecutorServiceWrapper implements ExecutorService {
                 semaphore.acquire();
                 target.run();
             } catch(InterruptedException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             } finally {
                 semaphore.release();
             }

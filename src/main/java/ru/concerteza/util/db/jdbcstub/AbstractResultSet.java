@@ -1515,6 +1515,22 @@ public abstract class AbstractResultSet implements ResultSet {
      * {@inheritDoc}
      */
     @Override
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new UnsupportedOperationException();
     }

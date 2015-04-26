@@ -1,7 +1,6 @@
 package ru.concerteza.util.db.springjdbc.entitymapper;
 
 import com.google.common.collect.*;
-import org.apache.commons.lang.UnhandledException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -137,7 +136,7 @@ public abstract class EntityMapper<T> implements RowMapper<T> {
             try {
                 return first.isAssignableFrom(Class.forName(secondName));
             } catch(ClassNotFoundException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             }
         }
     }

@@ -1,14 +1,14 @@
 package ru.concerteza.util.net.diriterator;
 
 import com.google.common.base.Function;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
  * User: alexkasko

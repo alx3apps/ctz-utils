@@ -3,7 +3,6 @@ package ru.concerteza.util.version;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -68,7 +67,7 @@ public class CtzVersionUtils {
                     "Cannot find manifest with {} = {} in resources, size: {}", IMP_TITLE, impTitle, resources.length));
         } catch (IOException e) {
             // classpath only operations, don't want checked exception
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

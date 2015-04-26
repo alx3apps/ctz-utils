@@ -1,7 +1,6 @@
 package ru.concerteza.util.except;
 
 import com.google.common.base.Optional;
-import org.apache.commons.lang.UnhandledException;
 import ru.concerteza.util.option.Option;
 import ru.concerteza.util.reflect.CtzReflectionUtils;
 
@@ -9,8 +8,8 @@ import javax.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
 
-import static org.apache.commons.lang.exception.ExceptionUtils.getThrowableList;
-import static org.apache.commons.lang.exception.ExceptionUtils.indexOfType;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getThrowableList;
+import static org.apache.commons.lang3.exception.ExceptionUtils.indexOfType;
 import static ru.concerteza.util.reflect.CtzReflectionUtils.invokeConstructor;
 import static ru.concerteza.util.reflect.CtzReflectionUtils.invokeDefaultConstructor;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
@@ -50,7 +49,7 @@ public class CtzExceptionUtils {
      * @return input throwable, wrapped into runtime exception if necessary
      */
     public static RuntimeException runtimeException(Throwable e) {
-        return e instanceof RuntimeException ? (RuntimeException) e : new UnhandledException(e);
+        return e instanceof RuntimeException ? (RuntimeException) e : new RuntimeException(e);
     }
 
     /**

@@ -1,7 +1,6 @@
 package ru.concerteza.util.crypto;
 
 import com.google.common.base.Function;
-import org.apache.commons.lang.UnhandledException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -20,8 +19,8 @@ import java.security.SecureRandom;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.System.arraycopy;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.reverse;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.reverse;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 import static ru.concerteza.util.string.CtzFormatUtils.format;
 import static ru.concerteza.util.crypto.CtzHashUtils.sha1Digest;
@@ -216,7 +215,7 @@ public class CtzAESUtils {
             }
             encryptedStream.flush();
         } catch (IOException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -249,9 +248,9 @@ public class CtzAESUtils {
             messageStream.write(outBuffer, 0, blockSize - padStartPosition);
             messageStream.flush();
         } catch (IOException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch (InvalidCipherTextException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

@@ -3,7 +3,6 @@ package ru.concerteza.util.io;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import junit.framework.Assert;
-import org.apache.commons.lang.UnhandledException;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -19,8 +18,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
-import static org.apache.commons.lang.RandomStringUtils.random;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.random;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.junit.Assert.assertEquals;
 import static ru.concerteza.util.string.CtzConstants.UTF8;
 

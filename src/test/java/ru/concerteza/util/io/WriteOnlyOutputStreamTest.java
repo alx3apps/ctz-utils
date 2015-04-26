@@ -1,6 +1,5 @@
 package ru.concerteza.util.io;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import ru.concerteza.util.io.noclose.NoCloseOutputStream;
 
@@ -35,7 +34,7 @@ public class WriteOnlyOutputStreamTest {
 
         @Override
         public void write(char[] cbuf, int off, int len) throws IOException {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -56,7 +55,7 @@ public class WriteOnlyOutputStreamTest {
 
         @Override
         public void write(int b) throws IOException {
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
         }
 
         @Override

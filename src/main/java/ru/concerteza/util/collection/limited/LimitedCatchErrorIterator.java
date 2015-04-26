@@ -1,7 +1,6 @@
 package ru.concerteza.util.collection.limited;
 
 import com.google.common.collect.AbstractIterator;
-import org.apache.commons.lang.UnhandledException;
 
 import java.util.Iterator;
 
@@ -66,7 +65,7 @@ public class LimitedCatchErrorIterator<T> implements Iterator<T> {
         } catch(Error e) {
             if(e.getClass().getName().equals(limitErrorClass.getName())) {
                 return false;
-            } else throw new UnhandledException(e);
+            } else throw new RuntimeException(e);
         }
     }
 

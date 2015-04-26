@@ -5,7 +5,6 @@ import com.google.common.base.Functions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
 import ru.concerteza.util.string.CtzConstants;
 
@@ -17,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static ru.concerteza.util.collection.CtzCollectionUtils.listsToMap;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 
@@ -104,7 +103,7 @@ public class CsvMapIterable<T> implements Iterable<T> {
                 if(!li.hasNext()) throw new IOException("Cannot read CSV headers, input resource is empty");
                 headers = parseList(li.next());
             } catch(IOException e) {
-                throw new UnhandledException(e);
+                throw new RuntimeException(e);
             }
         }
 

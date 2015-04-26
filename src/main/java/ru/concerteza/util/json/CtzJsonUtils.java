@@ -9,7 +9,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.UnhandledException;
 import org.springframework.core.io.Resource;
 import ru.concerteza.util.io.CtzResourceUtils;
 import ru.concerteza.util.io.RuntimeIOException;

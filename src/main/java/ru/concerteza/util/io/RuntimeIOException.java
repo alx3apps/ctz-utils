@@ -2,7 +2,7 @@ package ru.concerteza.util.io;
 
 import ru.concerteza.util.except.MessageException;
 
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 /**
  * User: alexey

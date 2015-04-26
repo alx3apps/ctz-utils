@@ -1,7 +1,7 @@
 package ru.concerteza.util.db.hibernate;
 
 import com.google.common.collect.AbstractIterator;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -2,7 +2,6 @@ package ru.concerteza.util.io;
 
 import com.google.common.base.Function;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.UnhandledException;
 import org.junit.Test;
 import ru.concerteza.util.value.Holder;
 
@@ -33,7 +32,7 @@ public class TempFileOutputInputStreamTest {
                     lengthHolder.set(input.getDecompressedLength());
                     return null;
                 } catch (IOException e) {
-                    throw new UnhandledException(e);
+                    throw new RuntimeException(e);
                 }
             }
         }

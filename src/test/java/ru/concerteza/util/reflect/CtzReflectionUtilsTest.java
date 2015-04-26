@@ -2,7 +2,6 @@ package ru.concerteza.util.reflect;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.UnhandledException;
 import org.junit.Test;
 import ru.concerteza.util.option.Option;
 
@@ -94,7 +93,7 @@ public class CtzReflectionUtilsTest {
 //        assertEquals("Char fail", '0', obj.charField);
 //    }
 
-    @Test(expected = UnhandledException.class)
+    @Test(expected = RuntimeException.class)
     public void testConstructorFail() {
         invokeDefaultConstructor(NoDefaultConstructor.class, this);
     }

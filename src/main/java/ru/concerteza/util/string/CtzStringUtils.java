@@ -3,7 +3,6 @@ package ru.concerteza.util.string;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang.UnhandledException;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.*;
@@ -44,7 +43,7 @@ public class CtzStringUtils {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         prettifyXml(in, out);
         byte[] outBytes = out.toByteArray();
-        return new String(outBytes, UTF8_CHARSET);
+        return new String(outBytes, UTF8_CHARSET).replace("><", ">\n<");
     }
 
     /**
@@ -74,9 +73,9 @@ public class CtzStringUtils {
             StreamResult res = new StreamResult(out);
             serializer.transform(xmlSource, res);
         } catch (TransformerConfigurationException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         } catch (TransformerException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 }

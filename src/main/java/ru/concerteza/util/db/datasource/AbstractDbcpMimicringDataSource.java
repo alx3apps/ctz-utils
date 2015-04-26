@@ -1,14 +1,10 @@
 package ru.concerteza.util.db.datasource;
 
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.UnhandledException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
-import javax.sql.DataSource;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.logging.Logger;
+import javax.sql.DataSource;
+import org.apache.commons.lang3.builder.*;
 
 /**
  * Abstract class for creating data sources with the same API, as commons-dbcp
@@ -26,7 +22,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -34,7 +30,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public PrintWriter getLogWriter() throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -42,7 +38,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public void setLogWriter(PrintWriter out) throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -50,7 +46,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public void setLoginTimeout(int seconds) throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -58,7 +54,15 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public int getLoginTimeout() throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    //@Override only for java version 1.7, but ctz-utils has code of version 1.6
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -66,7 +70,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -74,7 +78,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
      */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     // mimicring BasicDataSource creation interface
@@ -86,7 +90,7 @@ public abstract class AbstractDbcpMimicringDataSource implements DataSource {
         try {
             Class.forName(driverClassName);
         } catch(ClassNotFoundException e) {
-            throw new UnhandledException(e);
+            throw new RuntimeException(e);
         }
     }
 

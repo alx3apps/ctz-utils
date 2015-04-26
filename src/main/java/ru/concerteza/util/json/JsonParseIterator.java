@@ -3,13 +3,13 @@ package ru.concerteza.util.json;
 import com.google.common.collect.AbstractIterator;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.IOException;
 import java.io.Reader;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 /**
  * Wraps {@link Reader} with JSON array as {@link java.util.Iterator}

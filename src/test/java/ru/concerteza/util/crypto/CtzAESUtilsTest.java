@@ -1,15 +1,15 @@
 package ru.concerteza.util.crypto;
 
 import com.google.common.base.Function;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import ru.concerteza.util.string.CtzConstants;
 
 import javax.annotation.Nullable;
 import java.io.*;
 
-import static org.apache.commons.lang.RandomStringUtils.randomAscii;
-import static org.apache.commons.lang.StringUtils.reverse;
+import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang3.StringUtils.reverse;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
