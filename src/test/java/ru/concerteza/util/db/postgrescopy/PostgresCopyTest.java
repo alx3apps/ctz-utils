@@ -3,6 +3,9 @@ package ru.concerteza.util.db.postgrescopy;
 import com.alexkasko.unsafe.bytearray.ByteArrayTool;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import junit.framework.Assert;
+import org.apache.commons.io.EndianUtils;
+import org.apache.commons.io.IOUtils;
 import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +27,9 @@ import ru.concerteza.util.db.partition.PartitionProvider;
 
 import javax.inject.Inject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import static com.alexkasko.springjdbc.typedqueries.common.TypedQueriesUtils.STRING_ROW_MAPPER;
@@ -31,6 +37,10 @@ import static junit.framework.Assert.assertEquals;
 import static org.apache.commons.io.EndianUtils.swapInteger;
 import static org.apache.commons.io.EndianUtils.swapLong;
 import static org.apache.commons.io.EndianUtils.swapShort;
+import static org.apache.commons.io.IOUtils.closeQuietly;
+import static org.apache.commons.io.IOUtils.toByteArray;
+import static ru.concerteza.util.db.postgrescopy.PostgresCopyPersister.EOF_BYTES;
+import static ru.concerteza.util.db.postgrescopy.PostgresCopyPersister.HEADER_BYTES;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
@@ -46,8 +56,10 @@ public class PostgresCopyTest {
 
     @Inject
     private NamedParameterJdbcTemplate jt;
+    @Inject
+    private javax.sql.DataSource ds;
 
-    @Test
+//    @Test
     public void dummy() {
         //  I'm dummy
     }
@@ -89,6 +101,34 @@ public class PostgresCopyTest {
         PostgresPartitionCopyPersister pcp = new PostgresPartitionCopyPersister(sjt.getDataSource(), pm);
         String sql = "copy copy_test_partition_${partition}(id, rec_date) from stdin binary";
         pcp.persist(new TestProviderPartition(), sql, "copy_test_partition", "foo", ImmutableList.of(row1, row2).iterator());
+    }
+
+    @Test
+    public void testOpenCopyStream() throws SQLException, IOException {
+        jt.getJdbcOperations().update("drop table if exists copy_out_test");
+        jt.getJdbcOperations().update("create table copy_out_test(id bigint, val int)");
+        jt.getJdbcOperations().update("begin transaction");
+        jt.getJdbcOperations().update("insert into copy_out_test(id, val) values(41, 42)");
+        jt.getJdbcOperations().update("commit");
+        jt.getJdbcOperations().update("begin transaction");
+        InputStream is = null;
+        try {
+            byte[] buf = new byte[HEADER_BYTES.length + EOF_BYTES.length + 22];
+            is = PostgresCopyUtils.openCopyStream(ds.getConnection(), "copy copy_out_test(id, val) to stdin binary");
+            int read = is.read(buf);
+            assertEquals(buf.length, read);
+            assertEquals((byte) 0xff, buf[buf.length - 2]);
+            assertEquals((byte) 0xff, buf[buf.length - 1]);
+            long id = swapLong(BT.getLong(buf, HEADER_BYTES.length + 6));
+            assertEquals(41, id);
+            int val = swapInteger(BT.getInt(buf, HEADER_BYTES.length + 18));
+            assertEquals(42, val);
+            jt.getJdbcOperations().update("commit");
+        } catch (Exception e) {
+            jt.getJdbcOperations().update("rollback");
+        } finally {
+            closeQuietly(is);
+        }
     }
 
     private static class TestProvider implements PostgresCopyProvider {

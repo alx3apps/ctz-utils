@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static ru.concerteza.util.db.postgrescopy.PostgresCopyUtils.unwrap;
 import static ru.concerteza.util.io.CtzIOUtils.closeQuietly;
 
 /**
@@ -26,9 +27,9 @@ import static ru.concerteza.util.io.CtzIOUtils.closeQuietly;
 public class PostgresCopyPersister {
     private static final Logger logger = LoggerFactory.getLogger(PostgresCopyPersister.class);
 
-    static final byte[] HEADER_BYTES = new byte[]{0x50, 0x47, 0x43, 0x4f, 0x50, 0x59, 0x0a, (byte)0xff, 0x0d, 0x0a,
+    public static final byte[] HEADER_BYTES = new byte[]{0x50, 0x47, 0x43, 0x4f, 0x50, 0x59, 0x0a, (byte)0xff, 0x0d, 0x0a,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    static final byte[] EOF_BYTES = new byte[] {(byte) 0xff, (byte) 0xff};
+    public static final byte[] EOF_BYTES = new byte[] {(byte) 0xff, (byte) 0xff};
 
     private final DataSource ds;
     private final PostgresCopyProvider provider;
@@ -95,10 +96,6 @@ public class PostgresCopyPersister {
         }
     }
 
-    private PGConnection unwrap(Connection wrapper) throws SQLException {
-        if(wrapper instanceof PGConnection) return (PGConnection) wrapper;
-        return wrapper.unwrap(PGConnection.class);
-    }
 
     private void begin(Connection con) throws SQLException {
         Statement stmt = null;
