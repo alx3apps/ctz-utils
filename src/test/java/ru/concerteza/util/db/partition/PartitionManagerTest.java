@@ -2,15 +2,14 @@ package ru.concerteza.util.db.partition;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import static com.alexkasko.springjdbc.typedqueries.common.TypedQueriesUtils.STRING_ROW_MAPPER;
 import static java.util.Locale.ENGLISH;
@@ -30,17 +29,17 @@ public class PartitionManagerTest {
         PartitionManager pm = PartitionManager.builder(pp).withTable("test_table", 2).build();
         ImmutableList<Partition> initted = pm.init();
         assertEquals(0, initted.size());
-        pm.ensurePartition("test_table", new LocalDateTime(2012, 1, 1, 12, 30), "foo");
-        pm.ensurePartition("test_table", new LocalDateTime(2012, 1, 1, 17, 30), "foo");
-        pm.ensurePartition("test_table", new LocalDateTime(2012, 1, 1, 12, 35), "foo");
-        pm.ensurePartition("test_table", new LocalDateTime(2012, 1, 1, 12, 35), "bar");
+        pm.ensurePartition("test_table", LocalDateTime.of(2012, 1, 1, 12, 30), "foo");
+        pm.ensurePartition("test_table", LocalDateTime.of(2012, 1, 1, 17, 30), "foo");
+        pm.ensurePartition("test_table", LocalDateTime.of(2012, 1, 1, 12, 35), "foo");
+        pm.ensurePartition("test_table", LocalDateTime.of(2012, 1, 1, 12, 35), "bar");
         ImmutableList<Partition> li1 = pm.finder("test_table").find();
         assertEquals(3, li1.size());
         ImmutableList<Partition> li2 = pm.finder("test_table").withUid("foo").find();
         assertEquals(2, li2.size());
-        ImmutableList<Partition> li3 = pm.finder("test_table").withToDate(new LocalDateTime(2012, 1, 1, 13, 0)).find();
+        ImmutableList<Partition> li3 = pm.finder("test_table").withToDate(LocalDateTime.of(2012, 1, 1, 13, 0)).find();
         assertEquals(2, li3.size());
-        ImmutableList<Partition> li4 = pm.finder("test_table").withFromDate(new LocalDateTime(2012, 1, 1, 17, 0)).find();
+        ImmutableList<Partition> li4 = pm.finder("test_table").withFromDate(LocalDateTime.of(2012, 1, 1, 17, 0)).find();
         assertEquals(1, li4.size());
         List<String> parts = ImmutableList.copyOf(pp.loadPartitions("test_table"));
         assertEquals(3, parts.size());

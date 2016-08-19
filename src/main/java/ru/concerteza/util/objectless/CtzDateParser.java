@@ -1,10 +1,11 @@
 package ru.concerteza.util.objectless;
 
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static java.lang.Character.digit;
 import static java.lang.System.arraycopy;
+import static ru.concerteza.util.date.CtzDateUtils.toLong;
 import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
 
 /**
@@ -17,7 +18,7 @@ import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
  * Date: 4/18/13
  */
 public class CtzDateParser {
-    private static final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyyMMddHHmmss");
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private static final ThreadLocal<byte[]> dateBytes;
     private static final ThreadLocal<Long> dateMillis;
     static {
@@ -44,7 +45,7 @@ public class CtzDateParser {
         }
         if(!dateEqual) {
             String dateStr = new String(date, offset, 14, ASCII_CHARSET);
-            dateMillis.set(dtf.parseLocalDate(dateStr).toDate().getTime());
+            dateMillis.set(toLong(LocalDate.parse(dateStr, dtf)));
             arraycopy(date, offset, dateBytes.get(), 0, 8);
         }
         int hours = digit((char) date[offset + 8], 10) * 10;

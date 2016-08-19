@@ -1,19 +1,19 @@
 package ru.concerteza.util.date.hibernate;
 
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.EnhancedUserType;
-import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.util.Date;
 
+import static ru.concerteza.util.date.CtzDateUtils.toDate;
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
 /**
@@ -98,7 +98,7 @@ public class PersistentLocalDate implements EnhancedUserType, Serializable {
         if (value == null) {
             StandardBasicTypes.DATE.nullSafeSet(st, null, index, session);
         } else {
-            StandardBasicTypes.DATE.nullSafeSet(st, ((LocalDate) value).toDate(), index, session);
+            StandardBasicTypes.DATE.nullSafeSet(st, toDate((LocalDate)value), index, session);
         }
     }
 
@@ -163,7 +163,7 @@ public class PersistentLocalDate implements EnhancedUserType, Serializable {
      */
     @Override
     public Object fromXMLString(String string) {
-        return new LocalDate(string);
+        return LocalDate.parse(string);
     }
 
 }

@@ -5,15 +5,18 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.persistence.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static ru.concerteza.util.date.CtzDateUtils.toDate;
 import static ru.concerteza.util.date.hibernate.PersistentLocalDateTime.LOCAL_DATE_TIME_TYPE;
 
 /**
@@ -66,7 +69,7 @@ public class EntityMapperTest {
     private void checkFilters(TableBean tableBean) {
         assertNotNull("Load fail", tableBean);
         assertEquals("Simple map fail", 1L, tableBean.id);
-        assertEquals("LDT filter fail", new LocalDateTime(2012, 1, 1, 1, 23, 45), tableBean.ldt);
+        assertEquals("LDT filter fail", LocalDateTime.of(2012, 1, 1, 1, 23, 45), tableBean.ldt);
         assertNotNull("Gson fail", tableBean.fooJsonBean);
         assertEquals("Gson int field fail", 42, tableBean.fooJsonBean.foo);
         assertEquals("Gson string field fail", "aaa", tableBean.fooJsonBean.bar);
@@ -74,7 +77,7 @@ public class EntityMapperTest {
 
     @Test
     public void testFiltersMap() {
-        Date date = new LocalDateTime(2012, 1, 1, 1, 23, 45).toDate();
+        Date date = toDate(LocalDateTime.of(2012, 1, 1, 1, 23, 45));
         Map<String,?> tableBeanMap = ImmutableMap.of("id", 1L, "val", "{\"foo\": 42, \"bar\": \"aaa\"}", "da", date);
         TableBean tableBean = filtersMapper().map(tableBeanMap);
         checkFilters(tableBean);

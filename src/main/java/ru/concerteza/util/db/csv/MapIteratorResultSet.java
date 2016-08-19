@@ -4,18 +4,21 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.joda.time.LocalDateTime;
+import org.apache.commons.lang3.StringUtils;
 import ru.concerteza.util.db.jdbcstub.AbstractResultSet;
 import ru.concerteza.util.db.jdbcstub.AbstractResultSetMetadata;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.*;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import static com.google.common.base.Preconditions.checkArgument;
 import static ru.concerteza.util.collection.CtzCollectionUtils.fireTransform;
+import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
 /**
  * {@link ResultSet} implementation over provided map data iterator
@@ -338,14 +341,14 @@ class MapIteratorResultSet extends AbstractResultSet {
         Timestamp ts = getTimestamp(columnLabel);
         if (null == ts) return null;
 
-        LocalDateTime ldt = new LocalDateTime(ts.getTime());
+        LocalDateTime ldt = toLocalDateTime(ts.getTime());
         cal = (cal == null) ? new GregorianCalendar() : (Calendar)cal.clone();
         cal.set(Calendar.YEAR, ldt.getYear());
-        cal.set(Calendar.MONTH, ldt.getMonthOfYear() - 1);
+        cal.set(Calendar.MONTH, ldt.getMonthValue() - 1);
         cal.set(Calendar.DAY_OF_MONTH, ldt.getDayOfMonth());
-        cal.set(Calendar.HOUR_OF_DAY, ldt.getHourOfDay());
-        cal.set(Calendar.MINUTE, ldt.getMinuteOfHour());
-        cal.set(Calendar.SECOND, ldt.getSecondOfMinute());
+        cal.set(Calendar.HOUR_OF_DAY, ldt.getHour());
+        cal.set(Calendar.MINUTE, ldt.getMinute());
+        cal.set(Calendar.SECOND, ldt.getSecond());
         cal.set(Calendar.MILLISECOND, 0);
 
         Timestamp result = new Timestamp(cal.getTime().getTime());

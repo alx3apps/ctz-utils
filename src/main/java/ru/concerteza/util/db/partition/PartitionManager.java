@@ -7,10 +7,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +18,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
+import static ru.concerteza.util.date.CtzDateUtils.toLong;
 
 /**
  * User: alexkasko
@@ -66,7 +66,7 @@ public class PartitionManager {
     }
 
     public Partition ensurePartition(String tableName, LocalDateTime date, String uid) {
-        return ensurePartition(tableName, date.toDate().getTime(), uid);
+        return ensurePartition(tableName, toLong(date), uid);
     }
 
     // no allocations allowed here outside of lock area
@@ -119,11 +119,11 @@ public class PartitionManager {
             Matcher ma = splitPattern.matcher(st);
             if(!ma.matches()) throw new PartitionException("Invalid partition name loaded from db: [" + st + "]");
             Map<String, String> groups = ma.namedGroups();
-            LocalDateTime from = fromFormat.parseLocalDateTime(groups.get("from"));
-            LocalDateTime toStepped = toFormat.parseLocalDateTime(groups.get("to"));
-            LocalDateTime to = toStepped.withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999);
+            LocalDateTime from = LocalDateTime.parse(groups.get("from"), fromFormat);
+            LocalDateTime toStepped = LocalDateTime.parse(groups.get("to"), toFormat);
+            LocalDateTime to = toStepped.withMinute(59).withSecond(59).withNano(999_000_000);
             String uid = groups.get("uid");
-            Partition part = new Partition(fromFormat, toFormat, groups.get("name"), from.toDate().getTime(), to.toDate().getTime(), uid);
+            Partition part = new Partition(fromFormat, toFormat, groups.get("name"), toLong(from), toLong(to), uid);
             parts.add(part);
         }
         return parts;
@@ -135,10 +135,10 @@ public class PartitionManager {
         if (null == step) throw new PartitionException("Invalid table name, refistered tables: [" + tableStepMap.keySet() + "]");
         if(0 != 24 % step) throw new PartitionException("24 must be divisible by step");
         LocalDateTime ldt = toLocalDateTime(date);
-        LocalDateTime from = ldt.withMillisOfSecond(0).withSecondOfMinute(0).withMinuteOfHour(0);
-        while(from.getHourOfDay() % step > 0) from = from.minusHours(1);
-        LocalDateTime to = from.plusHours(step).minusMillis(1);
-        Partition part = new Partition(fromFormat, toFormat, tableName, from.toDate().getTime(), to.toDate().getTime(), uid);
+        LocalDateTime from = ldt.withNano(0).withSecond(0).withMinute(0);
+        while(from.getHour() % step > 0) from = from.minusHours(1);
+        LocalDateTime to = from.plusHours(step).minusNanos(1_000_000);
+        Partition part = new Partition(fromFormat, toFormat, tableName, toLong(from), toLong(to), uid);
         provider.createPartition(tableName, part.getPostfix());
         return part;
     }
@@ -190,8 +190,8 @@ public class PartitionManager {
         }
 
         public PartitionManager build() {
-            DateTimeFormatter fromDft = DateTimeFormat.forPattern(fromFormat);
-            DateTimeFormatter toDft = DateTimeFormat.forPattern(toFormat);
+            DateTimeFormatter fromDft = DateTimeFormatter.ofPattern(fromFormat);
+            DateTimeFormatter toDft = DateTimeFormatter.ofPattern(toFormat);
             Pattern pattern = Pattern.compile(splitPattern);
             return new PartitionManager(provider, fromDft, toDft, pattern, mapBuilder.build());
         }
@@ -218,7 +218,7 @@ public class PartitionManager {
         }
 
         public Finder withFromDate(LocalDateTime fromDate) {
-            this.fromDate = fromDate.toDate().getTime();
+            this.fromDate = toLong(fromDate);
             return this;
         }
 
@@ -228,7 +228,7 @@ public class PartitionManager {
         }
 
         public Finder withToDate(LocalDateTime toDate) {
-            this.toDate = toDate.toDate().getTime();
+            this.toDate = toLong(toDate);
             return this;
         }
 

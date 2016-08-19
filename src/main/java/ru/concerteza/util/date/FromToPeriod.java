@@ -4,7 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.joda.time.LocalDateTime;
+
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

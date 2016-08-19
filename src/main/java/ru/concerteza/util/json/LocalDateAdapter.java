@@ -1,12 +1,10 @@
 package ru.concerteza.util.json;
 
 import com.google.gson.*;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * GSON adapter for joda-time's LocalDate class. Serialized into {@code yyyy-MM-dd} format
@@ -17,14 +15,15 @@ import java.lang.reflect.Type;
  * @see LocalDateTimeAdapter
  */
 public class LocalDateAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
-    private static final DateTimeFormatter DTF = DateTimeFormat.forPattern("yyyy-MM-dd");
+
+    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * {@inheritDoc}
      */
     @Override
     public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-        return DTF.parseLocalDate(json.getAsString());
+        return LocalDate.parse(json.getAsString(), DTF);
     }
 
     /**
@@ -32,6 +31,6 @@ public class LocalDateAdapter implements JsonSerializer<LocalDate>, JsonDeserial
      */
     @Override
     public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(DTF.print(src));
+        return new JsonPrimitive(DTF.format(src));
     }
 }

@@ -6,8 +6,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import ru.concerteza.util.collection.SingleUseIterable;
 
 import java.awt.font.FontRenderContext;
@@ -17,15 +15,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.text.AttributedString;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.poi.ss.usermodel.Cell.*;
-import static ru.concerteza.util.reflect.CtzReflectionUtils.findGetter;
-import static ru.concerteza.util.reflect.CtzReflectionUtils.invokeMethod;
-import static ru.concerteza.util.reflect.CtzReflectionUtils.isAssignableBoxed;
+import static ru.concerteza.util.date.CtzDateUtils.toDate;
+import static ru.concerteza.util.reflect.CtzReflectionUtils.*;
 
 /**
  * Wrapper over Apache POI SXSSF library for streaming generation of simple (and large) XLSX files.
@@ -178,12 +177,12 @@ public class XlsxStreamReporter<T> {
             cell = row.createCell(column, CELL_TYPE_NUMERIC);
             cell.setCellStyle(dateFormat);
             LocalDate ldval = (LocalDate) value;
-            cell.setCellValue(ldval.toDate());
+            cell.setCellValue(toDate(ldval));
         } else if(CellType.DATETIME.equals(type)) {
             cell = row.createCell(column, CELL_TYPE_NUMERIC);
             cell.setCellStyle(dateTimeFormat);
             LocalDateTime ldtval = (LocalDateTime) value;
-            cell.setCellValue(ldtval.toDate());
+            cell.setCellValue(toDate(ldtval));
         } else {
             cell = row.createCell(column, CELL_TYPE_STRING);
             cell.setCellStyle(mainStyle);

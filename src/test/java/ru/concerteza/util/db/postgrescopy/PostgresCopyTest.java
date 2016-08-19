@@ -3,7 +3,6 @@ package ru.concerteza.util.db.postgrescopy;
 import com.alexkasko.unsafe.bytearray.ByteArrayTool;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.joda.time.LocalDateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,14 +22,12 @@ import ru.concerteza.util.db.partition.PartitionManager;
 import ru.concerteza.util.db.partition.PartitionProvider;
 
 import javax.inject.Inject;
-
+import java.time.LocalDateTime;
 import java.util.Collection;
 
-import static com.alexkasko.springjdbc.typedqueries.common.TypedQueriesUtils.STRING_ROW_MAPPER;
 import static junit.framework.Assert.assertEquals;
-import static org.apache.commons.io.EndianUtils.swapInteger;
-import static org.apache.commons.io.EndianUtils.swapLong;
-import static org.apache.commons.io.EndianUtils.swapShort;
+import static org.apache.commons.io.EndianUtils.*;
+import static ru.concerteza.util.date.CtzDateUtils.toLong;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
@@ -79,10 +76,10 @@ public class PostgresCopyTest {
         JdbcTemplate sjt = (JdbcTemplate) jt.getJdbcOperations();
         byte[] row1 = new byte[16];
         BT.putLong(row1, 0, 42);
-        BT.putLong(row1, 8, new LocalDateTime(2012, 1, 1, 12, 30).toDate().getTime());
+        BT.putLong(row1, 8, toLong(LocalDateTime.of(2012, 1, 1, 12, 30)));
         byte[] row2 = new byte[16];
         BT.putLong(row2, 0, 43);
-        BT.putLong(row2, 8, new LocalDateTime(2012, 1, 1, 17, 30).toDate().getTime());
+        BT.putLong(row2, 8, toLong(LocalDateTime.of(2012, 1, 1, 17, 30)));
         PartitionManager pm = PartitionManager.builder(new PostgresPartitionProvider(jt)).withTable("copy_test_partition", 2).build();
         ImmutableList<Partition> existed = pm.init();
         assertEquals("Existed data fail", 0, existed.size());

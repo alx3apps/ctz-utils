@@ -1,8 +1,9 @@
 package ru.concerteza.util.db.partition;
 
-import org.joda.time.format.DateTimeFormatter;
-
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
+
+import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
 /**
  * User: alexkasko
@@ -27,7 +28,8 @@ public class Partition implements Serializable {
         this.from = from;
         this.to = to;
         this.uid = uid;
-        this.postfix = this.fromFormat.print(from) + "_" + this.toFormat.print(to) + "_" + uid;
+        this.postfix = this.fromFormat.format(toLocalDateTime(from))
+                + "_" + this.toFormat.format(toLocalDateTime(to)) + "_" + uid;
         this.fullName = name + "_" + postfix;
     }
 
