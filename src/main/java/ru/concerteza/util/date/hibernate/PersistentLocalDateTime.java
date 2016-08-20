@@ -17,7 +17,7 @@ import static ru.concerteza.util.date.CtzDateUtils.toDate;
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
 
 /**
- * Persist org.joda.time.LocalDateTime via hibernate,
+ * Persist java.time.LocalDateTime via hibernate,
  * date -> ldt conversion changed
  *
  * @author Mario Ivankovits (mario@ops.co.at)

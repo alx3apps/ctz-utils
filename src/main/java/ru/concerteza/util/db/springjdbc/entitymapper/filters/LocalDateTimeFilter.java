@@ -1,14 +1,15 @@
 package ru.concerteza.util.db.springjdbc.entitymapper.filters;
 
-import ru.concerteza.util.date.CtzDateUtils;
 import ru.concerteza.util.db.springjdbc.entitymapper.ColumnListFilter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
+
 
 /**
- * Filter implementation to convert {@link java.util.Date} values to <a href="http://joda-time.sourceforge.net/api-release/org/joda/time/LocalDateTime.html">LocalDateTime</a>
+ * Filter implementation to convert {@link java.util.Date} values to {@link LocalDateTime}.
  *
  * @author alexey
  * Date: 4/29/12
@@ -35,6 +36,6 @@ public class LocalDateTimeFilter extends ColumnListFilter<LocalDateTime> {
      */
     @Override
     protected LocalDateTime filterColumn(String colname, Object value) {
-        return CtzDateUtils.toLocalDateTime((Date) value);
+        return toLocalDateTime((Date) value);
     }
 }

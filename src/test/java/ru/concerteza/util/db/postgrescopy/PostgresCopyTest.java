@@ -27,7 +27,7 @@ import java.util.Collection;
 
 import static junit.framework.Assert.assertEquals;
 import static org.apache.commons.io.EndianUtils.*;
-import static ru.concerteza.util.date.CtzDateUtils.toLong;
+import static ru.concerteza.util.date.CtzDateUtils.toMillis;
 import static ru.concerteza.util.io.CtzResourceUtils.RESOURCE_LOADER;
 import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
 
@@ -76,10 +76,10 @@ public class PostgresCopyTest {
         JdbcTemplate sjt = (JdbcTemplate) jt.getJdbcOperations();
         byte[] row1 = new byte[16];
         BT.putLong(row1, 0, 42);
-        BT.putLong(row1, 8, toLong(LocalDateTime.of(2012, 1, 1, 12, 30)));
+        BT.putLong(row1, 8, toMillis(LocalDateTime.of(2012, 1, 1, 12, 30)));
         byte[] row2 = new byte[16];
         BT.putLong(row2, 0, 43);
-        BT.putLong(row2, 8, toLong(LocalDateTime.of(2012, 1, 1, 17, 30)));
+        BT.putLong(row2, 8, toMillis(LocalDateTime.of(2012, 1, 1, 17, 30)));
         PartitionManager pm = PartitionManager.builder(new PostgresPartitionProvider(jt)).withTable("copy_test_partition", 2).build();
         ImmutableList<Partition> existed = pm.init();
         assertEquals("Existed data fail", 0, existed.size());

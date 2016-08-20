@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static ru.concerteza.util.date.CtzDateUtils.toLocalDateTime;
-import static ru.concerteza.util.date.CtzDateUtils.toLong;
+import static ru.concerteza.util.date.CtzDateUtils.toMillis;
 
 /**
  * User: alexkasko
@@ -66,7 +66,7 @@ public class PartitionManager {
     }
 
     public Partition ensurePartition(String tableName, LocalDateTime date, String uid) {
-        return ensurePartition(tableName, toLong(date), uid);
+        return ensurePartition(tableName, toMillis(date), uid);
     }
 
     // no allocations allowed here outside of lock area
@@ -123,7 +123,7 @@ public class PartitionManager {
             LocalDateTime toStepped = LocalDateTime.parse(groups.get("to"), toFormat);
             LocalDateTime to = toStepped.withMinute(59).withSecond(59).withNano(999_000_000);
             String uid = groups.get("uid");
-            Partition part = new Partition(fromFormat, toFormat, groups.get("name"), toLong(from), toLong(to), uid);
+            Partition part = new Partition(fromFormat, toFormat, groups.get("name"), toMillis(from), toMillis(to), uid);
             parts.add(part);
         }
         return parts;
@@ -138,7 +138,7 @@ public class PartitionManager {
         LocalDateTime from = ldt.withNano(0).withSecond(0).withMinute(0);
         while(from.getHour() % step > 0) from = from.minusHours(1);
         LocalDateTime to = from.plusHours(step).minusNanos(1_000_000);
-        Partition part = new Partition(fromFormat, toFormat, tableName, toLong(from), toLong(to), uid);
+        Partition part = new Partition(fromFormat, toFormat, tableName, toMillis(from), toMillis(to), uid);
         provider.createPartition(tableName, part.getPostfix());
         return part;
     }
@@ -218,7 +218,7 @@ public class PartitionManager {
         }
 
         public Finder withFromDate(LocalDateTime fromDate) {
-            this.fromDate = toLong(fromDate);
+            this.fromDate = toMillis(fromDate);
             return this;
         }
 
@@ -228,7 +228,7 @@ public class PartitionManager {
         }
 
         public Finder withToDate(LocalDateTime toDate) {
-            this.toDate = toLong(toDate);
+            this.toDate = toMillis(toDate);
             return this;
         }
 

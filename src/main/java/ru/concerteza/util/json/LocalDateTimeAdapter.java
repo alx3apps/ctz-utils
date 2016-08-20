@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * GSON adapter for joda-time's LocalDateTime class. Serialized into {@code yyyy-MM-dd HH:mm:ss} format
+ * GSON adapter for {@link LocalDateTime}. Serialized into {@code yyyy-MM-dd HH:mm:ss} format
  * that is also supported by {@link java.sql.Timestamp#valueOf(String)}
  *
  * @author alexey

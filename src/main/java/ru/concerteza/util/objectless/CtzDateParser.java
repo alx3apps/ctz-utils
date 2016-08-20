@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import static java.lang.Character.digit;
 import static java.lang.System.arraycopy;
-import static ru.concerteza.util.date.CtzDateUtils.toLong;
+import static ru.concerteza.util.date.CtzDateUtils.toMillis;
 import static ru.concerteza.util.string.CtzConstants.ASCII_CHARSET;
 
 /**
@@ -45,7 +45,7 @@ public class CtzDateParser {
         }
         if(!dateEqual) {
             String dateStr = new String(date, offset, 14, ASCII_CHARSET);
-            dateMillis.set(toLong(LocalDate.parse(dateStr, dtf)));
+            dateMillis.set(toMillis(LocalDate.parse(dateStr, dtf)));
             arraycopy(date, offset, dateBytes.get(), 0, 8);
         }
         int hours = digit((char) date[offset + 8], 10) * 10;
