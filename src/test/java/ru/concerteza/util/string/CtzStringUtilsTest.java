@@ -14,6 +14,6 @@ public class CtzStringUtilsTest {
     public void test() {
         String input = "<foo><bar/></foo>";
         String pretty = CtzStringUtils.prettifyXml(input);
-        Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<foo>\n  <bar/>\n</foo>\n", pretty);
+        Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\n  <bar/>\n</foo>\n", pretty);
     }
 }
