@@ -353,6 +353,20 @@ class MapIteratorResultSet extends AbstractResultSet {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     private class Metadata extends AbstractResultSetMetadata {
         @Override
         public int getColumnCount() throws SQLException {

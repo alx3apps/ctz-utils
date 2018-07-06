@@ -36,5 +36,19 @@ class CsvPreparedStatement extends NoOpPreparedStatement {
     public ResultSet executeQuery(String sql) throws SQLException {
         return executeQuery();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void closeOnCompletion() {
+        // noop
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isCloseOnCompletion() {
+        return false;
+    }
 }
 

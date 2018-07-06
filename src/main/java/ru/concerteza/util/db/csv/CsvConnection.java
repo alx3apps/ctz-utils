@@ -5,6 +5,7 @@ import ru.concerteza.util.db.jdbcstub.AbstractConnection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.concurrent.Executor;
 
 /**
  * {@link java.sql.Connection} implementation for CSV file with fixed data
@@ -44,5 +45,40 @@ class CsvConnection extends AbstractConnection {
     @Override
     public void close() throws SQLException {
         // noop
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSchema(String schema) throws SQLException {
+        // noop
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getSchema() throws SQLException {
+        return null; // no schema
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void abort(Executor executor) throws SQLException {
+        // noop
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        // noop
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getNetworkTimeout() throws SQLException {
+        return 0; // no limit
     }
 }

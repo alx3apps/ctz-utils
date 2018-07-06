@@ -9,7 +9,9 @@ import ru.concerteza.util.io.CtzResourceUtils;
 import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static ru.concerteza.util.string.CtzConstants.UTF8;
 
@@ -70,6 +72,13 @@ public class CsvDataSource extends AbstractDataSource {
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
         return getConnection();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException("getParentLogger");
     }
 
     private enum SubstituteNullsFunction implements Function<Map<String, String>, Map<String, String>> {
