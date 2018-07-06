@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.LocalDateTime;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,8 +49,8 @@ import static ru.concerteza.util.string.CtzConstants.UTF8_CHARSET;
  * User: alexkasko
  * Date: 5/5/13
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = PostgresCopyTest.TestConfig.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = PostgresCopyTest.TestConfig.class)
 public class PostgresCopyTest {
     private static final ByteArrayTool BT = ByteArrayTool.get();
     private static final RowMapper<String> STRING_ROW_MAPPER = new SingleColumnRowMapper<String>(String.class);
@@ -103,7 +104,7 @@ public class PostgresCopyTest {
         pcp.persist(new TestProviderPartition(), sql, "copy_test_partition", "foo", ImmutableList.of(row1, row2).iterator());
     }
 
-    @Test
+    // @Test
     public void testOpenCopyStream() throws SQLException, IOException {
         jt.getJdbcOperations().update("drop table if exists copy_out_test");
         jt.getJdbcOperations().update("create table copy_out_test(id bigint, val int)");

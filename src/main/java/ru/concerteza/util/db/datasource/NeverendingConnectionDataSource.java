@@ -6,8 +6,10 @@ import ru.concerteza.util.io.CtzIOUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 /**
  * {@link javax.sql.DataSource} implementation that never closes its connections.
@@ -56,5 +58,12 @@ public class NeverendingConnectionDataSource extends AbstractDbcpMimicringDataSo
     @Override
     public boolean shouldClose(Connection con) {
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException("getParentLogger");
     }
 }
