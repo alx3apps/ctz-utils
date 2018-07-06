@@ -45,6 +45,18 @@
         <gson.version>2.2.1</gson.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -406,6 +418,7 @@
                             <linksource>true</linksource>
                             <quiet>true</quiet>
                             <sourcepath>${project.basedir}/src/main/java/:${project.basedir}/src/test/java/</sourcepath>
+                            <additionalparam>${javadoc.opts}</additionalparam>
                             <additionnalDependencies>
                                 <dependency>
                                     <groupId>junit</groupId>
